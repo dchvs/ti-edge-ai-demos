@@ -9,6 +9,8 @@ import shlex
 
 # Create post develop command class for hooking into the python setup process
 # This command will run after dependencies are installed
+
+
 class PostDevelopCommand(develop):
     def run(self):
         try:
@@ -24,9 +26,13 @@ test_requires = ["pytest"]  # test dependencies
 dev_requires = ["pre-commit"]  # dev dependencies
 
 setup(
-    name="packagename",
-    version="v0.1.0",
+    name="ti-edge-ai-demos",
+    version="0.1.0",
     install_requires=install_requires,
-    extras_require={"test": test_requires, "extra": extra_requires, "dev": test_requires + extra_requires + dev_requires,},
+    extras_require={
+        "test": test_requires,
+        "extra": extra_requires,
+        "dev": test_requires + extra_requires + dev_requires,
+    },
     cmdclass={"develop": PostDevelopCommand},
 )
