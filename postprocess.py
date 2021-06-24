@@ -12,18 +12,25 @@
 #  a software license from RidgeRun.  All source code changes must be provided
 #  back to RidgeRun without any encumbrance.
 
-import yaml
+import argparse
 import cv2
 import numpy as np
+import yaml
 
-(cam_width, cam_height) = (1280, 720)
-(disp_width, disp_height) = (1920, 1080)
+from getconfig import *
+
+#(cam_width, cam_height) = (1280, 720)
+#(disp_width, disp_height) = (1400, 1080)
+
+(cam_width, cam_height) = (425, 326)
+(disp_width, disp_height) = (640, 420)
 
 
 class PostProcess:
     def __init__(self, img, model_dir):
         # Get parsed the model params
-        self.params = GetConfigYaml(model_dir)
+        config = GetConfigYaml(model_dir)
+        self.params = config.params
 
         # Get the image
         self.img = img
@@ -32,30 +39,31 @@ class PostProcess:
         self.model_name = model_dir[:len(model_dir) - 1]
         self.demo_name = 'Simple example'
 
-    def overlay_title(self, img):
-        (cam_width, cam_height) = (1280, 720)
-        (disp_width, disp_height) = (1920, 1080)
-
-        padx = disp_width - cam_width
-        pady = disp_height - cam_height
+    def overlay_title(self, img, padx, pady):
+        padx_2 = int(padx / 2)
+        pady_2 = int(pady / 2)
 
         img = cv2.copyMakeBorder(img,
-                                 int(pady / 2),
-                                 pady - int(pady / 2),
-                                 int(padx / 2),
-                                 padx - int(padx / 2),
+                                 pady_2,
+                                 pady - pady_2,
+                                 padx_2,
+                                 padx - padx_2,
                                  cv2.BORDER_CONSTANT)
+
         img = cv2.putText(img, "Texas Instruments - Edge Analytics", (40, 40),
                           cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 2)
+
         img = cv2.putText(img, self.demo_name, (40, 40 + 50),
                           cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+
         img = cv2.putText(img, "model : " + self.model_name, (40, 40 + 100),
                           cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+
         return img
 
 
 class PostProcessDetection(PostProcess):
-    def overlay_bounding_box(frame, results, classnames, score_thresh,
+    def overlay_bounding_box(self, frame, results, classnames, score_thresh,
                              scalex, scaley, label_offset, formatter):
         class_IDs, scores, bounding_boxes = results
         for i, score in enumerate(np.squeeze(scores, axis=0)):
@@ -90,22 +98,26 @@ class PostProcessDetection(PostProcess):
 
         return frame
 
-    def get_preprocessed_image(self, img, results):
-        classnames = eval(self.params.dataset)
-        scalex = cam_width / self.params.resize[0]
-        scaley = cam_height / self.params.resize[1]
-
-        img = utils.overlay_bounding_box(
+    def get_postprocessed_image(
+            self,
             img,
             results,
             classnames,
-            args.threshold,
+            scalex,
+            scaley):
+        img = self.overlay_bounding_box(
+            img,
+            results,
+            classnames,
+            0.5,
             scalex,
             scaley,
-            params.label_offset,
-            params.formatter)
-        img = utils.overlay_title(img, disp_width - cam_width,
-                                  disp_height - cam_height)
+            self.params.label_offset,
+            self.params.formatter)
+
+        img = self.overlay_title(img, disp_width - cam_width,
+                                 disp_height - cam_height)
+
         return img
 
 

@@ -17,6 +17,22 @@ import logging
 import sys
 import yaml
 
+from time import time
+from time import sleep
+import numpy as np
+import threading
+import curses
+import cv2
+import signal
+import sys
+import argparse
+import yaml
+import os
+import stat
+
+
+_metrics = {}
+
 
 class GetConfigYaml:
     def __init__(self, model_dir):
@@ -66,5 +82,11 @@ class GetConfigYaml:
         # Get the dataset parameters
         params.dataset = yaml_params['input_dataset']['name']
         params.task_type = yaml_params['task_type']
+
+        # metrics
+        params.label_offset = 0
+        if 'metric' in yaml_params:
+            if 'label_offset_pred' in yaml_params['metric']:
+                params.label_offset = yaml_params['metric']['label_offset_pred']
 
         return params

@@ -17,22 +17,44 @@ from preprocess import *
 from postprocess import *
 from runtimes import *
 
+from classnames import *
+
 model_dir = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
+
+#params = utils.Params(args.model)
+
+(cam_width, cam_height) = (425, 326)
+(disp_width, disp_height) = (640, 420)
+#(cam_width, cam_height) = (1280, 720)
+#(disp_width, disp_height) = (5000, 3020)
 
 
 def main():
+    #    global classnames
     image_handler = ImageHandler()
-    img = image_handler.loadImage("linux.jpg")
+    img = image_handler.loadImage("0004.jpg")
+    img_orig = image_handler.loadImage("0004.jpg")
 
-    preprocess = PreProcessDetection(img, model_dir)
-    img = preprocess.get_preprocessed_image(img)
-    RunTime = eval(preprocess.params.run_time)
-    run_time = RunTime(preprocess.params)
-    results = run_time.run(img)
-    postprocess = PostProcessDetection(img, model_dir)
-    img = get_postprocessed_image(img, results)
+    preprocess = PreProcessDetection(img_orig, model_dir)
+    img_pre = preprocess.get_preprocessed_image(img_orig)
 
-    image_handler.saveImage("linux_preprocessed.jpg", img)
+    postprocess = PostProcessDetection(img_orig, model_dir)
+
+    RunTime = eval(postprocess.params.run_time)
+    run_time = RunTime(postprocess.params)
+    results = run_time.run(img_pre)
+
+    classnames = eval(postprocess.params.dataset)
+    scalex = cam_width / postprocess.params.resize[0]
+    scaley = cam_height / postprocess.params.resize[1]
+
+    print ("scalex = %d " % (scalex))
+    print ("scaley = %d " % (scaley))
+
+    img_orig = postprocess.get_postprocessed_image(
+        img_orig, results, classnames, scalex, scaley)
+
+    image_handler.saveImage("falcon_postprocess.jpg", img_orig)
 
 
 if __name__ == "__main__":
