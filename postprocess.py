@@ -19,11 +19,8 @@ import numpy as np
 from getconfig import *
 from classnames import *
 
-#(cam_width, cam_height) = (1280, 720)
-#(disp_width, disp_height) = (1400, 1080)
-
-(cam_width, cam_height) = (425, 326)
-(disp_width, disp_height) = (640, 420)
+(cam_width, cam_height) = (1280, 720)
+(disp_width, disp_height) = (1920, 1080)
 
 
 class PostProcess:
