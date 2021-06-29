@@ -51,10 +51,15 @@ def main():
     print ("scalex = %d " % (scalex))
     print ("scaley = %d " % (scaley))
 
-    img_orig = postprocess.get_postprocessed_image(
-        img_orig, results, classnames, scalex, scaley)
+    preprocess = PreProcessDetection(img, model_dir)
+    img_preprocessed = preprocess.get_preprocessed_image(img)
+    RunTime = eval(preprocess.params.run_time)
+    run_time = RunTime(preprocess.params)
+    results = run_time.run(img_preprocessed)
+    postprocess = PostProcessDetection(img, model_dir)
+    img = postprocess.get_postprocessed_image(img, results)
 
-    image_handler.saveImage("falcon_postprocess.jpg", img_orig)
+    image_handler.saveImage("result.jpg", img)
 
 
 if __name__ == "__main__":

@@ -15,9 +15,9 @@
 import argparse
 import cv2
 import numpy as np
-import yaml
 
 from getconfig import *
+from classnames import *
 
 #(cam_width, cam_height) = (1280, 720)
 #(disp_width, disp_height) = (1400, 1080)
@@ -75,8 +75,6 @@ class PostProcessDetection(PostProcess):
                    int(box[formatter.index(2)] * scalex),
                    int(box[formatter.index(3)] * scaley)]
             class_id = label_offset[int(class_IDs[0][i])]
-            # print("%d: Detected object %s with score %f @(%d,%d) to (%d,%d)" % \
-            # (i, classnames[class_id], score, box[0], box[1], box[2], box[3]))
             box_color = (int(120 * score), int(120 * score), int(50 * score))
             text_color = (int(240 * score), int(240 * score), int(240 * score))
             cv2.rectangle(frame, (box[0], box[1]),
@@ -98,18 +96,17 @@ class PostProcessDetection(PostProcess):
 
         return frame
 
-    def get_postprocessed_image(
-            self,
-            img,
-            results,
-            classnames,
-            scalex,
-            scaley):
+    def get_postprocessed_image(self, img, results):
+        classnames = eval(self.params.dataset)
+        scalex = cam_width / self.params.resize[0]
+        scaley = cam_height / self.params.resize[1]
+        threshold = 0.5
+
         img = self.overlay_bounding_box(
             img,
             results,
             classnames,
-            0.5,
+            threshold,
             scalex,
             scaley,
             self.params.label_offset,
