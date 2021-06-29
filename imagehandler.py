@@ -18,8 +18,10 @@ import logging
 
 class ImageHandler:
     def loadImage(self, image_name):
+        cam_size = (1280, 720)
         try:
-            return cv2.imread(image_name)
+            img = cv2.imread(image_name)
+            return cv2.resize(img, cam_size, interpolation=cv2.INTER_LINEAR)
         except Exception as e:
             logging.warning("Unable to load the image")
 
