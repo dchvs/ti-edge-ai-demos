@@ -19,12 +19,9 @@ import numpy as np
 from getconfig import *
 from classnames import *
 
-(cam_width, cam_height) = (1280, 720)
-(disp_width, disp_height) = (1920, 1080)
-
 
 class PostProcess:
-    def __init__(self, img, model_dir):
+    def __init__(self, img, model_dir, disp_width, disp_height):
         # Get parsed the model params
         config = GetConfigYaml(model_dir)
         self.params = config.params
@@ -35,6 +32,16 @@ class PostProcess:
         # Get the model and demo names
         self.model_name = model_dir[:len(model_dir) - 1]
         self.demo_name = 'Simple example'
+
+        # Get the output display window size
+        self.disp_width = disp_width
+        self.disp_height = disp_height
+
+        # Get the image size
+        (img_height, img_width, img_channels) = img.shape
+        self.img_height = img_height
+        self.img_width = img_width
+        self.img_channels = img_channels
 
     def overlay_title(self, img, padx, pady):
         padx_2 = int(padx / 2)
@@ -95,8 +102,8 @@ class PostProcessDetection(PostProcess):
 
     def get_postprocessed_image(self, img, results):
         classnames = eval(self.params.dataset)
-        scalex = cam_width / self.params.resize[0]
-        scaley = cam_height / self.params.resize[1]
+        scalex = self.img_width / self.params.resize[0]
+        scaley = self.img_height / self.params.resize[1]
         threshold = 0.5
 
         img = self.overlay_bounding_box(
@@ -109,8 +116,8 @@ class PostProcessDetection(PostProcess):
             self.params.label_offset,
             self.params.formatter)
 
-        img = self.overlay_title(img, disp_width - cam_width,
-                                 disp_height - cam_height)
+        img = self.overlay_title(img, self.disp_width - self.img_width,
+                                 self.disp_height - self.img_height)
 
         return img
 
@@ -170,9 +177,9 @@ class PostProcessClassification(PostProcess):
 
         img = overlay_title(
             img,
-            disp_width -
-            cam_width,
-            disp_height -
-            cam_height)
+            self.disp_width -
+            self.img_width,
+            self.disp_height -
+            self.img_height)
         img = overlay_top5_classnames(
             img, results, classnames, self.params.label_offset)
