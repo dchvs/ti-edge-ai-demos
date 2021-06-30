@@ -18,10 +18,9 @@ import logging
 
 class ImageHandler:
     def loadImage(self, image_name):
-        cam_size = (1280, 720)
         try:
-            img = cv2.imread(image_name)
-            return cv2.resize(img, cam_size, interpolation=cv2.INTER_LINEAR)
+            return cv2.imread(image_name)
+
         except Exception as e:
             logging.warning("Unable to load the image")
 
@@ -30,3 +29,10 @@ class ImageHandler:
             cv2.imwrite(image_name, img)
         except Exception as e:
             logging.warning("Unable to save the image")
+
+    def resizeImage(self, img, new_size):
+        try:
+            return cv2.resize(img, new_size, interpolation=cv2.INTER_LINEAR)
+
+        except Exception as e:
+            logging.warning("Unable to resize image")
