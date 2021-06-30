@@ -18,21 +18,30 @@ from postprocess import *
 from runtimes import *
 
 model_dir = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
+input_image = "0004.jpg"
+output_image = "result.jpg"
+(disp_width, disp_height) = (1280, 720)
 
 
 def main():
     image_handler = ImageHandler()
-    img = image_handler.loadImage("0004.jpg")
+    img = image_handler.loadImage(input_image)
 
+    # Preprocess
     preprocess = PreProcessDetection(img, model_dir)
     img_preprocessed = preprocess.get_preprocessed_image(img)
+
+    # Inference
     RunTime = eval(preprocess.params.run_time)
     run_time = RunTime(preprocess.params)
     results = run_time.run(img_preprocessed)
-    postprocess = PostProcessDetection(img, model_dir)
+
+    # Postprocess
+    postprocess = PostProcessDetection(
+        img, model_dir, *(disp_width, disp_height))
     img = postprocess.get_postprocessed_image(img, results)
 
-    image_handler.saveImage("result.jpg", img)
+    image_handler.saveImage(output_image, img)
 
 
 if __name__ == "__main__":
