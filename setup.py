@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 
-#  Copyright (C) 2021 RidgeRun, LLC (http://www.ridgerun.com)
-#  All Rights Reserved.
-#  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
-#           Marisol Zeledon <marisol.zeledon@ridgerun.com>
-#
 #  The contents of this software are proprietary and confidential to RidgeRun,
 #  LLC.  No part of this program may be photocopied, reproduced or translated
 #  into another programming language without prior written consent of
