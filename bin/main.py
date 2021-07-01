@@ -4,13 +4,13 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
-from imagehandler import *
-from postprocess import *
-from preprocess import *
-from runtimes import *
+from utils.imagehandler import *
+from TI.postprocess import *
+from TI.preprocess import *
+from TI.runtimes import *
 
 model_dir = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
-input_image = "0004.jpg"
+input_image = "data/0004.jpg"
 output_image = "result.jpg"
 (disp_width, disp_height) = (1280, 720)
 
