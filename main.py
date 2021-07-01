@@ -5,8 +5,8 @@
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
 from imagehandler import *
-from preprocess import *
 from postprocess import *
+from preprocess import *
 from runtimes import *
 
 model_dir = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"

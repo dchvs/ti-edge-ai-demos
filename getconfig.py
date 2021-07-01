@@ -5,24 +5,19 @@
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 #  Based on Texas Instruments Incorporated - http://www.ti.com/
 
-import cv2
-import logging
-import sys
-import yaml
-
-from time import time
-from time import sleep
-import numpy as np
-import threading
+import argparse
 import curses
 import cv2
-import signal
-import sys
-import argparse
-import yaml
+import logging
+import numpy as np
 import os
+import signal
 import stat
-
+import sys
+from time import time
+from time import sleep
+import threading
+import yaml
 
 _metrics = {}
 

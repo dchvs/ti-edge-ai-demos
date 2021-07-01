@@ -7,12 +7,13 @@
 #  a software license from RidgeRun.  All source code changes must be provided
 #  back to RidgeRun without any encumbrance.
 
-import os
-import logging
 from codecs import open
-from setuptools import setup, find_packages
-from setuptools.command.develop import develop
+import logging
+import os
 from subprocess import check_call
+from setuptools import find_packages
+from setuptools import setup
+from setuptools.command.develop import develop
 import shlex
 
 # Create post develop command class for hooking into the python setup process

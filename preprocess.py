@@ -30,11 +30,11 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import yaml
+from getconfig import *
+
 import cv2
 import numpy as np
-
-from getconfig import *
+import yaml
 
 
 class PreProcess:

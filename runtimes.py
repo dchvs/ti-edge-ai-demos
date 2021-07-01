@@ -30,9 +30,9 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import tflite_runtime.interpreter as tflitert_interpreter
 from dlr import DLRModel
 import numpy as np
+import tflite_runtime.interpreter as tflitert_interpreter
 
 
 class tvmdlr:
