@@ -55,7 +55,7 @@ setup(
             "tests.*",
             "tests"]),
     scripts=[
-        'main.py',
+        'bin/main.py',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
