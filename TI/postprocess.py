@@ -39,6 +39,15 @@ import numpy as np
 
 
 class PostProcess:
+    """
+    Constructor to create a EdgeAI post-process object
+    Handles post-algorithms overlays operations over images
+    Args:
+        model_dir (string): The model directory
+        disp_width (int): Set the output image width
+        disp_height (int): Set the output image height
+    """
+
     def __init__(self, img, model_dir, disp_width, disp_height):
         # Get parsed the model params
         config = GetConfigYaml(model_dir)

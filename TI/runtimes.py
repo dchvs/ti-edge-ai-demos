@@ -36,6 +36,10 @@ import tflite_runtime.interpreter as tflitert_interpreter
 
 
 class tvmdlr:
+    '''
+    Abstracts the tvmdlr Run Time
+    '''
+
     def __init__(self, params):
         self.params = params
         self.model = DLRModel(params.artifacts, 'cpu')
@@ -46,6 +50,10 @@ class tvmdlr:
 
 
 class tflitert:
+    '''
+    Abstracts the tflitert Run Time
+    '''
+
     def __init__(self, params):
         self.params = params
         delegate_options = {

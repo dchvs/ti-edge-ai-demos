@@ -9,6 +9,11 @@ import logging
 
 
 class ImageHandler:
+    """
+    Constructor to create an image handler
+    Handles file operations over images
+    """
+
     def loadImage(self, image_name):
         try:
             return cv2.imread(image_name)

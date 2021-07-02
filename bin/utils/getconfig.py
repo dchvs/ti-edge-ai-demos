@@ -23,6 +23,13 @@ _metrics = {}
 
 
 class GetConfigYaml:
+    """
+    Class used to get parameters from a YAML file
+    Parse the parameters for a YAML file with the TI Edge AI segmentation/detection/classification models
+    Args:
+        model_dir (string): The model directory
+    """
+
     def __init__(self, model_dir):
         yaml_params = self.read_file(model_dir)
         self.params = self.parse_params(yaml_params, model_dir)

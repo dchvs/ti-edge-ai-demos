@@ -38,6 +38,14 @@ import yaml
 
 
 class PreProcess:
+    """
+    Constructor to create a EdgeAI pre-process object
+    Handles pre-algorithms normalization operations over images to be able to be inferred
+    Args:
+        img (obj): A CV2 image object
+        model_dir (string): The model directory
+    """
+
     def __init__(self, img, model_dir):
         # Get parsed the model params
         config = GetConfigYaml(model_dir)
