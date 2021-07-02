@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #  Copyright (C) 2021 RidgeRun, LLC (http://www.ridgerun.com)
 #  All Rights Reserved.
@@ -23,6 +23,10 @@ import shlex
 # Create post develop command class for hooking into the python setup process
 # This command will run after dependencies are installed
 
+name = 'ti-edge-ai-demos'
+version = '0.1.0'
+author = 'RidgeRun'
+
 
 class PostDevelopCommand(develop):
     def run(self):
@@ -33,15 +37,45 @@ class PostDevelopCommand(develop):
         develop.run(self)
 
 
-install_requires = ["networkx"]  # alternatively, read from `requirements.txt`
+# alternatively, read from `requirements.txt`
+install_requires = ["networkx", "setuptools"]
 extra_requires = ["pandas"]  # optional dependencies
 test_requires = ["pytest"]  # test dependencies
 dev_requires = ["pre-commit"]  # dev dependencies
 
 setup(
-    name="ti-edge-ai-demos",
-    version="0.1.0",
+    name=name,
+    version=version,
+    description='RidgeRun Edge AI Demos',
+    long_description='RidgeRun custom demos from TI Computer Vision and Deep Learning SDKs',
+    long_description_content_type='text/markdown',
+    author=author,
+    author_email='support@ridgerun.com',
+
+    packages=find_packages(
+        exclude=[
+            "*.tests",
+            "*.tests.*",
+            "tests.*",
+            "tests"]),
+    scripts=[
+        'main.py',
+    ],
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+    ],
+    python_requires='>=3.8.5',
     install_requires=install_requires,
+    command_options={
+        'build_sphinx': {
+            'project': ('setup.py', name),
+            'version': ('setup.py', version),
+            'release': ('setup.py', version),
+            'source_dir': ('setup.py', 'doc')}},
+
     extras_require={
         "test": test_requires,
         "extra": extra_requires,
