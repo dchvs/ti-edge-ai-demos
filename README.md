@@ -5,6 +5,6 @@ Demos to show the powerful capabilities of TI Edge AI SDK on J7 platform
 
 ```console
 sudo -H pip3 install pre-commit
-pip install -e "common/.[dev]"
+pip install -e ".[dev]"
 ```
 
