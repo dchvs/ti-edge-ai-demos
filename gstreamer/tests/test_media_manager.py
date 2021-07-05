@@ -18,6 +18,15 @@ class TestGstManager(unittest.TestCase):
         assert(ret is not None)
         assert(gst_manager.pipeline is not None)
 
+    def testDeletePipeline(self):
+        desc = "videotestsrc ! fakesink"
+
+        gst_manager = GstManager()
+
+        ret = gst_manager.CreatePipeline(desc)
+        ret = gst_manager.DeletePipeline()
+        assert(ret is True)
+
 
 if __name__ == '__main__':
     unittest.main()

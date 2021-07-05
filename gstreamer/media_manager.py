@@ -30,3 +30,8 @@ class GstManager():
             return False
 
         return True
+
+    def DeletePipeline(self):
+        del self.pipeline
+
+        return True
