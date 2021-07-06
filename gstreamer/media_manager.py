@@ -38,3 +38,6 @@ class GstManager():
 
     def PlayPipeline(self):
         self.pipeline.set_state(gst.State.PLAYING)
+
+    def StopPipeline(self):
+        self.pipeline.set_state(gst.State.NULL)
