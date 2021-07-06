@@ -27,6 +27,23 @@ class TestGstManager(unittest.TestCase):
         ret = gst_manager.DeletePipeline()
         assert(ret is True)
 
+    def testPlayPipeline(self):
+        desc = "videotestsrc ! fakesink async=false"
+
+        gst_manager = GstManager()
+
+        ret = gst_manager.CreatePipeline(desc)
+
+        self.assertEqual(
+            gst.State.NULL,
+            gst_manager.pipeline.get_state(
+                gst.CLOCK_TIME_NONE)[1])
+        gst_manager.PlayPipeline()
+        self.assertEqual(
+            gst.State.PLAYING,
+            gst_manager.pipeline.get_state(
+                gst.CLOCK_TIME_NONE)[1])
+
 
 if __name__ == '__main__':
     unittest.main()

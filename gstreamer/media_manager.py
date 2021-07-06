@@ -35,3 +35,6 @@ class GstManager():
         del self.pipeline
 
         return True
+
+    def PlayPipeline(self):
+        self.pipeline.set_state(gst.State.PLAYING)
