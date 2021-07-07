@@ -15,6 +15,31 @@ output_image = "result.jpg"
 (disp_width, disp_height) = (1280, 720)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-m",
+        "--model",
+        help="The path to the model directory that is going to be used",
+        required=True)
+    parser.add_argument(
+        "-i",
+        "--input",
+        help="The path to the input image",
+        required=True)
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="The output image name",
+        required=True)
+    parser.add_argument("--height", help="The display height", default=720)
+    parser.add_argument("--width", help="The display width", default=1280)
+
+    args = parser.parse_args()
+
+    return vars(args)
+
+
 def main():
     image_handler = ImageHandler()
     img = image_handler.loadImage(input_image)
