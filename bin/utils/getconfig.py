@@ -5,21 +5,24 @@
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 #  Based on Texas Instruments Incorporated - http://www.ti.com/
 
-import argparse
-import curses
-import cv2
+
 import logging
 import numpy as np
 import os
-import signal
-import stat
 import sys
-from time import time
-from time import sleep
-import threading
 import yaml
 
-_metrics = {}
+
+def read_file(model_dir):
+    try:
+        with open(model_dir + "param.yaml", "r") as file:
+            return yaml.safe_load(file)
+    except OSError as e:
+        logging.error("YAML file not found")
+        sys.exit(1)
+    except yaml.YAMLError as e:
+        logging.error("Error parsing file: %s" % (e))
+        sys.exit(1)
 
 
 class GetConfigYaml:
@@ -31,16 +34,8 @@ class GetConfigYaml:
     """
 
     def __init__(self, model_dir):
-        yaml_params = self.read_file(model_dir)
+        yaml_params = read_file(model_dir)
         self.params = self.parse_params(yaml_params, model_dir)
-
-    def read_file(self, model_dir):
-        try:
-            with open(model_dir + "param.yaml", "r") as file:
-                return yaml.safe_load(file)
-        except Exception as e:
-            logging.error("YAML file not found")
-            sys.exit(1)
 
     def parse_params(self, yaml_params, model_dir):
         def params(): return None
