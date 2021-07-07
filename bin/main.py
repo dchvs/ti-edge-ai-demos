@@ -4,15 +4,11 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
+import argparse
 from utils.imagehandler import *
 from TI.postprocess import *
 from TI.preprocess import *
 from TI.runtimes import *
-
-model_dir = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
-input_image = "data/0004.jpg"
-output_image = "result.jpg"
-(disp_width, disp_height) = (1280, 720)
 
 
 def parse_args():
@@ -41,11 +37,12 @@ def parse_args():
 
 
 def main():
+    args = parse_args()
     image_handler = ImageHandler()
-    img = image_handler.loadImage(input_image)
+    img = image_handler.loadImage(args['input'])
 
     # Preprocess
-    preprocess = PreProcessDetection(img, model_dir)
+    preprocess = PreProcessDetection(img, args['model'])
     img_preprocessed = preprocess.get_preprocessed_image(img)
 
     # Inference
@@ -54,11 +51,12 @@ def main():
     results = run_time.run(img_preprocessed)
 
     # Postprocess
+    (disp_width, disp_height) = (args['width'], args['height'])
     postprocess = PostProcessDetection(
-        img, model_dir, *(disp_width, disp_height))
+        img, args['model'], *(disp_width, disp_height))
     img = postprocess.get_postprocessed_image(img, results)
 
-    image_handler.saveImage(output_image, img)
+    image_handler.saveImage(args['output'], img)
 
 
 if __name__ == "__main__":
