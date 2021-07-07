@@ -39,7 +39,7 @@ def parse_args():
 def main():
     args = parse_args()
     image_handler = ImageHandler()
-    img = image_handler.load_mage(args['input'])
+    img = image_handler.load_image(args['input'])
 
     # Preprocess
     preprocess = PreProcessDetection(img, args['model'])
