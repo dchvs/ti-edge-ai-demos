@@ -61,10 +61,16 @@ class tflitert:
             "artifacts_folder": params.artifacts,
             "import": 'no',
         }
-        tidl_delegate = [
-            tflitert_interpreter.load_delegate(
-                '/usr/lib/libtidl_tfl_delegate.so',
-                delegate_options)]
+
+        try:
+            tidl_delegate = [
+                tflitert_interpreter.load_delegate(
+                    '/usr/lib/libtidl_tfl_delegate.so',
+                    delegate_options)]
+        except ValueError as e:
+            logging.error("Delegate library not found")
+            sys.exit(1)
+
         self.interpreter = tflitert_interpreter.Interpreter(
             params.model_path, experimental_delegates=tidl_delegate)
         self.interpreter.allocate_tensors()
