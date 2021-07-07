@@ -28,8 +28,16 @@ def parse_args():
         "--output",
         help="The output image name",
         required=True)
-    parser.add_argument("--height", help="The display height", default=720)
-    parser.add_argument("--width", help="The display width", default=1280)
+    parser.add_argument(
+        "--height",
+        help="The display height",
+        type=int,
+        default=720)
+    parser.add_argument(
+        "--width",
+        help="The display width",
+        type=int,
+        default=1280)
 
     args = parser.parse_args()
 
