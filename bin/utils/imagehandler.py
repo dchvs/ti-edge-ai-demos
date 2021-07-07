@@ -6,6 +6,8 @@
 
 import cv2
 import logging
+import numpy as np
+import sys
 
 
 class ImageHandler:
@@ -14,22 +16,27 @@ class ImageHandler:
     Handles file operations over images
     """
 
-    def loadImage(self, image_name):
-        try:
-            return cv2.imread(image_name)
+    def load_image(self, image_name):
+        img = cv2.imread(image_name)
 
-        except Exception as e:
-            logging.warning("Unable to load the image")
+        if (not np.any(img)):
+            logging.error("Unable to load the input image")
+            sys.exit(1)
+        else:
+            return img
 
-    def saveImage(self, image_name, img):
-        try:
-            cv2.imwrite(image_name, img)
-        except Exception as e:
-            logging.warning("Unable to save the image")
+    def save_image(self, image_name, img):
+        saved_img = cv2.imwrite(image_name, img)
 
-    def resizeImage(self, img, new_size):
+        if (not saved_img):
+            logging.error("Unable to save the image")
+            sys.exit(1)
+        else:
+            return saved_img
+
+    def resize_image(self, img, new_size):
         try:
             return cv2.resize(img, new_size, interpolation=cv2.INTER_LINEAR)
-
-        except Exception as e:
-            logging.warning("Unable to resize image")
+        except cv2.error as e:
+            logging.error("Unable to resize image")
+            sys.exit(1)
