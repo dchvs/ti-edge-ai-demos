@@ -26,13 +26,11 @@ class ImageHandler:
             return img
 
     def save_image(self, image_name, img):
-        saved_img = cv2.imwrite(image_name, img)
-
-        if (not saved_img):
-            logging.error("Unable to save the image")
+        try:
+            cv2.imwrite(image_name, img)
+        except cv2.error as e:
+            logging.error("Unable to save image")
             sys.exit(1)
-        else:
-            return saved_img
 
     def resize_image(self, img, new_size):
         try:
