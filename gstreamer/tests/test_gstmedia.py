@@ -8,11 +8,11 @@ from gstreamer.media_manager import *
 import unittest
 
 
-class TestGstManager(unittest.TestCase):
+class TestGstMedia(unittest.TestCase):
     def testCreatePipeline(self):
         desc = "videotestsrc ! fakesink"
 
-        gst_manager = GstManager()
+        gst_manager = GstMedia()
 
         ret = gst_manager.CreatePipeline(desc)
         assert(ret is not None)
@@ -21,7 +21,7 @@ class TestGstManager(unittest.TestCase):
     def testDeletePipeline(self):
         desc = "videotestsrc ! fakesink"
 
-        gst_manager = GstManager()
+        gst_manager = GstMedia()
 
         ret = gst_manager.CreatePipeline(desc)
         ret = gst_manager.DeletePipeline()
@@ -30,7 +30,7 @@ class TestGstManager(unittest.TestCase):
     def testPlayPipeline(self):
         desc = "videotestsrc ! fakesink async=false"
 
-        gst_manager = GstManager()
+        gst_manager = GstMedia()
 
         ret = gst_manager.CreatePipeline(desc)
 
@@ -47,7 +47,7 @@ class TestGstManager(unittest.TestCase):
     def testStopPipeline(self):
         desc = "videotestsrc ! fakesink async=false"
 
-        gst_manager = GstManager()
+        gst_manager = GstMedia()
 
         ret = gst_manager.CreatePipeline(desc)
 
