@@ -9,32 +9,29 @@ from rr.config.yaml_format import YamlFormat, YamlFormatError
 
 
 class TestYamlFormat(unittest.TestCase):
-    _path = 'tests/config/test_yaml.yaml'
+
+    def setUp(self):
+        self.formatter = YamlFormat()
 
     def test_sucess(self):
-        formatter = YamlFormat()
-
-        cfg = formatter.parse(self._path)
+        yaml = 'tests/config/test_yaml.yaml'
+        cfg = self.formatter.parse(yaml)
 
         self.assertEqual(10, cfg['test'])
 
     def test_file_not_found(self):
-        non_existent = 'tests/config/test_yaml_nonexistent.yaml'
-
-        formatter = YamlFormat()
+        yaml = 'tests/config/test_yaml_nonexistent.yaml'
 
         with self.assertRaises(YamlFormatError) as e:
-            formatter.parse(non_existent)
+            self.formatter.parse(yaml)
 
         self.assertEqual("Unable to find configuration file", str(e.exception))
 
     def test_invalid(self):
-        invalid = 'tests/config/test_yaml_invalid.yaml'
-
-        formatter = YamlFormat()
+        yaml = 'tests/config/test_yaml_invalid.yaml'
 
         with self.assertRaises(YamlFormatError) as e:
-            formatter.parse(invalid)
+            self.formatter.parse(yaml)
 
         self.assertEqual("Provided config file is invalid", str(e.exception))
 
