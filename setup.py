@@ -70,7 +70,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
-    python_requires='>=3.8.5',
+    python_requires='>=3',
     install_requires=install_requires,
     command_options={
         'build_sphinx': {
