@@ -24,10 +24,10 @@ class GstMedia():
         self.pipeline = None
 
     def CreatePipeline(self, desc):
-        self.pipeline = gst.parse_launch(desc)
-
-        if self.pipeline is None:
-            return False
+        try:
+            self.pipeline = gst.parse_launch(desc)
+        except ValueError as e:
+            logging.error("Unable to create the pipeline")
 
         return True
 
@@ -39,7 +39,13 @@ class GstMedia():
         return True
 
     def PlayPipeline(self):
-        self.pipeline.set_state(gst.State.PLAYING)
+        try:
+            self.pipeline.set_state(gst.State.PLAYING)
+        except ValueError as e:
+            logging.error("Unable to play the pipeline")
 
     def StopPipeline(self):
-        self.pipeline.set_state(gst.State.NULL)
+        try:
+            self.pipeline.set_state(gst.State.NULL)
+        except ValueError as e:
+            logging.error("Unable to stop the pipeline")
