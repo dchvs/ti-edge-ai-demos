@@ -62,6 +62,18 @@ class TestGstMedia(unittest.TestCase):
             gstmedia.pipeline.get_state(
                 gst.CLOCK_TIME_NONE)[1])
 
+    def testDeleteMultipleTimes(self):
+        desc = "videotestsrc ! fakesink async=false"
+
+        gstmedia = GstMedia()
+
+        ret = gstmedia.CreatePipeline(desc)
+
+        ret = gstmedia.DeletePipeline()
+        ret = gstmedia.DeletePipeline()
+
+        assert(ret is True)
+
 
 if __name__ == '__main__':
     unittest.main()
