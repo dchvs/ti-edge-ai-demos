@@ -4,7 +4,7 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
-from gstreamer.media_manager import *
+from gstreamer.gstmedia import *
 import unittest
 
 
@@ -12,54 +12,54 @@ class TestGstMedia(unittest.TestCase):
     def testCreatePipeline(self):
         desc = "videotestsrc ! fakesink"
 
-        gst_manager = GstMedia()
+        gstmedia = GstMedia()
 
-        ret = gst_manager.CreatePipeline(desc)
+        ret = gstmedia.CreatePipeline(desc)
         assert(ret is not None)
-        assert(gst_manager.pipeline is not None)
+        assert(gstmedia.pipeline is not None)
 
     def testDeletePipeline(self):
         desc = "videotestsrc ! fakesink"
 
-        gst_manager = GstMedia()
+        gstmedia = GstMedia()
 
-        ret = gst_manager.CreatePipeline(desc)
-        ret = gst_manager.DeletePipeline()
+        ret = gstmedia.CreatePipeline(desc)
+        ret = gstmedia.DeletePipeline()
         assert(ret is True)
 
     def testPlayPipeline(self):
         desc = "videotestsrc ! fakesink async=false"
 
-        gst_manager = GstMedia()
+        gstmedia = GstMedia()
 
-        ret = gst_manager.CreatePipeline(desc)
+        ret = gstmedia.CreatePipeline(desc)
 
         self.assertEqual(
             gst.State.NULL,
-            gst_manager.pipeline.get_state(
+            gstmedia.pipeline.get_state(
                 gst.CLOCK_TIME_NONE)[1])
-        gst_manager.PlayPipeline()
+        gstmedia.PlayPipeline()
         self.assertEqual(
             gst.State.PLAYING,
-            gst_manager.pipeline.get_state(
+            gstmedia.pipeline.get_state(
                 gst.CLOCK_TIME_NONE)[1])
 
     def testStopPipeline(self):
         desc = "videotestsrc ! fakesink async=false"
 
-        gst_manager = GstMedia()
+        gstmedia = GstMedia()
 
-        ret = gst_manager.CreatePipeline(desc)
+        ret = gstmedia.CreatePipeline(desc)
 
-        gst_manager.PlayPipeline()
+        gstmedia.PlayPipeline()
         self.assertEqual(
             gst.State.PLAYING,
-            gst_manager.pipeline.get_state(
+            gstmedia.pipeline.get_state(
                 gst.CLOCK_TIME_NONE)[1])
-        gst_manager.StopPipeline()
+        gstmedia.StopPipeline()
         self.assertEqual(
             gst.State.NULL,
-            gst_manager.pipeline.get_state(
+            gstmedia.pipeline.get_state(
                 gst.CLOCK_TIME_NONE)[1])
 
 
