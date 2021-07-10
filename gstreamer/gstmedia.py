@@ -14,7 +14,7 @@ gi.require_version('GLib', '2.0')
 class GstMedia():
     """
     Constructor for the Media Gstreamer Manager object
-    Class that creates the Gstreamer handler
+    Class that creates the GStreamer handler
     """
 
     def __init__(self):
