@@ -18,7 +18,6 @@ class GstMedia():
     """
 
     def __init__(self):
-        # Init the gst
         gst.init(None)
 
         self._pipeline = None
