@@ -23,7 +23,7 @@ class TestGstMedia(unittest.TestCase):
 
         gstmedia = GstMedia()
 
-        ret = gstmedia.CreatePipeline(desc)
+        gstmedia.CreatePipeline(desc)
         ret = gstmedia.DeletePipeline()
         assert(ret is True)
 
@@ -32,7 +32,7 @@ class TestGstMedia(unittest.TestCase):
 
         gstmedia = GstMedia()
 
-        ret = gstmedia.CreatePipeline(desc)
+        gstmedia.CreatePipeline(desc)
 
         self.assertEqual(
             gst.State.NULL,
@@ -49,7 +49,7 @@ class TestGstMedia(unittest.TestCase):
 
         gstmedia = GstMedia()
 
-        ret = gstmedia.CreatePipeline(desc)
+        gstmedia.CreatePipeline(desc)
 
         gstmedia.PlayPipeline()
         self.assertEqual(
@@ -67,9 +67,9 @@ class TestGstMedia(unittest.TestCase):
 
         gstmedia = GstMedia()
 
-        ret = gstmedia.CreatePipeline(desc)
+        gstmedia.CreatePipeline(desc)
 
-        ret = gstmedia.DeletePipeline()
+        gstmedia.DeletePipeline()
         ret = gstmedia.DeletePipeline()
 
         assert(ret is True)
