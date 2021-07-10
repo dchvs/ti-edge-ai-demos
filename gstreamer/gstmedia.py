@@ -32,7 +32,9 @@ class GstMedia():
         return True
 
     def DeletePipeline(self):
-        del self.pipeline
+        if self.pipeline is not None:
+            del self.pipeline
+            self.pipeline = None
 
         return True
 
