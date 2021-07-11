@@ -10,57 +10,57 @@ import unittest
 
 
 class TestGstMedia(unittest.TestCase):
-    def testCreatePipeline(self):
+    def testCreateMedia(self):
         desc = "videotestsrc ! fakesink"
 
         gstmedia = GstMedia()
 
-        ret = gstmedia.CreatePipeline(desc)
-        assert(ret is not None)
-        assert(gstmedia.GetPipeline() is not None)
+        ret = gstmedia.CreateMedia(desc)
+        self.assertTrue(ret)
+        assert(gstmedia.GetMedia() is not None)
 
-    def testDeletePipeline(self):
+    def testDeleteMedia(self):
         desc = "videotestsrc ! fakesink"
 
         gstmedia = GstMedia()
 
-        gstmedia.CreatePipeline(desc)
-        ret = gstmedia.DeletePipeline()
+        gstmedia.CreateMedia(desc)
+        ret = gstmedia.DeleteMedia()
         assert(ret is True)
 
-    def testPlayPipeline(self):
+    def testPlayMedia(self):
         desc = "videotestsrc ! fakesink async=false"
 
         gstmedia = GstMedia()
 
-        gstmedia.CreatePipeline(desc)
+        gstmedia.CreateMedia(desc)
 
         self.assertEqual(
             gst.State.NULL,
-            gstmedia.GetPipeline().get_state(
+            gstmedia.GetMedia().get_state(
                 gst.CLOCK_TIME_NONE)[1])
-        gstmedia.PlayPipeline()
+        gstmedia.PlayMedia()
         self.assertEqual(
             gst.State.PLAYING,
-            gstmedia.GetPipeline().get_state(
+            gstmedia.GetMedia().get_state(
                 gst.CLOCK_TIME_NONE)[1])
 
-    def testStopPipeline(self):
+    def testStopMedia(self):
         desc = "videotestsrc ! fakesink async=false"
 
         gstmedia = GstMedia()
 
-        gstmedia.CreatePipeline(desc)
+        gstmedia.CreateMedia(desc)
 
-        gstmedia.PlayPipeline()
+        gstmedia.PlayMedia()
         self.assertEqual(
             gst.State.PLAYING,
-            gstmedia.GetPipeline().get_state(
+            gstmedia.GetMedia().get_state(
                 gst.CLOCK_TIME_NONE)[1])
-        gstmedia.StopPipeline()
+        gstmedia.StopMedia()
         self.assertEqual(
             gst.State.NULL,
-            gstmedia.GetPipeline().get_state(
+            gstmedia.GetMedia().get_state(
                 gst.CLOCK_TIME_NONE)[1])
 
     def testDeleteMultipleTimes(self):
@@ -68,10 +68,10 @@ class TestGstMedia(unittest.TestCase):
 
         gstmedia = GstMedia()
 
-        gstmedia.CreatePipeline(desc)
+        gstmedia.CreateMedia(desc)
 
-        gstmedia.DeletePipeline()
-        ret = gstmedia.DeletePipeline()
+        gstmedia.DeleteMedia()
+        ret = gstmedia.DeleteMedia()
 
         assert(ret is True)
 
