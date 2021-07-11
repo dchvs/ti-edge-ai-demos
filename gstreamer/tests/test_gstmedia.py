@@ -4,7 +4,8 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
-from gstreamer.gstmedia import *
+from gi.repository import Gst as gst
+from gstreamer.gstmedia import GstMedia
 import unittest
 
 
