@@ -9,69 +9,49 @@ from gstreamer.gstmedia import GstMedia
 import unittest
 
 
+def _GetMediaState(media):
+    return media.get_state(gst.CLOCK_TIME_NONE)[1]
+
+
 class TestGstMedia(unittest.TestCase):
+    def setUp(self):
+        self.desc = "videotestsrc ! fakesink"
+
+        self.gstmedia = GstMedia()
+
+        self.ret = self.gstmedia.CreateMedia(self.desc)
+
     def testCreateMedia(self):
-        desc = "videotestsrc ! fakesink"
-
-        gstmedia = GstMedia()
-
-        ret = gstmedia.CreateMedia(desc)
-        self.assertTrue(ret)
-        assert(gstmedia.GetMedia() is not None)
+        self.assertTrue(self.ret)
 
     def testDeleteMedia(self):
-        desc = "videotestsrc ! fakesink"
-
-        gstmedia = GstMedia()
-
-        gstmedia.CreateMedia(desc)
-        ret = gstmedia.DeleteMedia()
+        ret = self.gstmedia.DeleteMedia()
         assert(ret is True)
 
     def testPlayMedia(self):
-        desc = "videotestsrc ! fakesink async=false"
+        media_state = _GetMediaState(self.gstmedia.GetMedia())
+        self.assertEqual(gst.State.NULL, media_state)
 
-        gstmedia = GstMedia()
+        ret = self.gstmedia.PlayMedia()
+        assert(ret is True)
 
-        gstmedia.CreateMedia(desc)
-
-        self.assertEqual(
-            gst.State.NULL,
-            gstmedia.GetMedia().get_state(
-                gst.CLOCK_TIME_NONE)[1])
-        gstmedia.PlayMedia()
-        self.assertEqual(
-            gst.State.PLAYING,
-            gstmedia.GetMedia().get_state(
-                gst.CLOCK_TIME_NONE)[1])
+        media_state = _GetMediaState(self.gstmedia.GetMedia())
+        self.assertEqual(gst.State.PLAYING, media_state)
 
     def testStopMedia(self):
-        desc = "videotestsrc ! fakesink async=false"
+        self.gstmedia.PlayMedia()
+        media_state = _GetMediaState(self.gstmedia.GetMedia())
+        self.assertEqual(gst.State.PLAYING, media_state)
 
-        gstmedia = GstMedia()
+        ret = self.gstmedia.StopMedia()
+        assert(ret is True)
 
-        gstmedia.CreateMedia(desc)
-
-        gstmedia.PlayMedia()
-        self.assertEqual(
-            gst.State.PLAYING,
-            gstmedia.GetMedia().get_state(
-                gst.CLOCK_TIME_NONE)[1])
-        gstmedia.StopMedia()
-        self.assertEqual(
-            gst.State.NULL,
-            gstmedia.GetMedia().get_state(
-                gst.CLOCK_TIME_NONE)[1])
+        media_state = _GetMediaState(self.gstmedia.GetMedia())
+        self.assertEqual(gst.State.NULL, media_state)
 
     def testDeleteMultipleTimes(self):
-        desc = "videotestsrc ! fakesink async=false"
-
-        gstmedia = GstMedia()
-
-        gstmedia.CreateMedia(desc)
-
-        gstmedia.DeleteMedia()
-        ret = gstmedia.DeleteMedia()
+        self.gstmedia.DeleteMedia()
+        ret = self.gstmedia.DeleteMedia()
 
         assert(ret is True)
 
