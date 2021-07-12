@@ -43,12 +43,18 @@ class GstMedia():
             self._pipeline.set_state(gst.State.PLAYING)
         except ValueError as e:
             logging.error("Unable to play the media")
+            return False
+
+        return True
 
     def StopMedia(self):
         try:
             self._pipeline.set_state(gst.State.NULL)
         except ValueError as e:
             logging.error("Unable to stop the media")
+            return False
+
+        return True
 
     def GetMedia(self):
         return self._pipeline
