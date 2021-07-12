@@ -5,6 +5,7 @@
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
 from gi.repository import Gst as gst
+from gi.repository import GLib
 from gstreamer.gstmedia import GstMedia
 import unittest
 
@@ -54,6 +55,35 @@ class TestGstMedia(unittest.TestCase):
         ret = self.gstmedia.DeleteMedia()
 
         assert(ret is True)
+
+
+class TestGstMediaFail(unittest.TestCase):
+    def setUp(self):
+        # Force desc to make media fail
+        self.desc = "videotestsrc ! "
+
+        self.gstmedia = GstMedia()
+
+    def testCreateMedia(self):
+        with self.assertRaises(GLib.GError), self.assertRaisesRegex(ValueError, "Unable to create the media"):
+            self.ret = self.gstmedia.CreateMedia(self.desc)
+            self.assertFalse(self.ret)
+
+    def testPlayMedia(self):
+        with self.assertRaises(AttributeError), self.assertRaises(ValueError):
+            ret = self.gstmedia.PlayMedia()
+            assert(ret is False)
+
+            media_state = _GetMediaState(self.gstmedia.GetMedia())
+            self.assertNotEqual(gst.State.PLAYING, media_state)
+
+    def testStopMedia(self):
+        with self.assertRaises(AttributeError), self.assertRaises(ValueError):
+            ret = self.gstmedia.StopMedia()
+            assert(ret is False)
+
+            media_state = _GetMediaState(self.gstmedia.GetMedia())
+            self.assertNotEqual(gst.State.NULL, media_state)
 
 
 if __name__ == '__main__':
