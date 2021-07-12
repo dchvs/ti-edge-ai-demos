@@ -28,7 +28,7 @@ class TestYamlFormat(unittest.TestCase):
             self.validator.validate_streams(cfg_obj3)
 
         self.assertEqual(None, streams_validate)
-        self.assertEqual("Streams object not found", str(e1.exception))
+        self.assertEqual("streams object not found", str(e1.exception))
         self.assertEqual("Invalid streams format", str(e2.exception))
 
     def test_id_errors(self):
@@ -77,6 +77,81 @@ class TestYamlFormat(unittest.TestCase):
             "triggers property not found in stream", str(
                 e1.exception))
         self.assertEqual("Invalid triggers format", str(e2.exception))
+
+    def test_filters(self):
+        cfg_obj1 = {'filters': [{'name': 'person_filter',
+                                 'labels': ['male', 'child'], 'threshold': 0.7}]}
+        cfg_obj2 = {'streams': 'test1', 'triggers': 'test2'}
+        cfg_obj3 = {'filters': 'test'}
+
+        filters_validate = self.validator.validate_filters(cfg_obj1)
+
+        with self.assertRaises(AppValidatortError) as e1:
+            self.validator.validate_filters(cfg_obj2)
+
+        with self.assertRaises(AppValidatortError) as e2:
+            self.validator.validate_filters(cfg_obj3)
+
+        self.assertEqual(None, filters_validate)
+        self.assertEqual("filters object not found", str(e1.exception))
+        self.assertEqual("Invalid filters format", str(e2.exception))
+
+    def test_filers_name_errors(self):
+        cfg_obj1 = {'filters': [
+            {'labels': ['male', 'child'], 'threshold': 0.7}]}
+        cfg_obj2 = {'filters': [
+            {'name': [], 'labels': ['male', 'child'], 'threshold': 0.7}]}
+
+        with self.assertRaises(AppValidatortError) as e1:
+            self.validator.validate_filters(cfg_obj1)
+
+        with self.assertRaises(AppValidatortError) as e2:
+            self.validator.validate_filters(cfg_obj2)
+
+        self.assertEqual(
+            "name property not found in filter", str(
+                e1.exception))
+        self.assertEqual("Invalid name format in filter", str(e2.exception))
+
+    def test_labels_errors(self):
+        cfg_obj1 = {'filters': [{'name': 'recording',
+                                 'test': ['male', 'child'], 'threshold': 0.7}]}
+        cfg_obj2 = {'filters': [
+            {'name': 'recording', 'labels': 'test', 'threshold': 0.7}]}
+        cfg_obj3 = {'filters': [{'name': 'recording',
+                                 'labels': [0, 'child'], 'threshold': 0.7}]}
+
+        with self.assertRaises(AppValidatortError) as e1:
+            self.validator.validate_filters(cfg_obj1)
+
+        with self.assertRaises(AppValidatortError) as e2:
+            self.validator.validate_filters(cfg_obj2)
+
+        with self.assertRaises(AppValidatortError) as e3:
+            self.validator.validate_filters(cfg_obj3)
+
+        self.assertEqual(
+            "labels property not found in filter", str(
+                e1.exception))
+        self.assertEqual("Invalid labels format in filter", str(e2.exception))
+        self.assertEqual("Invalid label format", str(e3.exception))
+
+    def test_threshold_errors(self):
+        cfg_obj1 = {'filters': [
+            {'name': 'recording', 'labels': ['male', 'child']}]}
+        cfg_obj2 = {'filters': [
+            {'name': 'recording', 'labels': ['male', 'child'], 'threshold': 'test'}]}
+
+        with self.assertRaises(AppValidatortError) as e1:
+            self.validator.validate_filters(cfg_obj1)
+
+        with self.assertRaises(AppValidatortError) as e2:
+            self.validator.validate_filters(cfg_obj2)
+
+        self.assertEqual(
+            "threshold property not found in filter", str(
+                e1.exception))
+        self.assertEqual("Invalid threshold format", str(e2.exception))
 
 
 if __name__ == '__main__':
