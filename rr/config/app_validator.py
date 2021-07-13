@@ -10,6 +10,12 @@ class AppValidatortError(RuntimeError):
 
 class AppValidator():
 
+    def validate(self, cfg):
+        self.validate_streams(cfg)
+        self.validate_filters(cfg)
+        self.validate_actions(cfg)
+        self.validate_triggers(cfg)
+
     def validate_streams(self, cfg):
         try:
             streams = cfg['streams']

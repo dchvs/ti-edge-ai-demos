@@ -371,6 +371,45 @@ class TestYamlFormat(unittest.TestCase):
             "Invalid filter format in triggers filters", str(
                 e3.exception))
 
+    def test_validate(self):
+        cfg = {'streams': [{'id': 'stream0',
+                            'uri': 'http0',
+                            'triggers': ['person_recording',
+                                         'person_logging']},
+                           {'id': 'stream1',
+                            'uri': 'http1',
+                            'triggers': ['person_recording',
+                                         'animal_logging']}],
+               'filters': [{'name': 'person_filter',
+                            'labels': ['male',
+                                       'child'],
+                            'threshold': 0.7},
+                           {'name': 'animal_filter',
+                            'labels': ['cat',
+                                       'dog'],
+                            'threshold': 0.8}],
+               'actions': [{'name': 'start_recording',
+                            'type': 'recording',
+                            'lenght': 10,
+                            'location': '/tmp/recording%d.mp4'},
+                           {'name': 'log_event',
+                            'type': 'logging',
+                            'location': '/tmp/log.xls'}],
+               'triggers': [{'name': 'person_recording',
+                             'action': 'start_recording',
+                             'filters': ['person_filter',
+                                         'animal_filter']},
+                            {'name': 'person_logging',
+                             'action': 'log_event',
+                             'filters': ['person_filter']},
+                            {'name': 'animal_logging',
+                             'action': 'log_event',
+                             'filters': ['animal_filter']}]}
+
+        validate = self.validator.validate(cfg)
+
+        self.assertEqual(None, validate)
+
 
 if __name__ == '__main__':
     unittest.main()
