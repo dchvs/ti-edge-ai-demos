@@ -96,7 +96,7 @@ class TestYamlFormat(unittest.TestCase):
         self.assertEqual("filters object not found", str(e1.exception))
         self.assertEqual("Invalid filters format", str(e2.exception))
 
-    def test_filers_name_errors(self):
+    def test_filters_name_errors(self):
         cfg_obj1 = {'filters': [
             {'labels': ['male', 'child'], 'threshold': 0.7}]}
         cfg_obj2 = {'filters': [
@@ -154,6 +154,102 @@ class TestYamlFormat(unittest.TestCase):
             "threshold property not found in filter", str(
                 e1.exception))
         self.assertEqual("Invalid threshold format", str(e2.exception))
+
+    def test_actions(self):
+        cfg_obj1 = {'actions': [{'name': 'start_recording',
+                                 'type': 'recording',
+                                 'lenght': 10,
+                                 'location': '/path'},
+                                {'name': 'log_event',
+                                 'type': 'logging',
+                                 'location': '/tmp/log.xls'}]}
+        cfg_obj2 = {'streams': 'test1', 'triggers': 'test2'}
+        cfg_obj3 = {'actions': 'test'}
+
+        actions_validate = self.validator.validate_actions(cfg_obj1)
+
+        with self.assertRaises(AppValidatortError) as e1:
+            self.validator.validate_actions(cfg_obj2)
+
+        with self.assertRaises(AppValidatortError) as e2:
+            self.validator.validate_actions(cfg_obj3)
+
+        self.assertEqual(None, actions_validate)
+        self.assertEqual("actions object not found", str(e1.exception))
+        self.assertEqual("Invalid actions format", str(e2.exception))
+
+    def test_actions_name_errors(self):
+        cfg_obj1 = {'actions': [
+            {'test': 'start_recording', 'type': 'recording', 'lenght': 10, 'location': '/path'}]}
+        cfg_obj2 = {'actions': [
+            {'name': 0, 'type': 'recording', 'lenght': 10, 'location': '/path'}]}
+
+        with self.assertRaises(AppValidatortError) as e1:
+            self.validator.validate_actions(cfg_obj1)
+
+        with self.assertRaises(AppValidatortError) as e2:
+            self.validator.validate_actions(cfg_obj2)
+
+        self.assertEqual(
+            "name property not found in action", str(
+                e1.exception))
+        self.assertEqual("Invalid name format in action", str(e2.exception))
+
+    def test_actions_type_errors(self):
+        cfg_obj1 = {'actions': [
+            {'name': 'start_recording', 'test': 'recording', 'lenght': 10, 'location': '/path'}]}
+        cfg_obj2 = {'actions': [{'name': 'start_recording', 'type': [
+            'test'], 'lenght': 10, 'location': '/path'}]}
+        cfg_obj3 = {'actions': [
+            {'name': 'start_recording', 'type': 'recording', 'test': 10, 'location': '/path'}]}
+        cfg_obj4 = {'actions': [{'name': 'start_recording',
+                                 'type': 'recording',
+                                 'lenght': '10',
+                                 'location': '/path'}]}
+
+        with self.assertRaises(AppValidatortError) as e1:
+            self.validator.validate_actions(cfg_obj1)
+
+        with self.assertRaises(AppValidatortError) as e2:
+            self.validator.validate_actions(cfg_obj2)
+
+        with self.assertRaises(AppValidatortError) as e3:
+            self.validator.validate_actions(cfg_obj3)
+
+        with self.assertRaises(AppValidatortError) as e4:
+            self.validator.validate_actions(cfg_obj4)
+
+        self.assertEqual(
+            "type property not found in action", str(
+                e1.exception))
+        self.assertEqual("Invalid type format in action", str(e2.exception))
+        self.assertEqual(
+            "lenght property not found in action of type recording", str(
+                e3.exception))
+        self.assertEqual(
+            "Invalid lenght format in action of type recording", str(
+                e4.exception))
+
+    def test_actions_location_errors(self):
+        cfg_obj1 = {'actions': [{'name': 'start_recording',
+                                 'type': 'recording',
+                                 'lenght': 10,
+                                 'test': '/tmp/recording%d.mp4'}]}
+        cfg_obj2 = {'actions': [
+            {'name': 'start_recording', 'type': 'recording', 'lenght': 10, 'location': 0}]}
+
+        with self.assertRaises(AppValidatortError) as e1:
+            self.validator.validate_actions(cfg_obj1)
+
+        with self.assertRaises(AppValidatortError) as e2:
+            self.validator.validate_actions(cfg_obj2)
+
+        self.assertEqual(
+            "location property not found in action", str(
+                e1.exception))
+        self.assertEqual(
+            "Invalid location format in action", str(
+                e2.exception))
 
 
 if __name__ == '__main__':

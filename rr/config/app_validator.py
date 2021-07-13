@@ -80,3 +80,47 @@ class AppValidator():
                 if (not isinstance(label, str)):
                     raise AppValidatortError(
                         "Invalid label format in filter labels")
+
+    def validate_actions(self, cfg):
+        try:
+            actions = cfg['actions']
+        except KeyError as e:
+            raise AppValidatortError("actions object not found") from e
+
+        if (not isinstance(actions, list)):
+            raise AppValidatortError("Invalid actions format")
+
+        for action in actions:
+            try:
+                action_name = action['name']
+            except KeyError as e:
+                raise AppValidatortError(
+                    "name property not found in action") from e
+            try:
+                action_type = action['type']
+            except KeyError as e:
+                raise AppValidatortError(
+                    "type property not found in action") from e
+
+            if (action_type == 'recording'):
+                try:
+                    recording_lenght = action['lenght']
+                except KeyError as e:
+                    raise AppValidatortError(
+                        "lenght property not found in action of type recording") from e
+            try:
+                action_location = action['location']
+            except KeyError as e:
+                raise AppValidatortError(
+                    "location property not found in action") from e
+
+        if (not isinstance(action_name, str)):
+            raise AppValidatortError("Invalid name format in action")
+        if (not isinstance(action_type, str)):
+            raise AppValidatortError("Invalid type format in action")
+        if (action_type == 'recording'):
+            if (not isinstance(recording_lenght, int)):
+                raise AppValidatortError(
+                    "Invalid lenght format in action of type recording")
+        if (not isinstance(action_location, str)):
+            raise AppValidatortError("Invalid location format in action")
