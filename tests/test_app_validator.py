@@ -251,6 +251,122 @@ class TestYamlFormat(unittest.TestCase):
             "Invalid location format in action", str(
                 e2.exception))
 
+    def test_triggers(self):
+        cfg_obj1 = {
+            'triggers': [
+                {
+                    'name': 'person_recording',
+                    'action': 'start_recording',
+                    'filters': [
+                        'person_filter',
+                        'animal_filter']}]}
+        cfg_obj2 = {'test': [{'name': 'person_recording',
+                              'action': 'start_recording',
+                              'filters': ['person_filter',
+                                          'animal_filter']}]}
+        cfg_obj3 = {'triggers': None}
+
+        triggers_validate = self.validator.validate_triggers(cfg_obj1)
+
+        with self.assertRaises(AppValidatortError) as e1:
+            self.validator.validate_triggers(cfg_obj2)
+
+        with self.assertRaises(AppValidatortError) as e2:
+            self.validator.validate_triggers(cfg_obj3)
+
+        self.assertEqual(None, triggers_validate)
+        self.assertEqual("triggers object not found", str(e1.exception))
+        self.assertEqual("Invalid triggers format", str(e2.exception))
+
+    def test_triggers_name_errors(self):
+        cfg_obj1 = {
+            'triggers': [
+                {
+                    'test': 'person_recording',
+                    'action': 'start_recording',
+                    'filters': [
+                        'person_filter',
+                        'animal_filter']}]}
+        cfg_obj2 = {'triggers': [{'name': None,
+                                  'action': 'start_recording',
+                                  'filters': ['person_filter',
+                                              'animal_filter']}]}
+
+        with self.assertRaises(AppValidatortError) as e1:
+            self.validator.validate_triggers(cfg_obj1)
+
+        with self.assertRaises(AppValidatortError) as e2:
+            self.validator.validate_triggers(cfg_obj2)
+
+        self.assertEqual(
+            "name property not found in triggers", str(
+                e1.exception))
+        self.assertEqual("Invalid name format in triggers", str(e2.exception))
+
+    def test_triggers_action_errors(self):
+        cfg_obj1 = {
+            'triggers': [
+                {
+                    'name': 'person_recording',
+                    'test': 'start_recording',
+                    'filters': [
+                        'person_filter',
+                        'animal_filter']}]}
+        cfg_obj2 = {'triggers': [{'name': 'person_recording', 'action': None, 'filters': [
+            'person_filter', 'animal_filter']}]}
+
+        with self.assertRaises(AppValidatortError) as e1:
+            self.validator.validate_triggers(cfg_obj1)
+
+        with self.assertRaises(AppValidatortError) as e2:
+            self.validator.validate_triggers(cfg_obj2)
+
+        self.assertEqual(
+            "action property not found in triggers", str(
+                e1.exception))
+        self.assertEqual(
+            "Invalid action format in triggers", str(
+                e2.exception))
+
+    def test_trigger_filters_errors(self):
+        cfg_obj1 = {
+            'triggers': [
+                {
+                    'name': 'person_recording',
+                    'action': 'start_recording',
+                    'test': [
+                        'person_filter',
+                        'animal_filter']}]}
+        cfg_obj2 = {'triggers': [
+            {'name': 'person_recording', 'action': 'start_recording', 'filters': 'test'}]}
+        cfg_obj3 = {
+            'triggers': [
+                {
+                    'name': 'person_recording',
+                    'action': 'start_recording',
+                    'filters': [
+                        0,
+                        'animal_filter']}]}
+
+        with self.assertRaises(AppValidatortError) as e1:
+            self.validator.validate_triggers(cfg_obj1)
+
+        with self.assertRaises(AppValidatortError) as e2:
+            self.validator.validate_triggers(cfg_obj2)
+
+        with self.assertRaises(AppValidatortError) as e3:
+            self.validator.validate_triggers(cfg_obj3)
+
+        self.assertEqual(
+            "filters property not found in triggers", str(
+                e1.exception))
+        self.assertEqual(
+            "Invalid filters format in triggers", str(
+                e2.exception))
+        self.assertEqual(
+            "Invalid filter format in triggers filters", str(
+                e3.exception))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -124,3 +124,41 @@ class AppValidator():
                     "Invalid lenght format in action of type recording")
         if (not isinstance(action_location, str)):
             raise AppValidatortError("Invalid location format in action")
+
+    def validate_triggers(self, cfg):
+        try:
+            triggers = cfg['triggers']
+        except KeyError as e:
+            raise AppValidatortError("triggers object not found") from e
+
+        if (not isinstance(triggers, list)):
+            raise AppValidatortError("Invalid triggers format")
+
+        for trigger in triggers:
+            try:
+                trigger_name = trigger['name']
+            except KeyError as e:
+                raise AppValidatortError(
+                    "name property not found in triggers") from e
+            try:
+                trigger_action = trigger['action']
+            except KeyError as e:
+                raise AppValidatortError(
+                    "action property not found in triggers") from e
+            try:
+                trigger_filters = trigger['filters']
+            except KeyError as e:
+                raise AppValidatortError(
+                    "filters property not found in triggers") from e
+
+        if (not isinstance(trigger_name, str)):
+            raise AppValidatortError("Invalid name format in triggers")
+        if (not isinstance(trigger_action, str)):
+            raise AppValidatortError("Invalid action format in triggers")
+        if (not isinstance(trigger_filters, list)):
+            raise AppValidatortError("Invalid filters format in triggers")
+
+        for filt in trigger_filters:
+            if (not isinstance(filt, str)):
+                raise AppValidatortError(
+                    "Invalid filter format in triggers filters")
