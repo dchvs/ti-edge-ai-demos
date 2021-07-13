@@ -134,7 +134,9 @@ class TestYamlFormat(unittest.TestCase):
             "labels property not found in filter", str(
                 e1.exception))
         self.assertEqual("Invalid labels format in filter", str(e2.exception))
-        self.assertEqual("Invalid label format", str(e3.exception))
+        self.assertEqual(
+            "Invalid label format in filter labels", str(
+                e3.exception))
 
     def test_threshold_errors(self):
         cfg_obj1 = {'filters': [
