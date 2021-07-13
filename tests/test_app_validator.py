@@ -61,22 +61,27 @@ class TestYamlFormat(unittest.TestCase):
         self.assertEqual("uri property not found in stream", str(e1.exception))
         self.assertEqual("Invalid uri format", str(e2.exception))
 
-    def test_triggers_errors(self):
+    def test_streams_triggers_errors(self):
         cfg_obj1 = {'streams': [
             {'id': 'stream0', 'uri': 'http0', 'test': ['person_recording']}]}
         cfg_obj2 = {'streams': [
             {'id': 'stream0', 'uri': "http0", 'triggers': 'test'}]}
+        cfg_obj3 = {'streams': [
+            {'id': 'stream0', 'uri': 'http0', 'triggers': [0]}]}
 
         with self.assertRaises(AppValidatortError) as e1:
             self.validator.validate_streams(cfg_obj1)
-
         with self.assertRaises(AppValidatortError) as e2:
             self.validator.validate_streams(cfg_obj2)
+        with self.assertRaises(AppValidatortError) as e3:
+            self.validator.validate_streams(cfg_obj3)
 
         self.assertEqual(
             "triggers property not found in stream", str(
                 e1.exception))
         self.assertEqual("Invalid triggers format", str(e2.exception))
+        self.assertEqual("Invalid trigger format in streams triggers", str(
+            e3.exception))
 
     def test_filters(self):
         cfg_obj1 = {'filters': [{'name': 'person_filter',
@@ -254,8 +259,7 @@ class TestYamlFormat(unittest.TestCase):
     def test_triggers(self):
         cfg_obj1 = {
             'triggers': [
-                {
-                    'name': 'person_recording',
+                {'name': 'person_recording',
                     'action': 'start_recording',
                     'filters': [
                         'person_filter',

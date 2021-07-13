@@ -43,6 +43,11 @@ class AppValidator():
             if (not isinstance(stream_triggers, list)):
                 raise AppValidatortError("Invalid triggers format")
 
+            for trigger in stream_triggers:
+                if (not isinstance(trigger, str)):
+                    raise AppValidatortError(
+                        "Invalid trigger format in streams triggers")
+
     def validate_filters(self, cfg):
         try:
             filters = cfg['filters']
