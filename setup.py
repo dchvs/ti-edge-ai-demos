@@ -19,6 +19,7 @@ from setuptools import setup, find_packages
 from setuptools.command.develop import develop
 from subprocess import check_call
 import shlex
+import unittest
 
 # Create post develop command class for hooking into the python setup process
 # This command will run after dependencies are installed
@@ -26,6 +27,8 @@ import shlex
 name = 'ti-edge-ai-demos'
 version = '0.1.0'
 author = 'RidgeRun'
+
+tested = False
 
 
 class PostDevelopCommand(develop):
@@ -38,9 +41,9 @@ class PostDevelopCommand(develop):
 
 
 # alternatively, read from `requirements.txt`
-install_requires = ["networkx", "setuptools"]
+install_requires = ["networkx", "setuptools", "wheel"]
 extra_requires = ["pandas"]  # optional dependencies
-test_requires = ["pytest"]  # test dependencies
+test_requires = ["unittest"]  # test dependencies
 dev_requires = ["pre-commit"]  # dev dependencies
 
 setup(
