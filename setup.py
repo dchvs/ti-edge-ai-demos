@@ -41,8 +41,8 @@ class PostDevelopCommand(develop):
 
 
 # alternatively, read from `requirements.txt`
-install_requires = ["networkx", "setuptools", "wheel"]
-extra_requires = ["pandas"]  # optional dependencies
+install_requires = ["setuptools", "wheel"]
+extra_requires = []  # optional dependencies
 test_requires = ["unittest"]  # test dependencies
 dev_requires = ["pre-commit"]  # dev dependencies
 
