@@ -52,7 +52,7 @@ class TestGstMedia(unittest.TestCase):
         media_state = _get_mediaState(self.gstmedia.get_media())
         self.assertEqual(gst.State.NULL, media_state)
 
-    def testDeleteMultipleTimes(self):
+    def testdelete_multiple_times(self):
         self.gstmedia.delete_media()
         assert self.gstmedia.get_media() is None, "Failed to delete the media object properly"
         self.gstmedia.delete_media()
