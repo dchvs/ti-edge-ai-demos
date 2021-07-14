@@ -10,7 +10,7 @@ from rr.config.yaml_format import YamlFormat
 
 class AppConfigLoader:
     """
-    Class that serves as the Apo Config facade
+    Class that serves as the App Config facade
 
     Attributes
     ----------

@@ -140,7 +140,7 @@ def validate_filters(cfg):
 
 
 def validate_actions(cfg):
-    """Validates the avtions field of the configuration object
+    """Validates the actions field of the configuration object
     """
 
     validate_objects(
