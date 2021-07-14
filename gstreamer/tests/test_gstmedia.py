@@ -7,6 +7,7 @@
 from gi.repository import Gst as gst
 from gi.repository import GLib
 from gstreamer.gstmedia import GstMedia
+from gstreamer.gstmedia import GstMediaError
 import unittest
 
 
@@ -20,22 +21,20 @@ class TestGstMedia(unittest.TestCase):
 
         self.gstmedia = GstMedia()
 
-        self.ret = self.gstmedia.CreateMedia(self.desc)
+        self.gstmedia.CreateMedia(self.desc)
 
     def testCreateMedia(self):
-        self.assertTrue(self.ret)
+        self.assertTrue(isinstance(self.gstmedia.GetMedia(), gst.Pipeline))
 
     def testDeleteMedia(self):
-        ret = self.gstmedia.DeleteMedia()
-        assert(ret is True)
+        self.gstmedia.DeleteMedia()
+        assert self.gstmedia.GetMedia() is None, "Failed to delete the media object properly"
 
     def testPlayMedia(self):
         media_state = _GetMediaState(self.gstmedia.GetMedia())
         self.assertEqual(gst.State.NULL, media_state)
 
-        ret = self.gstmedia.PlayMedia()
-        assert(ret is True)
-
+        self.gstmedia.PlayMedia()
         media_state = _GetMediaState(self.gstmedia.GetMedia())
         self.assertEqual(gst.State.PLAYING, media_state)
 
@@ -44,46 +43,46 @@ class TestGstMedia(unittest.TestCase):
         media_state = _GetMediaState(self.gstmedia.GetMedia())
         self.assertEqual(gst.State.PLAYING, media_state)
 
-        ret = self.gstmedia.StopMedia()
-        assert(ret is True)
+        self.gstmedia.StopMedia()
 
         media_state = _GetMediaState(self.gstmedia.GetMedia())
         self.assertEqual(gst.State.NULL, media_state)
 
     def testDeleteMultipleTimes(self):
         self.gstmedia.DeleteMedia()
-        ret = self.gstmedia.DeleteMedia()
-
-        assert(ret is True)
+        assert self.gstmedia.GetMedia() is None, "Failed to delete the media object properly"
+        self.gstmedia.DeleteMedia()
+        assert self.gstmedia.GetMedia() is None, "Failed to delete the media object properly"
 
 
 class TestGstMediaFail(unittest.TestCase):
-    def setUp(self):
+    def testCreateMedia(self):
         # Force desc to make media fail
         self.desc = "videotestsrc ! "
-
         self.gstmedia = GstMedia()
 
-    def testCreateMedia(self):
-        with self.assertRaises(GLib.GError), self.assertRaisesRegex(ValueError, "Unable to create the media"):
-            self.ret = self.gstmedia.CreateMedia(self.desc)
-            self.assertFalse(self.ret)
+        with self.assertRaisesRegex(GstMediaError, "Unable to create the media"):
+            self.gstmedia.CreateMedia(self.desc)
 
     def testPlayMedia(self):
-        with self.assertRaises(AttributeError), self.assertRaises(ValueError):
-            ret = self.gstmedia.PlayMedia()
-            assert(ret is False)
+        # Force blocking of playing state
+        self.desc = "videotestsrc ! fakesink state-error=3"
+        self.gstmedia = GstMedia()
+        self.gstmedia.CreateMedia(self.desc)
 
-            media_state = _GetMediaState(self.gstmedia.GetMedia())
-            self.assertNotEqual(gst.State.PLAYING, media_state)
+        self.gstmedia.PlayMedia()
+        media_state = _GetMediaState(self.gstmedia.GetMedia())
+        self.assertNotEqual(gst.State.PLAYING, media_state)
 
     def testStopMedia(self):
-        with self.assertRaises(AttributeError), self.assertRaises(ValueError):
-            ret = self.gstmedia.StopMedia()
-            assert(ret is False)
+        # Force blocking of stopped state
+        self.desc = "fakesrc ! fakesink state-error=6"
+        self.gstmedia = GstMedia()
+        self.gstmedia.CreateMedia(self.desc)
 
-            media_state = _GetMediaState(self.gstmedia.GetMedia())
-            self.assertNotEqual(gst.State.NULL, media_state)
+        self.gstmedia.StopMedia()
+        media_state = _GetMediaState(self.gstmedia.GetMedia())
+        self.assertNotEqual(gst.State.PLAYING, media_state)
 
 
 if __name__ == '__main__':
