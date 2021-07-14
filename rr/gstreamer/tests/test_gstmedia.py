@@ -66,21 +66,26 @@ class TestGstMediaFail(unittest.TestCase):
 
     def testPlayMedia(self):
         # Force blocking of playing state
-        self.desc = "videotestsrc ! fakesink state-error=3"
+        self.desc = "fakesrc ! fakesink async=false state-error=3"
         self.gstmedia = GstMedia()
         self.gstmedia.CreateMedia(self.desc)
 
-        self.gstmedia.PlayMedia()
+        with self.assertRaisesRegex(GstMediaError, "Unable to play the media"):
+            self.gstmedia.PlayMedia()
+
         media_state = _GetMediaState(self.gstmedia.GetMedia())
         self.assertNotEqual(gst.State.PLAYING, media_state)
 
     def testStopMedia(self):
         # Force blocking of stopped state
-        self.desc = "fakesrc ! fakesink state-error=6"
+        self.desc = "fakesrc ! fakesink async=false state-error=5"
         self.gstmedia = GstMedia()
         self.gstmedia.CreateMedia(self.desc)
 
-        self.gstmedia.StopMedia()
+        self.gstmedia.PlayMedia()
+        with self.assertRaisesRegex(GstMediaError, "Unable to stop the media"):
+            self.gstmedia.StopMedia()
+
         media_state = _GetMediaState(self.gstmedia.GetMedia())
         self.assertNotEqual(gst.State.PLAYING, media_state)
 

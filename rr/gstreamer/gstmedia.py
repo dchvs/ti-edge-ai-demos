@@ -88,8 +88,10 @@ class GstMedia():
         """
 
         try:
-            self._pipeline.set_state(gst.State.PLAYING)
-        except GLib.GError as e:
+            ret = self._pipeline.set_state(gst.State.PLAYING)
+            if gst.StateChangeReturn.FAILURE == ret:
+                raise GstMediaError
+        except GstMediaError as e:
             raise GstMediaError("Unable to play the media") from e
 
     def StopMedia(self):
@@ -102,8 +104,10 @@ class GstMedia():
         """
 
         try:
-            self._pipeline.set_state(gst.State.NULL)
-        except GLib.GError as e:
+            ret = self._pipeline.set_state(gst.State.NULL)
+            if gst.StateChangeReturn.FAILURE == ret:
+                raise GstMediaError
+        except GstMediaError as e:
             raise GstMediaError("Unable to stop the media") from e
 
     def GetMedia(self):
