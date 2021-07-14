@@ -41,8 +41,8 @@ class PostDevelopCommand(develop):
 
 
 # alternatively, read from `requirements.txt`
-install_requires = ["networkx", "setuptools", "wheel"]
-extra_requires = ["pandas"]  # optional dependencies
+install_requires = ["setuptools", "wheel"]
+extra_requires = []  # optional dependencies
 test_requires = ["unittest"]  # test dependencies
 dev_requires = ["pre-commit"]  # dev dependencies
 
@@ -70,7 +70,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
-    python_requires='>=3.8.5',
+    python_requires='>=3',
     install_requires=install_requires,
     command_options={
         'build_sphinx': {
