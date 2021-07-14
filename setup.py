@@ -40,19 +40,6 @@ class PostDevelopCommand(develop):
         develop.run(self)
 
 
-def media_server_test_suite():
-    global tested
-
-    test_load = unittest.TestLoader()
-    if not tested:
-        tested = True
-        test_suite = test_load.nosetests()
-    else:
-        test_suite = unittest.suite.TestSuite()
-
-    return test_suite
-
-
 # alternatively, read from `requirements.txt`
 install_requires = ["networkx", "setuptools", "wheel"]
 extra_requires = ["pandas"]  # optional dependencies
@@ -98,6 +85,4 @@ setup(
         "dev": test_requires + extra_requires + dev_requires,
     },
     cmdclass={"develop": PostDevelopCommand},
-
-    test_suite='setup.media_server_test_suite',
 )
