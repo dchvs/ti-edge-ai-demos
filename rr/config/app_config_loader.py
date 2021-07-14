@@ -9,8 +9,34 @@ from rr.config.yaml_format import YamlFormat
 
 
 class AppConfigLoader:
+    """
+    Class that serves as the Apo Config facade
+
+    Attributes
+    ----------
+    _loader : ConfigLoader
+        A private ConfigLoader object
+
+    Methods
+    -------
+    load(path : str)
+        Returns a dictionary with the app configuration
+    """
+
     def __init__(self):
+        """
+        Constructor for the App Config Laoder object
+        """
+
         self._loader = ConfigLoader(YamlFormat(), AppValidator())
 
     def load(self, path):
+        """Returns the dictionary with the app configuration from the Config Loader object
+
+        Parameters
+        ----------
+        path : str
+            The path to the configuration file
+        """
+
         return self._loader.load(path)

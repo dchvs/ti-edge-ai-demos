@@ -11,7 +11,24 @@ class YamlFormatError(RuntimeError):
 
 
 class YamlFormat:
+    """
+    Class that parses the app configuration file
+
+    Methods
+    -------
+    parse(path : str)
+        Parses the app configuration file
+    """
+
     def parse(self, path):
+        """Parses the app configuration file and return a dictionary with the configuration
+
+        Raises
+        ------
+        YamlFormatError
+            If couldn't find the app configuration file
+            If the app configuration file is invalid
+        """
 
         try:
             with open(path, 'r') as stream:

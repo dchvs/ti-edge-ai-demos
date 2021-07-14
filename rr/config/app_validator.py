@@ -5,6 +5,15 @@
 
 
 def validate_objects(dict, key, expected_type, key_err_msg, type_err_msg):
+    """Validates the parsed objects
+
+    Raises
+    ------
+    AppValidatorError
+    If dictionary key is not found
+    If the dictionary value is not of the expected type
+    """
+
     try:
         value = dict[key]
     except KeyError as e:
@@ -15,17 +24,36 @@ def validate_objects(dict, key, expected_type, key_err_msg, type_err_msg):
 
 
 def validate_lists(in_list, expected_type, type_err_msg):
+    """Validates the lists elements of the parsed objects
+
+    Raises
+    ------
+    AppValidatorError
+    If the list value is not of the expected type
+    """
+
     for list_object in in_list:
         if not isinstance(list_object, expected_type):
             raise AppValidatortError(type_err_msg)
 
 
 def validate_dependency(obj, available_objs, err_msg):
+    """Validates the dependency between objects
+
+    Raises
+    ------
+    AppValidatorError
+    If the value is not found in the list of valid element fields
+    """
+
     if obj not in available_objs:
         raise AppValidatortError(err_msg)
 
 
 def validate_streams(cfg, triggers):
+    """Validates the streams field of the configuration object
+    """
+
     validate_objects(
         cfg,
         'streams',
@@ -66,6 +94,9 @@ def validate_streams(cfg, triggers):
 
 
 def validate_filters(cfg):
+    """Validates the filters field of the configuration object
+    """
+
     validate_objects(
         cfg,
         'filters',
@@ -107,6 +138,9 @@ def validate_filters(cfg):
 
 
 def validate_actions(cfg):
+    """Validates the avtions field of the configuration object
+    """
+
     validate_objects(
         cfg,
         'actions',
@@ -151,6 +185,9 @@ def validate_actions(cfg):
 
 
 def validate_triggers(cfg, actions, filters):
+    """Validates the triggers field of the configuration object
+    """
+
     validate_objects(
         cfg,
         'triggers',
@@ -204,8 +241,19 @@ class AppValidatortError(RuntimeError):
 
 
 class AppValidator():
+    """
+    Class that verifies the condiguration object fields
+
+    Methods
+    -------
+    load(validate : dict)
+        Validates the configuration file fields
+    """
 
     def validate(self, cfg):
+        """Calls the validation field functions
+        """
+
         filters = validate_filters(cfg)
         actions = validate_actions(cfg)
         triggers = validate_triggers(cfg, actions, filters)
