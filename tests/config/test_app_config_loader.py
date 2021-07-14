@@ -6,7 +6,7 @@
 import unittest
 
 from rr.config.app_validator import AppValidator
-from rr.config.config_loader import ConfigLoader
+from rr.config.app_config_loader import AppConfigLoader
 from rr.config.yaml_format import YamlFormat
 
 
@@ -49,9 +49,9 @@ class TestYamlFormat(unittest.TestCase):
                              'action': 'log_event',
                              'filters': ['animal_filter']}]}
 
-    def test_config_loader(self):
-        cfg = ConfigLoader(YamlFormat(), AppValidator())
-        cfg_obj = cfg.load(self.path)
+    def test_app_config_loader(self):
+        app_cfg = AppConfigLoader()
+        cfg_obj = app_cfg.load(self.path)
 
         self.assertEqual(self.output_cfg, cfg_obj)
 

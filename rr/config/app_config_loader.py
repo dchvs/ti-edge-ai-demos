@@ -3,18 +3,14 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
-
+from rr.config.config_loader import ConfigLoader
 from rr.config.app_validator import AppValidator
 from rr.config.yaml_format import YamlFormat
 
 
-class ConfigLoader:
-    def __init__(self, appformat, validator):
-        self._format = appformat
-        self._validator = validator
+class AppConfigLoader:
+    def __init__(self):
+        self._loader = ConfigLoader(YamlFormat(), AppValidator())
 
     def load(self, path):
-        cfg_obj = self._format.parse(path)
-        self._validator.validate(cfg_obj)
-
-        return cfg_obj
+        return self._loader.load(path)
