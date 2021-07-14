@@ -14,33 +14,33 @@ gi.require_version('GLib', '2.0')
 class GstMedia():
     """
     Class that creates the GStreamer handler
+
+    Attributes
+    ----------
+    _pipeline : GstElement
+        A private GStreamer pipeline object
+
+    Methods
+    -------
+    CreateMedia(desc : str)
+        Creates the media object from a string description
+
+    DeleteMedia()
+        Deletes the media object
+
+    PlayMedia()
+        Set the media state to playing
+
+    StopMedia()
+        Set the media state to stopped
+
+    GetMedia()
+        Getter for the private media object
     """
 
     def __init__(self):
         """
         Constructor for the Media Gstreamer Manager object
-
-        Attributes
-        ----------
-        _pipeline : GstElement
-            A private GStreamer pipeline object
-
-        Methods
-        -------
-        CreateMedia(desc : str)
-            Creates the media object from a string description
-
-        DeleteMedia()
-            Deletes the media object
-
-        PlayMedia()
-            Set the media state to playing
-
-        StopMedia()
-            Set the media state to stopped
-
-        GetMedia()
-            Getter for the private media object
         """
 
         gst.init(None)
