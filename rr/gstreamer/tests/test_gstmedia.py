@@ -4,8 +4,12 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
+import gi  # nopep8
+gi.require_version('Gst', '1.0')  # nopep8
+gi.require_version('GLib', '2.0')  # nopep8
 from gi.repository import Gst as gst
 from gi.repository import GLib
+
 from rr.gstreamer.gstmedia import GstMedia
 from rr.gstreamer.gstmedia import GstMediaError
 import unittest
