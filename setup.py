@@ -46,7 +46,7 @@ def media_server_test_suite():
     test_load = unittest.TestLoader()
     if not tested:
         tested = True
-        test_suite = test_load.discover("gstreamer/")
+        test_suite = test_load.nosetests()
     else:
         test_suite = unittest.suite.TestSuite()
 
