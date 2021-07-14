@@ -37,7 +37,7 @@ class GstMedia():
             Set the media state to playing
 
         StopMedia()
-            Set the media state to stop
+            Set the media state to stopped
 
         GetMedia()
             Getter for the private media object
@@ -97,12 +97,12 @@ class GstMedia():
         return True
 
     def StopMedia(self):
-        """Set the media state to stop
+        """Set the media state to stopped
 
         Raises
         ------
         GLib.GError, ValueError
-            If couldn't set the media state to stop
+            If couldn't set the media state to stopped
         """
 
         try:
