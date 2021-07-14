@@ -11,19 +11,19 @@ from rr.config.app_validator import AppValidator, AppValidatortError, validate_s
 class TestYamlFormat(unittest.TestCase):
 
     def test_streams(self):
-        cfg_obj1 = {'streams': [
+        cfg_good = {'streams': [
             {'id': 'stream0', 'uri': 'http0', 'triggers': ['person_recording']}]}
-        cfg_obj2 = {'triggers': 'test', 'filters': 0}
-        cfg_obj3 = {'streams': 'test'}
+        cfg_missing_stream = {'triggers': 'test', 'filters': 0}
+        cfg_invalid_stream = {'streams': 'test'}
 
         triggers_list = ['person_recording']
-        streams_validate = validate_streams(cfg_obj1, triggers_list)
+        streams_validate = validate_streams(cfg_good, triggers_list)
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_streams(cfg_obj2, triggers_list)
+            validate_streams(cfg_missing_stream, triggers_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_streams(cfg_obj3, triggers_list)
+            validate_streams(cfg_invalid_stream, triggers_list)
 
         self.assertEqual(None, streams_validate)
         self.assertEqual("Streams field not found", str(e1.exception))
@@ -32,18 +32,18 @@ class TestYamlFormat(unittest.TestCase):
                 e2.exception))
 
     def test_id_errors(self):
-        cfg_obj1 = {'streams': [
+        cfg_missing_id = {'streams': [
             {'test': 'stream0', 'uri': 'http0', 'triggers': ['person_recording']}]}
-        cfg_obj2 = {'streams': [
+        cfg_invalid_id = {'streams': [
             {'id': 0, 'uri': 'http0', 'triggers': ['person_recording']}]}
 
         triggers_list = ['person_recording']
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_streams(cfg_obj1, triggers_list)
+            validate_streams(cfg_missing_id, triggers_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_streams(cfg_obj2, triggers_list)
+            validate_streams(cfg_invalid_id, triggers_list)
 
         self.assertEqual("Id field not found in stream", str(e1.exception))
         self.assertEqual(
@@ -51,18 +51,18 @@ class TestYamlFormat(unittest.TestCase):
                 e2.exception))
 
     def test_uri_errors(self):
-        cfg_obj1 = {'streams': [
+        cfg_missing_uri = {'streams': [
             {'id': 'stream0', 'test': 'http0', 'triggers': ['person_recording']}]}
-        cfg_obj2 = {'streams': [
+        cfg_invalid_uri = {'streams': [
             {'id': 'stream0', 'uri': 0, 'triggers': ['person_recording']}]}
 
         triggers_list = ['person_recording']
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_streams(cfg_obj1, triggers_list)
+            validate_streams(cfg_missing_uri, triggers_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_streams(cfg_obj2, triggers_list)
+            validate_streams(cfg_invalid_uri, triggers_list)
 
         self.assertEqual("Uri field not found in stream", str(e1.exception))
         self.assertEqual(
@@ -70,25 +70,25 @@ class TestYamlFormat(unittest.TestCase):
                 e2.exception))
 
     def test_streams_triggers_errors(self):
-        cfg_obj1 = {'streams': [
+        cfg_missing_triggers = {'streams': [
             {'id': 'stream0', 'uri': 'http0', 'test': ['person_recording']}]}
-        cfg_obj2 = {'streams': [
+        cfg_invalid_triggers = {'streams': [
             {'id': 'stream0', 'uri': "http0", 'triggers': 'test'}]}
-        cfg_obj3 = {'streams': [
+        cfg_invalid_trigger = {'streams': [
             {'id': 'stream0', 'uri': 'http0', 'triggers': [0]}]}
-        cfg_obj4 = {'streams': [
+        cfg_missing_valid_trigger = {'streams': [
             {'id': 'stream0', 'uri': 'http0', 'triggers': ['person_recording', 'test']}]}
 
         triggers_list = ['person_recording']
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_streams(cfg_obj1, triggers_list)
+            validate_streams(cfg_missing_triggers, triggers_list)
         with self.assertRaises(AppValidatortError) as e2:
-            validate_streams(cfg_obj2, triggers_list)
+            validate_streams(cfg_invalid_triggers, triggers_list)
         with self.assertRaises(AppValidatortError) as e3:
-            validate_streams(cfg_obj3, triggers_list)
+            validate_streams(cfg_invalid_trigger, triggers_list)
         with self.assertRaises(AppValidatortError) as e4:
-            validate_streams(cfg_obj4, triggers_list)
+            validate_streams(cfg_missing_valid_trigger, triggers_list)
 
         self.assertEqual(
             "Triggers field not found in stream", str(
@@ -103,20 +103,20 @@ class TestYamlFormat(unittest.TestCase):
             e4.exception))
 
     def test_filters(self):
-        cfg_obj1 = {'filters': [{'name': 'person_filter',
+        cfg_good = {'filters': [{'name': 'person_filter',
                                  'labels': ['male', 'child'], 'threshold': 0.7}]}
-        cfg_obj2 = {'streams': 'test1', 'triggers': 'test2'}
-        cfg_obj3 = {'filters': 'test'}
+        cfg_missing_filters = {'streams': 'test1', 'triggers': 'test2'}
+        cfg_invalid_filters = {'filters': 'test'}
 
         filters_list = ['person_filter']
 
-        filters_validate = validate_filters(cfg_obj1)
+        filters_validate = validate_filters(cfg_good)
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_filters(cfg_obj2)
+            validate_filters(cfg_missing_filters)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_filters(cfg_obj3)
+            validate_filters(cfg_invalid_filters)
 
         self.assertEqual(filters_list, filters_validate)
         self.assertEqual("Filters field not found", str(e1.exception))
@@ -125,16 +125,16 @@ class TestYamlFormat(unittest.TestCase):
                 e2.exception))
 
     def test_filters_name_errors(self):
-        cfg_obj1 = {'filters': [
+        cfg_missing_name = {'filters': [
             {'labels': ['male', 'child'], 'threshold': 0.7}]}
-        cfg_obj2 = {'filters': [
+        cfg_invalid_name = {'filters': [
             {'name': [], 'labels': ['male', 'child'], 'threshold': 0.7}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_filters(cfg_obj1)
+            validate_filters(cfg_missing_name)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_filters(cfg_obj2)
+            validate_filters(cfg_invalid_name)
 
         self.assertEqual(
             "Name field not found in filter", str(
@@ -144,21 +144,21 @@ class TestYamlFormat(unittest.TestCase):
                 e2.exception))
 
     def test_labels_errors(self):
-        cfg_obj1 = {'filters': [{'name': 'recording',
-                                 'test': ['male', 'child'], 'threshold': 0.7}]}
-        cfg_obj2 = {'filters': [
+        cfg_missing_labels = {'filters': [
+            {'name': 'recording', 'test': ['male', 'child'], 'threshold': 0.7}]}
+        cfg_invalid_labels = {'filters': [
             {'name': 'recording', 'labels': 'test', 'threshold': 0.7}]}
-        cfg_obj3 = {'filters': [{'name': 'recording',
-                                 'labels': [0, 'child'], 'threshold': 0.7}]}
+        cfg_invalid_label = {'filters': [
+            {'name': 'recording', 'labels': [0, 'child'], 'threshold': 0.7}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_filters(cfg_obj1)
+            validate_filters(cfg_missing_labels)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_filters(cfg_obj2)
+            validate_filters(cfg_invalid_labels)
 
         with self.assertRaises(AppValidatortError) as e3:
-            validate_filters(cfg_obj3)
+            validate_filters(cfg_invalid_label)
 
         self.assertEqual(
             "Labels field not found in filter", str(
@@ -171,16 +171,16 @@ class TestYamlFormat(unittest.TestCase):
                 e3.exception))
 
     def test_threshold_errors(self):
-        cfg_obj1 = {'filters': [
+        cfg_missing_thresh = {'filters': [
             {'name': 'recording', 'labels': ['male', 'child']}]}
-        cfg_obj2 = {'filters': [
+        cfg_invalid_tresh = {'filters': [
             {'name': 'recording', 'labels': ['male', 'child'], 'threshold': 'test'}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_filters(cfg_obj1)
+            validate_filters(cfg_missing_thresh)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_filters(cfg_obj2)
+            validate_filters(cfg_invalid_tresh)
 
         self.assertEqual(
             "Threshold field not found in filter", str(
@@ -190,25 +190,25 @@ class TestYamlFormat(unittest.TestCase):
                 e2.exception))
 
     def test_actions(self):
-        cfg_obj1 = {'actions': [{'name': 'start_recording',
+        cfg_good = {'actions': [{'name': 'start_recording',
                                  'type': 'recording',
                                  'lenght': 10,
                                  'location': '/path'},
                                 {'name': 'log_event',
                                  'type': 'logging',
                                  'location': '/tmp/log.xls'}]}
-        cfg_obj2 = {'streams': 'test1', 'triggers': 'test2'}
-        cfg_obj3 = {'actions': 'test'}
+        cfg_missing_actions = {'streams': 'test1', 'triggers': 'test2'}
+        cfg_invalid_actions = {'actions': 'test'}
 
         actions_list = ['start_recording', 'log_event']
 
-        actions_validate = validate_actions(cfg_obj1)
+        actions_validate = validate_actions(cfg_good)
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_actions(cfg_obj2)
+            validate_actions(cfg_missing_actions)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_actions(cfg_obj3)
+            validate_actions(cfg_invalid_actions)
 
         self.assertEqual(actions_list, actions_validate)
         self.assertEqual("Actions field not found", str(e1.exception))
@@ -217,16 +217,16 @@ class TestYamlFormat(unittest.TestCase):
                 e2.exception))
 
     def test_actions_name_errors(self):
-        cfg_obj1 = {'actions': [
+        cfg_missing_name = {'actions': [
             {'test': 'start_recording', 'type': 'recording', 'lenght': 10, 'location': '/path'}]}
-        cfg_obj2 = {'actions': [
+        cfg_invalid_name = {'actions': [
             {'name': 0, 'type': 'recording', 'lenght': 10, 'location': '/path'}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_actions(cfg_obj1)
+            validate_actions(cfg_missing_name)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_actions(cfg_obj2)
+            validate_actions(cfg_invalid_name)
 
         self.assertEqual(
             "Name field not found in action", str(
@@ -236,28 +236,28 @@ class TestYamlFormat(unittest.TestCase):
                 e2.exception))
 
     def test_actions_type_errors(self):
-        cfg_obj1 = {'actions': [
+        cfg_missing_type = {'actions': [
             {'name': 'start_recording', 'test': 'recording', 'lenght': 10, 'location': '/path'}]}
-        cfg_obj2 = {'actions': [{'name': 'start_recording', 'type': [
+        cfg_invalid_type = {'actions': [{'name': 'start_recording', 'type': [
             'test'], 'lenght': 10, 'location': '/path'}]}
-        cfg_obj3 = {'actions': [
+        cfg_missing_lenght = {'actions': [
             {'name': 'start_recording', 'type': 'recording', 'test': 10, 'location': '/path'}]}
-        cfg_obj4 = {'actions': [{'name': 'start_recording',
-                                 'type': 'recording',
-                                 'lenght': '10',
-                                 'location': '/path'}]}
+        cfg_invalid_lenght = {'actions': [{'name': 'start_recording',
+                                           'type': 'recording',
+                                           'lenght': '10',
+                                           'location': '/path'}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_actions(cfg_obj1)
+            validate_actions(cfg_missing_type)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_actions(cfg_obj2)
+            validate_actions(cfg_invalid_type)
 
         with self.assertRaises(AppValidatortError) as e3:
-            validate_actions(cfg_obj3)
+            validate_actions(cfg_missing_lenght)
 
         with self.assertRaises(AppValidatortError) as e4:
-            validate_actions(cfg_obj4)
+            validate_actions(cfg_invalid_lenght)
 
         self.assertEqual(
             "Type field not found in action", str(
@@ -273,18 +273,18 @@ class TestYamlFormat(unittest.TestCase):
                 e4.exception))
 
     def test_actions_location_errors(self):
-        cfg_obj1 = {'actions': [{'name': 'start_recording',
-                                 'type': 'recording',
-                                 'lenght': 10,
-                                 'test': '/tmp/recording%d.mp4'}]}
-        cfg_obj2 = {'actions': [
+        cfg_missing_location = {'actions': [{'name': 'start_recording',
+                                             'type': 'recording',
+                                             'lenght': 10,
+                                             'test': '/tmp/recording%d.mp4'}]}
+        cfg_invalid_location = {'actions': [
             {'name': 'start_recording', 'type': 'recording', 'lenght': 10, 'location': 0}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_actions(cfg_obj1)
+            validate_actions(cfg_missing_location)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_actions(cfg_obj2)
+            validate_actions(cfg_invalid_location)
 
         self.assertEqual(
             "Location field not found in action", str(
@@ -294,31 +294,31 @@ class TestYamlFormat(unittest.TestCase):
                 e2.exception))
 
     def test_triggers(self):
-        cfg_obj1 = {
+        cfg_good = {
             'triggers': [
                 {'name': 'person_recording',
                     'action': 'start_recording',
                     'filters': [
                         'person_filter',
                         'animal_filter']}]}
-        cfg_obj2 = {'test': [{'name': 'person_recording',
-                              'action': 'start_recording',
-                              'filters': ['person_filter',
-                                          'animal_filter']}]}
-        cfg_obj3 = {'triggers': None}
+        cfg_missing_triggers = {'test': [{'name': 'person_recording',
+                                          'action': 'start_recording',
+                                          'filters': ['person_filter',
+                                                      'animal_filter']}]}
+        cfg_invalid_triggers = {'triggers': None}
 
         triggers_list = ['person_recording']
         filters_list = ['person_filter', 'animal_filter']
         actions_list = ['start_recording']
 
         triggers_validate = validate_triggers(
-            cfg_obj1, actions_list, filters_list)
+            cfg_good, actions_list, filters_list)
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_triggers(cfg_obj2, actions_list, filters_list)
+            validate_triggers(cfg_missing_triggers, actions_list, filters_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_triggers(cfg_obj3, actions_list, filters_list)
+            validate_triggers(cfg_invalid_triggers, actions_list, filters_list)
 
         self.assertEqual(triggers_list, triggers_validate)
         self.assertEqual("Triggers field not found", str(e1.exception))
@@ -327,7 +327,7 @@ class TestYamlFormat(unittest.TestCase):
                 e2.exception))
 
     def test_triggers_name_errors(self):
-        cfg_obj1 = {
+        cfg_missing_name = {
             'triggers': [
                 {
                     'test': 'person_recording',
@@ -335,19 +335,19 @@ class TestYamlFormat(unittest.TestCase):
                     'filters': [
                         'person_filter',
                         'animal_filter']}]}
-        cfg_obj2 = {'triggers': [{'name': None,
-                                  'action': 'start_recording',
-                                  'filters': ['person_filter',
-                                              'animal_filter']}]}
+        cfg_invalid_name = {'triggers': [{'name': None,
+                                          'action': 'start_recording',
+                                          'filters': ['person_filter',
+                                                      'animal_filter']}]}
 
         filters_list = ['person_filter', 'animal_filter']
         actions_list = ['start_recording']
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_triggers(cfg_obj1, actions_list, filters_list)
+            validate_triggers(cfg_missing_name, actions_list, filters_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_triggers(cfg_obj2, actions_list, filters_list)
+            validate_triggers(cfg_invalid_name, actions_list, filters_list)
 
         self.assertEqual(
             "Name field not found in trigger", str(
@@ -357,7 +357,7 @@ class TestYamlFormat(unittest.TestCase):
                 e2.exception))
 
     def test_triggers_action_errors(self):
-        cfg_obj1 = {
+        cfg_missing_action = {
             'triggers': [
                 {
                     'name': 'person_recording',
@@ -365,22 +365,37 @@ class TestYamlFormat(unittest.TestCase):
                     'filters': [
                         'person_filter',
                         'animal_filter']}]}
-        cfg_obj2 = {'triggers': [{'name': 'person_recording', 'action': None, 'filters': [
-            'person_filter', 'animal_filter']}]}
-        cfg_obj3 = {'triggers': [{'name': 'person_recording', 'action': 'test', 'filters': [
-            'person_filter', 'animal_filter']}]}
+        cfg_invalid_action = {
+            'triggers': [
+                {
+                    'name': 'person_recording',
+                    'action': None,
+                    'filters': [
+                        'person_filter',
+                        'animal_filter']}]}
+        cfg_missing_valid_action = {
+            'triggers': [
+                {
+                    'name': 'person_recording',
+                    'action': 'test',
+                    'filters': [
+                        'person_filter',
+                        'animal_filter']}]}
 
         filters_list = ['person_filter', 'animal_filter']
         actions_list = ['start_recording']
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_triggers(cfg_obj1, actions_list, filters_list)
+            validate_triggers(cfg_missing_action, actions_list, filters_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_triggers(cfg_obj2, actions_list, filters_list)
+            validate_triggers(cfg_invalid_action, actions_list, filters_list)
 
         with self.assertRaises(AppValidatortError) as e3:
-            validate_triggers(cfg_obj3, actions_list, filters_list)
+            validate_triggers(
+                cfg_missing_valid_action,
+                actions_list,
+                filters_list)
 
         self.assertEqual(
             "Action field not found in trigger", str(
@@ -393,7 +408,7 @@ class TestYamlFormat(unittest.TestCase):
                 e3.exception))
 
     def test_trigger_filters_errors(self):
-        cfg_obj1 = {
+        cfg_missing_filters = {
             'triggers': [
                 {
                     'name': 'person_recording',
@@ -401,9 +416,9 @@ class TestYamlFormat(unittest.TestCase):
                     'test': [
                         'person_filter',
                         'animal_filter']}]}
-        cfg_obj2 = {'triggers': [
+        cfg_invalid_filters = {'triggers': [
             {'name': 'person_recording', 'action': 'start_recording', 'filters': 'test'}]}
-        cfg_obj3 = {
+        cfg_invalid_filter = {
             'triggers': [
                 {
                     'name': 'person_recording',
@@ -411,7 +426,7 @@ class TestYamlFormat(unittest.TestCase):
                     'filters': [
                         0,
                         'animal_filter']}]}
-        cfg_obj4 = {
+        cfg_mising_valid_filter = {
             'triggers': [
                 {'name': 'person_recording',
                     'action': 'start_recording',
@@ -423,15 +438,18 @@ class TestYamlFormat(unittest.TestCase):
         actions_list = ['start_recording']
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_triggers(cfg_obj1, actions_list, filters_list)
+            validate_triggers(cfg_missing_filters, actions_list, filters_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_triggers(cfg_obj2, actions_list, filters_list)
+            validate_triggers(cfg_invalid_filters, actions_list, filters_list)
 
         with self.assertRaises(AppValidatortError) as e3:
-            validate_triggers(cfg_obj3, actions_list, filters_list)
+            validate_triggers(cfg_invalid_filter, actions_list, filters_list)
         with self.assertRaises(AppValidatortError) as e4:
-            validate_triggers(cfg_obj4, actions_list, filters_list)
+            validate_triggers(
+                cfg_mising_valid_filter,
+                actions_list,
+                filters_list)
 
         self.assertEqual(
             "Filters field not found in trigger", str(
