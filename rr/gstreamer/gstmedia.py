@@ -87,12 +87,9 @@ class GstMedia():
             If couldn't set the media state to playing
         """
 
-        try:
-            ret = self._pipeline.set_state(gst.State.PLAYING)
-            if gst.StateChangeReturn.FAILURE == ret:
-                raise GstMediaError
-        except GstMediaError as e:
-            raise GstMediaError("Unable to play the media") from e
+        ret = self._pipeline.set_state(gst.State.PLAYING)
+        if gst.StateChangeReturn.FAILURE == ret:
+            raise GstMediaError("Unable to play the media")
 
     def StopMedia(self):
         """Set the media state to stopped
@@ -103,12 +100,9 @@ class GstMedia():
             If couldn't set the media state to stopped
         """
 
-        try:
-            ret = self._pipeline.set_state(gst.State.NULL)
-            if gst.StateChangeReturn.FAILURE == ret:
-                raise GstMediaError
-        except GstMediaError as e:
-            raise GstMediaError("Unable to stop the media") from e
+        ret = self._pipeline.set_state(gst.State.NULL)
+        if gst.StateChangeReturn.FAILURE == ret:
+            raise GstMediaError("Unable to stop the media")
 
     def GetMedia(self):
         """Getter for the private media object
