@@ -5,13 +5,10 @@
 
 import unittest
 
-from rr.config.app_validator import AppValidator, AppValidatortError
+from rr.config.app_validator import AppValidator, AppValidatortError, validate_streams, validate_filters, validate_actions, validate_triggers
 
 
 class TestYamlFormat(unittest.TestCase):
-
-    def setUp(self):
-        self.validator = AppValidator()
 
     def test_streams(self):
         cfg_obj1 = {'streams': [
@@ -19,16 +16,16 @@ class TestYamlFormat(unittest.TestCase):
         cfg_obj2 = {'triggers': 'test', 'filters': 0}
         cfg_obj3 = {'streams': 'test'}
 
-        streams_validate = self.validator.validate_streams(cfg_obj1)
+        streams_validate = validate_streams(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_streams(cfg_obj2)
+            validate_streams(cfg_obj2)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_streams(cfg_obj3)
+            validate_streams(cfg_obj3)
 
         self.assertEqual(None, streams_validate)
-        self.assertEqual("streams object not found", str(e1.exception))
+        self.assertEqual("Streams object not found", str(e1.exception))
         self.assertEqual("Invalid streams format", str(e2.exception))
 
     def test_id_errors(self):
@@ -38,10 +35,10 @@ class TestYamlFormat(unittest.TestCase):
             {'id': 0, 'uri': 'http0', 'triggers': ['person_recording']}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_streams(cfg_obj1)
+            validate_streams(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_streams(cfg_obj2)
+            validate_streams(cfg_obj2)
 
         self.assertEqual("id property not found in stream", str(e1.exception))
         self.assertEqual("Invalid id format", str(e2.exception))
@@ -53,10 +50,10 @@ class TestYamlFormat(unittest.TestCase):
             {'id': 'stream0', 'uri': 0, 'triggers': ['person_recording']}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_streams(cfg_obj1)
+            validate_streams(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_streams(cfg_obj2)
+            validate_streams(cfg_obj2)
 
         self.assertEqual("uri property not found in stream", str(e1.exception))
         self.assertEqual("Invalid uri format", str(e2.exception))
@@ -70,11 +67,11 @@ class TestYamlFormat(unittest.TestCase):
             {'id': 'stream0', 'uri': 'http0', 'triggers': [0]}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_streams(cfg_obj1)
+            validate_streams(cfg_obj1)
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_streams(cfg_obj2)
+            validate_streams(cfg_obj2)
         with self.assertRaises(AppValidatortError) as e3:
-            self.validator.validate_streams(cfg_obj3)
+            validate_streams(cfg_obj3)
 
         self.assertEqual(
             "triggers property not found in stream", str(
@@ -89,13 +86,13 @@ class TestYamlFormat(unittest.TestCase):
         cfg_obj2 = {'streams': 'test1', 'triggers': 'test2'}
         cfg_obj3 = {'filters': 'test'}
 
-        filters_validate = self.validator.validate_filters(cfg_obj1)
+        filters_validate = validate_filters(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_filters(cfg_obj2)
+            validate_filters(cfg_obj2)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_filters(cfg_obj3)
+            validate_filters(cfg_obj3)
 
         self.assertEqual(None, filters_validate)
         self.assertEqual("filters object not found", str(e1.exception))
@@ -108,10 +105,10 @@ class TestYamlFormat(unittest.TestCase):
             {'name': [], 'labels': ['male', 'child'], 'threshold': 0.7}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_filters(cfg_obj1)
+            validate_filters(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_filters(cfg_obj2)
+            validate_filters(cfg_obj2)
 
         self.assertEqual(
             "name property not found in filter", str(
@@ -127,13 +124,13 @@ class TestYamlFormat(unittest.TestCase):
                                  'labels': [0, 'child'], 'threshold': 0.7}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_filters(cfg_obj1)
+            validate_filters(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_filters(cfg_obj2)
+            validate_filters(cfg_obj2)
 
         with self.assertRaises(AppValidatortError) as e3:
-            self.validator.validate_filters(cfg_obj3)
+            validate_filters(cfg_obj3)
 
         self.assertEqual(
             "labels property not found in filter", str(
@@ -150,10 +147,10 @@ class TestYamlFormat(unittest.TestCase):
             {'name': 'recording', 'labels': ['male', 'child'], 'threshold': 'test'}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_filters(cfg_obj1)
+            validate_filters(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_filters(cfg_obj2)
+            validate_filters(cfg_obj2)
 
         self.assertEqual(
             "threshold property not found in filter", str(
@@ -171,13 +168,13 @@ class TestYamlFormat(unittest.TestCase):
         cfg_obj2 = {'streams': 'test1', 'triggers': 'test2'}
         cfg_obj3 = {'actions': 'test'}
 
-        actions_validate = self.validator.validate_actions(cfg_obj1)
+        actions_validate = validate_actions(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_actions(cfg_obj2)
+            validate_actions(cfg_obj2)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_actions(cfg_obj3)
+            validate_actions(cfg_obj3)
 
         self.assertEqual(None, actions_validate)
         self.assertEqual("actions object not found", str(e1.exception))
@@ -190,10 +187,10 @@ class TestYamlFormat(unittest.TestCase):
             {'name': 0, 'type': 'recording', 'lenght': 10, 'location': '/path'}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_actions(cfg_obj1)
+            validate_actions(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_actions(cfg_obj2)
+            validate_actions(cfg_obj2)
 
         self.assertEqual(
             "name property not found in action", str(
@@ -213,16 +210,16 @@ class TestYamlFormat(unittest.TestCase):
                                  'location': '/path'}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_actions(cfg_obj1)
+            validate_actions(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_actions(cfg_obj2)
+            validate_actions(cfg_obj2)
 
         with self.assertRaises(AppValidatortError) as e3:
-            self.validator.validate_actions(cfg_obj3)
+            validate_actions(cfg_obj3)
 
         with self.assertRaises(AppValidatortError) as e4:
-            self.validator.validate_actions(cfg_obj4)
+            validate_actions(cfg_obj4)
 
         self.assertEqual(
             "type property not found in action", str(
@@ -244,10 +241,10 @@ class TestYamlFormat(unittest.TestCase):
             {'name': 'start_recording', 'type': 'recording', 'lenght': 10, 'location': 0}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_actions(cfg_obj1)
+            validate_actions(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_actions(cfg_obj2)
+            validate_actions(cfg_obj2)
 
         self.assertEqual(
             "location property not found in action", str(
@@ -270,13 +267,13 @@ class TestYamlFormat(unittest.TestCase):
                                           'animal_filter']}]}
         cfg_obj3 = {'triggers': None}
 
-        triggers_validate = self.validator.validate_triggers(cfg_obj1)
+        triggers_validate = validate_triggers(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_triggers(cfg_obj2)
+            validate_triggers(cfg_obj2)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_triggers(cfg_obj3)
+            validate_triggers(cfg_obj3)
 
         self.assertEqual(None, triggers_validate)
         self.assertEqual("triggers object not found", str(e1.exception))
@@ -297,10 +294,10 @@ class TestYamlFormat(unittest.TestCase):
                                               'animal_filter']}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_triggers(cfg_obj1)
+            validate_triggers(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_triggers(cfg_obj2)
+            validate_triggers(cfg_obj2)
 
         self.assertEqual(
             "name property not found in triggers", str(
@@ -320,10 +317,10 @@ class TestYamlFormat(unittest.TestCase):
             'person_filter', 'animal_filter']}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_triggers(cfg_obj1)
+            validate_triggers(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_triggers(cfg_obj2)
+            validate_triggers(cfg_obj2)
 
         self.assertEqual(
             "action property not found in triggers", str(
@@ -353,13 +350,13 @@ class TestYamlFormat(unittest.TestCase):
                         'animal_filter']}]}
 
         with self.assertRaises(AppValidatortError) as e1:
-            self.validator.validate_triggers(cfg_obj1)
+            validate_triggers(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e2:
-            self.validator.validate_triggers(cfg_obj2)
+            validate_triggers(cfg_obj2)
 
         with self.assertRaises(AppValidatortError) as e3:
-            self.validator.validate_triggers(cfg_obj3)
+            validate_triggers(cfg_obj3)
 
         self.assertEqual(
             "filters property not found in triggers", str(
@@ -372,6 +369,7 @@ class TestYamlFormat(unittest.TestCase):
                 e3.exception))
 
     def test_validate(self):
+        self.validator = AppValidator()
         cfg = {'streams': [{'id': 'stream0',
                             'uri': 'http0',
                             'triggers': ['person_recording',
