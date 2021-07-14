@@ -16,13 +16,14 @@ class TestYamlFormat(unittest.TestCase):
         cfg_obj2 = {'triggers': 'test', 'filters': 0}
         cfg_obj3 = {'streams': 'test'}
 
-        streams_validate = validate_streams(cfg_obj1)
+        triggers_list = ['person_recording']
+        streams_validate = validate_streams(cfg_obj1, triggers_list)
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_streams(cfg_obj2)
+            validate_streams(cfg_obj2, triggers_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_streams(cfg_obj3)
+            validate_streams(cfg_obj3, triggers_list)
 
         self.assertEqual(None, streams_validate)
         self.assertEqual("Streams object not found", str(e1.exception))
@@ -34,11 +35,13 @@ class TestYamlFormat(unittest.TestCase):
         cfg_obj2 = {'streams': [
             {'id': 0, 'uri': 'http0', 'triggers': ['person_recording']}]}
 
+        triggers_list = ['person_recording']
+
         with self.assertRaises(AppValidatortError) as e1:
-            validate_streams(cfg_obj1)
+            validate_streams(cfg_obj1, triggers_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_streams(cfg_obj2)
+            validate_streams(cfg_obj2, triggers_list)
 
         self.assertEqual("id property not found in stream", str(e1.exception))
         self.assertEqual("Invalid id format", str(e2.exception))
@@ -49,11 +52,13 @@ class TestYamlFormat(unittest.TestCase):
         cfg_obj2 = {'streams': [
             {'id': 'stream0', 'uri': 0, 'triggers': ['person_recording']}]}
 
+        triggers_list = ['person_recording']
+
         with self.assertRaises(AppValidatortError) as e1:
-            validate_streams(cfg_obj1)
+            validate_streams(cfg_obj1, triggers_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_streams(cfg_obj2)
+            validate_streams(cfg_obj2, triggers_list)
 
         self.assertEqual("uri property not found in stream", str(e1.exception))
         self.assertEqual("Invalid uri format", str(e2.exception))
@@ -65,13 +70,19 @@ class TestYamlFormat(unittest.TestCase):
             {'id': 'stream0', 'uri': "http0", 'triggers': 'test'}]}
         cfg_obj3 = {'streams': [
             {'id': 'stream0', 'uri': 'http0', 'triggers': [0]}]}
+        cfg_obj4 = {'streams': [
+            {'id': 'stream0', 'uri': 'http0', 'triggers': ['person_recording', 'test']}]}
+
+        triggers_list = ['person_recording']
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_streams(cfg_obj1)
+            validate_streams(cfg_obj1, triggers_list)
         with self.assertRaises(AppValidatortError) as e2:
-            validate_streams(cfg_obj2)
+            validate_streams(cfg_obj2, triggers_list)
         with self.assertRaises(AppValidatortError) as e3:
-            validate_streams(cfg_obj3)
+            validate_streams(cfg_obj3, triggers_list)
+        with self.assertRaises(AppValidatortError) as e4:
+            validate_streams(cfg_obj4, triggers_list)
 
         self.assertEqual(
             "triggers property not found in stream", str(
@@ -79,12 +90,16 @@ class TestYamlFormat(unittest.TestCase):
         self.assertEqual("Invalid triggers format", str(e2.exception))
         self.assertEqual("Invalid trigger format in streams triggers", str(
             e3.exception))
+        self.assertEqual("Stream has a not defined trigger", str(
+            e4.exception))
 
     def test_filters(self):
         cfg_obj1 = {'filters': [{'name': 'person_filter',
                                  'labels': ['male', 'child'], 'threshold': 0.7}]}
         cfg_obj2 = {'streams': 'test1', 'triggers': 'test2'}
         cfg_obj3 = {'filters': 'test'}
+
+        filters_list = ['person_filter']
 
         filters_validate = validate_filters(cfg_obj1)
 
@@ -94,7 +109,7 @@ class TestYamlFormat(unittest.TestCase):
         with self.assertRaises(AppValidatortError) as e2:
             validate_filters(cfg_obj3)
 
-        self.assertEqual(None, filters_validate)
+        self.assertEqual(filters_list, filters_validate)
         self.assertEqual("filters object not found", str(e1.exception))
         self.assertEqual("Invalid filters format", str(e2.exception))
 
@@ -168,6 +183,8 @@ class TestYamlFormat(unittest.TestCase):
         cfg_obj2 = {'streams': 'test1', 'triggers': 'test2'}
         cfg_obj3 = {'actions': 'test'}
 
+        actions_list = ['start_recording', 'log_event']
+
         actions_validate = validate_actions(cfg_obj1)
 
         with self.assertRaises(AppValidatortError) as e1:
@@ -176,7 +193,7 @@ class TestYamlFormat(unittest.TestCase):
         with self.assertRaises(AppValidatortError) as e2:
             validate_actions(cfg_obj3)
 
-        self.assertEqual(None, actions_validate)
+        self.assertEqual(actions_list, actions_validate)
         self.assertEqual("actions object not found", str(e1.exception))
         self.assertEqual("Invalid actions format", str(e2.exception))
 
@@ -267,15 +284,20 @@ class TestYamlFormat(unittest.TestCase):
                                           'animal_filter']}]}
         cfg_obj3 = {'triggers': None}
 
-        triggers_validate = validate_triggers(cfg_obj1)
+        triggers_list = ['person_recording']
+        filters_list = ['person_filter', 'animal_filter']
+        actions_list = ['start_recording']
+
+        triggers_validate = validate_triggers(
+            cfg_obj1, actions_list, filters_list)
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_triggers(cfg_obj2)
+            validate_triggers(cfg_obj2, actions_list, filters_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_triggers(cfg_obj3)
+            validate_triggers(cfg_obj3, actions_list, filters_list)
 
-        self.assertEqual(None, triggers_validate)
+        self.assertEqual(triggers_list, triggers_validate)
         self.assertEqual("triggers object not found", str(e1.exception))
         self.assertEqual("Invalid triggers format", str(e2.exception))
 
@@ -293,11 +315,14 @@ class TestYamlFormat(unittest.TestCase):
                                   'filters': ['person_filter',
                                               'animal_filter']}]}
 
+        filters_list = ['person_filter', 'animal_filter']
+        actions_list = ['start_recording']
+
         with self.assertRaises(AppValidatortError) as e1:
-            validate_triggers(cfg_obj1)
+            validate_triggers(cfg_obj1, actions_list, filters_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_triggers(cfg_obj2)
+            validate_triggers(cfg_obj2, actions_list, filters_list)
 
         self.assertEqual(
             "name property not found in triggers", str(
@@ -315,12 +340,20 @@ class TestYamlFormat(unittest.TestCase):
                         'animal_filter']}]}
         cfg_obj2 = {'triggers': [{'name': 'person_recording', 'action': None, 'filters': [
             'person_filter', 'animal_filter']}]}
+        cfg_obj3 = {'triggers': [{'name': 'person_recording', 'action': 'test', 'filters': [
+            'person_filter', 'animal_filter']}]}
+
+        filters_list = ['person_filter', 'animal_filter']
+        actions_list = ['start_recording']
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_triggers(cfg_obj1)
+            validate_triggers(cfg_obj1, actions_list, filters_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_triggers(cfg_obj2)
+            validate_triggers(cfg_obj2, actions_list, filters_list)
+
+        with self.assertRaises(AppValidatortError) as e3:
+            validate_triggers(cfg_obj3, actions_list, filters_list)
 
         self.assertEqual(
             "action property not found in triggers", str(
@@ -328,6 +361,9 @@ class TestYamlFormat(unittest.TestCase):
         self.assertEqual(
             "Invalid action format in triggers", str(
                 e2.exception))
+        self.assertEqual(
+            "Trigger has a not defined action", str(
+                e3.exception))
 
     def test_trigger_filters_errors(self):
         cfg_obj1 = {
@@ -348,15 +384,27 @@ class TestYamlFormat(unittest.TestCase):
                     'filters': [
                         0,
                         'animal_filter']}]}
+        cfg_obj4 = {
+            'triggers': [
+                {'name': 'person_recording',
+                    'action': 'start_recording',
+                    'filters': [
+                        'test',
+                        'animal_filter']}]}
+
+        filters_list = ['person_filter', 'animal_filter']
+        actions_list = ['start_recording']
 
         with self.assertRaises(AppValidatortError) as e1:
-            validate_triggers(cfg_obj1)
+            validate_triggers(cfg_obj1, actions_list, filters_list)
 
         with self.assertRaises(AppValidatortError) as e2:
-            validate_triggers(cfg_obj2)
+            validate_triggers(cfg_obj2, actions_list, filters_list)
 
         with self.assertRaises(AppValidatortError) as e3:
-            validate_triggers(cfg_obj3)
+            validate_triggers(cfg_obj3, actions_list, filters_list)
+        with self.assertRaises(AppValidatortError) as e4:
+            validate_triggers(cfg_obj4, actions_list, filters_list)
 
         self.assertEqual(
             "filters property not found in triggers", str(
@@ -367,6 +415,9 @@ class TestYamlFormat(unittest.TestCase):
         self.assertEqual(
             "Invalid filter format in triggers filters", str(
                 e3.exception))
+        self.assertEqual(
+            "Trigger has a not defined filter", str(
+                e4.exception))
 
     def test_validate(self):
         self.validator = AppValidator()

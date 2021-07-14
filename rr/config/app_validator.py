@@ -20,7 +20,12 @@ def validate_lists(in_list, expected_type, type_err_msg):
             raise AppValidatortError(type_err_msg)
 
 
-def validate_streams(cfg):
+def validate_dependency(obj, available_objs, err_msg):
+    if obj not in available_objs:
+        raise AppValidatortError(err_msg)
+
+
+def validate_streams(cfg, triggers):
     validate_objects(
         cfg,
         'streams',
@@ -55,6 +60,10 @@ def validate_streams(cfg):
             str,
             "Invalid trigger format in streams triggers")
 
+        for trigger in stream_triggers:
+            validate_dependency(
+                trigger, triggers, "Stream has a not defined trigger")
+
 
 def validate_filters(cfg):
     validate_objects(
@@ -65,6 +74,7 @@ def validate_filters(cfg):
         "Invalid filters format")
     filters = cfg['filters']
 
+    filters_list = []
     for filt in filters:
         validate_objects(
             filt,
@@ -91,6 +101,10 @@ def validate_filters(cfg):
             str,
             "Invalid label format in filter labels")
 
+        filters_list.append(filt['name'])
+
+    return filters_list
+
 
 def validate_actions(cfg):
     validate_objects(
@@ -101,6 +115,7 @@ def validate_actions(cfg):
         "Invalid actions format")
     actions = cfg['actions']
 
+    actions_list = []
     for action in actions:
         validate_objects(
             action,
@@ -130,8 +145,12 @@ def validate_actions(cfg):
                 "lenght property not found in action of type recording",
                 "Invalid lenght format in action of type recording")
 
+        actions_list.append(action['name'])
 
-def validate_triggers(cfg):
+    return actions_list
+
+
+def validate_triggers(cfg, actions, filters):
     validate_objects(
         cfg,
         'triggers',
@@ -140,6 +159,7 @@ def validate_triggers(cfg):
         "Invalid triggers format")
     triggers = cfg['triggers']
 
+    triggers_list = []
     for trigger in triggers:
         validate_objects(
             trigger,
@@ -160,11 +180,23 @@ def validate_triggers(cfg):
             "filters property not found in triggers",
             "Invalid filters format in triggers")
 
-    trigger_filters = trigger['filters']
-    validate_lists(
-        trigger_filters,
-        str,
-        "Invalid filter format in triggers filters")
+        trigger_filters = trigger['filters']
+        validate_lists(
+            trigger_filters,
+            str,
+            "Invalid filter format in triggers filters")
+
+        for filt in trigger_filters:
+            validate_dependency(
+                filt, filters, "Trigger has a not defined filter")
+        validate_dependency(
+            trigger['action'],
+            actions,
+            "Trigger has a not defined action")
+
+        triggers_list.append(trigger['name'])
+
+    return triggers_list
 
 
 class AppValidatortError(RuntimeError):
@@ -174,7 +206,7 @@ class AppValidatortError(RuntimeError):
 class AppValidator():
 
     def validate(self, cfg):
-        validate_streams(cfg)
-        validate_filters(cfg)
-        validate_actions(cfg)
-        validate_triggers(cfg)
+        filters = validate_filters(cfg)
+        actions = validate_actions(cfg)
+        triggers = validate_triggers(cfg, actions, filters)
+        validate_streams(cfg, triggers)
