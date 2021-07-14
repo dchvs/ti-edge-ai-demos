@@ -26,19 +26,19 @@ class GstMedia():
 
     Methods
     -------
-    CreateMedia(desc : str)
+    create_media(desc : str)
         Creates the media object from a string description
 
-    DeleteMedia()
+    delete_media()
         Deletes the media object
 
-    PlayMedia()
+    play_media()
         Set the media state to playing
 
-    StopMedia()
+    stop_media()
         Set the media state to stopped
 
-    GetMedia()
+    get_media()
         Getter for the private media object
     """
 
@@ -51,7 +51,7 @@ class GstMedia():
 
         self._pipeline = None
 
-    def CreateMedia(self, desc):
+    def create_media(self, desc):
         """Creates the media object from a string description
 
         Parameters
@@ -70,7 +70,7 @@ class GstMedia():
         except GLib.GError as e:
             raise GstMediaError("Unable to create the media") from e
 
-    def DeleteMedia(self):
+    def delete_media(self):
         """Deletes the media object
         """
 
@@ -78,7 +78,7 @@ class GstMedia():
             del self._pipeline
             self._pipeline = None
 
-    def PlayMedia(self):
+    def play_media(self):
         """Set the media state to playing
 
         Raises
@@ -91,7 +91,7 @@ class GstMedia():
         if gst.StateChangeReturn.FAILURE == ret:
             raise GstMediaError("Unable to play the media")
 
-    def StopMedia(self):
+    def stop_media(self):
         """Set the media state to stopped
 
         Raises
@@ -104,7 +104,7 @@ class GstMedia():
         if gst.StateChangeReturn.FAILURE == ret:
             raise GstMediaError("Unable to stop the media")
 
-    def GetMedia(self):
+    def get_media(self):
         """Getter for the private media object
         """
         return self._pipeline
