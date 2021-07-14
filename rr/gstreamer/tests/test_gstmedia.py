@@ -6,8 +6,8 @@
 
 from gi.repository import Gst as gst
 from gi.repository import GLib
-from gstreamer.gstmedia import GstMedia
-from gstreamer.gstmedia import GstMediaError
+from rr.gstreamer.gstmedia import GstMedia
+from rr.gstreamer.gstmedia import GstMediaError
 import unittest
 
 
