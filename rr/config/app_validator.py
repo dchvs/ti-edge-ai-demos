@@ -30,8 +30,8 @@ def validate_streams(cfg, triggers):
         cfg,
         'streams',
         list,
-        "Streams object not found",
-        "Invalid streams format")
+        "Streams field not found",
+        "Found streams field, but is is not a list")
     streams = cfg['streams']
 
     for stream in streams:
@@ -39,26 +39,26 @@ def validate_streams(cfg, triggers):
             stream,
             'id',
             str,
-            "id property not found in stream",
-            "Invalid id format")
+            "Id field not found in stream",
+            "Found id field in stream, but is is not a string")
         validate_objects(
             stream,
             'uri',
             str,
-            "uri property not found in stream",
-            "Invalid uri format")
+            "Uri field not found in stream",
+            "Found uri field in stream, but is is not a string")
         validate_objects(
             stream,
             'triggers',
             list,
-            "triggers property not found in stream",
-            "Invalid triggers format")
+            "Triggers field not found in stream",
+            "Found triggers field in stream, but is is not a list")
 
         stream_triggers = stream["triggers"]
         validate_lists(
             stream_triggers,
             str,
-            "Invalid trigger format in streams triggers")
+            "Found trigger element in stream, but it is not a string")
 
         for trigger in stream_triggers:
             validate_dependency(
@@ -70,8 +70,8 @@ def validate_filters(cfg):
         cfg,
         'filters',
         list,
-        "filters object not found",
-        "Invalid filters format")
+        "Filters field not found",
+        "Found filters field, but is is not a list")
     filters = cfg['filters']
 
     filters_list = []
@@ -80,26 +80,26 @@ def validate_filters(cfg):
             filt,
             'name',
             str,
-            "name property not found in filter",
-            "Invalid name format in filter")
+            "Name field not found in filter",
+            "Found name field in filter, but it is not a string")
         validate_objects(
             filt,
             'labels',
             list,
-            "labels property not found in filter",
-            "Invalid labels format in filter")
+            "Labels field not found in filter",
+            "Found labels field in filter, but it is not a list")
         validate_objects(
             filt,
             'threshold',
             float,
-            "threshold property not found in filter",
-            "Invalid threshold format")
+            "Threshold field not found in filter",
+            "Found threshold field in filter, but it is not a number")
 
         filter_labels = filt['labels']
         validate_lists(
             filter_labels,
             str,
-            "Invalid label format in filter labels")
+            "Found label element in filter, but it is not a string")
 
         filters_list.append(filt['name'])
 
@@ -111,8 +111,8 @@ def validate_actions(cfg):
         cfg,
         'actions',
         list,
-        "actions object not found",
-        "Invalid actions format")
+        "Actions field not found",
+        "Found actions field, but is is not a list")
     actions = cfg['actions']
 
     actions_list = []
@@ -121,20 +121,20 @@ def validate_actions(cfg):
             action,
             'name',
             str,
-            "name property not found in action",
-            "Invalid name format in action")
+            "Name field not found in action",
+            "Found name field in action, but it is not a string")
         validate_objects(
             action,
             'type',
             str,
-            "type property not found in action",
-            "Invalid type format in action")
+            "Type field not found in action",
+            "Found type field in action, but it is not a string")
         validate_objects(
             action,
             'location',
             str,
-            "location property not found in action",
-            "Invalid location format in action")
+            "Location field not found in action",
+            "Found location field in action, but it is not a string")
 
         action_type = action['type']
         if (action_type == 'recording'):
@@ -142,8 +142,8 @@ def validate_actions(cfg):
                 action,
                 'lenght',
                 int,
-                "lenght property not found in action of type recording",
-                "Invalid lenght format in action of type recording")
+                "Lenght field not found in action of type recording",
+                "Lenght field in action must be a whole number")
 
         actions_list.append(action['name'])
 
@@ -155,8 +155,8 @@ def validate_triggers(cfg, actions, filters):
         cfg,
         'triggers',
         list,
-        "triggers object not found",
-        "Invalid triggers format")
+        "Triggers field not found",
+        "Found triggers field, but is is not a list")
     triggers = cfg['triggers']
 
     triggers_list = []
@@ -165,26 +165,26 @@ def validate_triggers(cfg, actions, filters):
             trigger,
             'name',
             str,
-            "name property not found in triggers",
-            "Invalid name format in triggers")
+            "Name field not found in trigger",
+            "Found name field in action, but it is not a string")
         validate_objects(
             trigger,
             'action',
             str,
-            "action property not found in triggers",
-            "Invalid action format in triggers")
+            "Action field not found in trigger",
+            "Found action field in trigger, but it is not a string")
         validate_objects(
             trigger,
             'filters',
             list,
-            "filters property not found in triggers",
-            "Invalid filters format in triggers")
+            "Filters field not found in trigger",
+            "Found filters field in trigger, but it is not a list")
 
         trigger_filters = trigger['filters']
         validate_lists(
             trigger_filters,
             str,
-            "Invalid filter format in triggers filters")
+            "Found filter element in trigger, but it is not a string")
 
         for filt in trigger_filters:
             validate_dependency(

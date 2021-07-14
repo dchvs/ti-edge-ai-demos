@@ -26,8 +26,10 @@ class TestYamlFormat(unittest.TestCase):
             validate_streams(cfg_obj3, triggers_list)
 
         self.assertEqual(None, streams_validate)
-        self.assertEqual("Streams object not found", str(e1.exception))
-        self.assertEqual("Invalid streams format", str(e2.exception))
+        self.assertEqual("Streams field not found", str(e1.exception))
+        self.assertEqual(
+            "Found streams field, but is is not a list", str(
+                e2.exception))
 
     def test_id_errors(self):
         cfg_obj1 = {'streams': [
@@ -43,8 +45,10 @@ class TestYamlFormat(unittest.TestCase):
         with self.assertRaises(AppValidatortError) as e2:
             validate_streams(cfg_obj2, triggers_list)
 
-        self.assertEqual("id property not found in stream", str(e1.exception))
-        self.assertEqual("Invalid id format", str(e2.exception))
+        self.assertEqual("Id field not found in stream", str(e1.exception))
+        self.assertEqual(
+            "Found id field in stream, but is is not a string", str(
+                e2.exception))
 
     def test_uri_errors(self):
         cfg_obj1 = {'streams': [
@@ -60,8 +64,10 @@ class TestYamlFormat(unittest.TestCase):
         with self.assertRaises(AppValidatortError) as e2:
             validate_streams(cfg_obj2, triggers_list)
 
-        self.assertEqual("uri property not found in stream", str(e1.exception))
-        self.assertEqual("Invalid uri format", str(e2.exception))
+        self.assertEqual("Uri field not found in stream", str(e1.exception))
+        self.assertEqual(
+            "Found uri field in stream, but is is not a string", str(
+                e2.exception))
 
     def test_streams_triggers_errors(self):
         cfg_obj1 = {'streams': [
@@ -85,11 +91,14 @@ class TestYamlFormat(unittest.TestCase):
             validate_streams(cfg_obj4, triggers_list)
 
         self.assertEqual(
-            "triggers property not found in stream", str(
+            "Triggers field not found in stream", str(
                 e1.exception))
-        self.assertEqual("Invalid triggers format", str(e2.exception))
-        self.assertEqual("Invalid trigger format in streams triggers", str(
-            e3.exception))
+        self.assertEqual(
+            "Found triggers field in stream, but is is not a list", str(
+                e2.exception))
+        self.assertEqual(
+            "Found trigger element in stream, but it is not a string", str(
+                e3.exception))
         self.assertEqual("Stream has a not defined trigger", str(
             e4.exception))
 
@@ -110,8 +119,10 @@ class TestYamlFormat(unittest.TestCase):
             validate_filters(cfg_obj3)
 
         self.assertEqual(filters_list, filters_validate)
-        self.assertEqual("filters object not found", str(e1.exception))
-        self.assertEqual("Invalid filters format", str(e2.exception))
+        self.assertEqual("Filters field not found", str(e1.exception))
+        self.assertEqual(
+            "Found filters field, but is is not a list", str(
+                e2.exception))
 
     def test_filters_name_errors(self):
         cfg_obj1 = {'filters': [
@@ -126,9 +137,11 @@ class TestYamlFormat(unittest.TestCase):
             validate_filters(cfg_obj2)
 
         self.assertEqual(
-            "name property not found in filter", str(
+            "Name field not found in filter", str(
                 e1.exception))
-        self.assertEqual("Invalid name format in filter", str(e2.exception))
+        self.assertEqual(
+            "Found name field in filter, but it is not a string", str(
+                e2.exception))
 
     def test_labels_errors(self):
         cfg_obj1 = {'filters': [{'name': 'recording',
@@ -148,11 +161,13 @@ class TestYamlFormat(unittest.TestCase):
             validate_filters(cfg_obj3)
 
         self.assertEqual(
-            "labels property not found in filter", str(
+            "Labels field not found in filter", str(
                 e1.exception))
-        self.assertEqual("Invalid labels format in filter", str(e2.exception))
         self.assertEqual(
-            "Invalid label format in filter labels", str(
+            "Found labels field in filter, but it is not a list", str(
+                e2.exception))
+        self.assertEqual(
+            "Found label element in filter, but it is not a string", str(
                 e3.exception))
 
     def test_threshold_errors(self):
@@ -168,9 +183,11 @@ class TestYamlFormat(unittest.TestCase):
             validate_filters(cfg_obj2)
 
         self.assertEqual(
-            "threshold property not found in filter", str(
+            "Threshold field not found in filter", str(
                 e1.exception))
-        self.assertEqual("Invalid threshold format", str(e2.exception))
+        self.assertEqual(
+            "Found threshold field in filter, but it is not a number", str(
+                e2.exception))
 
     def test_actions(self):
         cfg_obj1 = {'actions': [{'name': 'start_recording',
@@ -194,8 +211,10 @@ class TestYamlFormat(unittest.TestCase):
             validate_actions(cfg_obj3)
 
         self.assertEqual(actions_list, actions_validate)
-        self.assertEqual("actions object not found", str(e1.exception))
-        self.assertEqual("Invalid actions format", str(e2.exception))
+        self.assertEqual("Actions field not found", str(e1.exception))
+        self.assertEqual(
+            "Found actions field, but is is not a list", str(
+                e2.exception))
 
     def test_actions_name_errors(self):
         cfg_obj1 = {'actions': [
@@ -210,9 +229,11 @@ class TestYamlFormat(unittest.TestCase):
             validate_actions(cfg_obj2)
 
         self.assertEqual(
-            "name property not found in action", str(
+            "Name field not found in action", str(
                 e1.exception))
-        self.assertEqual("Invalid name format in action", str(e2.exception))
+        self.assertEqual(
+            "Found name field in action, but it is not a string", str(
+                e2.exception))
 
     def test_actions_type_errors(self):
         cfg_obj1 = {'actions': [
@@ -239,14 +260,16 @@ class TestYamlFormat(unittest.TestCase):
             validate_actions(cfg_obj4)
 
         self.assertEqual(
-            "type property not found in action", str(
+            "Type field not found in action", str(
                 e1.exception))
-        self.assertEqual("Invalid type format in action", str(e2.exception))
         self.assertEqual(
-            "lenght property not found in action of type recording", str(
+            "Found type field in action, but it is not a string", str(
+                e2.exception))
+        self.assertEqual(
+            "Lenght field not found in action of type recording", str(
                 e3.exception))
         self.assertEqual(
-            "Invalid lenght format in action of type recording", str(
+            "Lenght field in action must be a whole number", str(
                 e4.exception))
 
     def test_actions_location_errors(self):
@@ -264,10 +287,10 @@ class TestYamlFormat(unittest.TestCase):
             validate_actions(cfg_obj2)
 
         self.assertEqual(
-            "location property not found in action", str(
+            "Location field not found in action", str(
                 e1.exception))
         self.assertEqual(
-            "Invalid location format in action", str(
+            "Found location field in action, but it is not a string", str(
                 e2.exception))
 
     def test_triggers(self):
@@ -298,8 +321,10 @@ class TestYamlFormat(unittest.TestCase):
             validate_triggers(cfg_obj3, actions_list, filters_list)
 
         self.assertEqual(triggers_list, triggers_validate)
-        self.assertEqual("triggers object not found", str(e1.exception))
-        self.assertEqual("Invalid triggers format", str(e2.exception))
+        self.assertEqual("Triggers field not found", str(e1.exception))
+        self.assertEqual(
+            "Found triggers field, but is is not a list", str(
+                e2.exception))
 
     def test_triggers_name_errors(self):
         cfg_obj1 = {
@@ -325,9 +350,11 @@ class TestYamlFormat(unittest.TestCase):
             validate_triggers(cfg_obj2, actions_list, filters_list)
 
         self.assertEqual(
-            "name property not found in triggers", str(
+            "Name field not found in trigger", str(
                 e1.exception))
-        self.assertEqual("Invalid name format in triggers", str(e2.exception))
+        self.assertEqual(
+            "Found name field in action, but it is not a string", str(
+                e2.exception))
 
     def test_triggers_action_errors(self):
         cfg_obj1 = {
@@ -356,10 +383,10 @@ class TestYamlFormat(unittest.TestCase):
             validate_triggers(cfg_obj3, actions_list, filters_list)
 
         self.assertEqual(
-            "action property not found in triggers", str(
+            "Action field not found in trigger", str(
                 e1.exception))
         self.assertEqual(
-            "Invalid action format in triggers", str(
+            "Found action field in trigger, but it is not a string", str(
                 e2.exception))
         self.assertEqual(
             "Trigger has a not defined action", str(
@@ -407,13 +434,13 @@ class TestYamlFormat(unittest.TestCase):
             validate_triggers(cfg_obj4, actions_list, filters_list)
 
         self.assertEqual(
-            "filters property not found in triggers", str(
+            "Filters field not found in trigger", str(
                 e1.exception))
         self.assertEqual(
-            "Invalid filters format in triggers", str(
+            "Found filters field in trigger, but it is not a list", str(
                 e2.exception))
         self.assertEqual(
-            "Invalid filter format in triggers filters", str(
+            "Found filter element in trigger, but it is not a string", str(
                 e3.exception))
         self.assertEqual(
             "Trigger has a not defined filter", str(
