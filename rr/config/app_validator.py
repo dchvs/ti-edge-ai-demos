@@ -89,8 +89,10 @@ def validate_streams(cfg, triggers):
             "Found trigger element in stream, but it is not a string")
 
         for trigger in stream_triggers:
+            err_msg_triggers = "Streams attempts to use the " + \
+                trigger + " trigger but it is not defined anywhere"
             validate_dependency(
-                trigger, triggers, "Stream has a not defined trigger")
+                trigger, triggers, err_msg_triggers)
 
 
 def validate_filters(cfg):
@@ -224,12 +226,17 @@ def validate_triggers(cfg, actions, filters):
             "Found filter element in trigger, but it is not a string")
 
         for filt in trigger_filters:
+            err_msg_filters = "Triggers attempts to use the " + \
+                filt + " filter but it is not defined anywhere"
             validate_dependency(
-                filt, filters, "Trigger has a not defined filter")
+                filt, filters, err_msg_filters)
+
+        err_msg_action = "Triggers attempts to use the " + \
+            trigger['action'] + " action but it is not defined anywhere"
         validate_dependency(
             trigger['action'],
             actions,
-            "Trigger has a not defined action")
+            err_msg_action)
 
         triggers_list.append(trigger['name'])
 

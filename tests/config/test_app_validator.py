@@ -99,8 +99,9 @@ class TestYamlFormat(unittest.TestCase):
         self.assertEqual(
             "Found trigger element in stream, but it is not a string", str(
                 e3.exception))
-        self.assertEqual("Stream has a not defined trigger", str(
-            e4.exception))
+        self.assertEqual(
+            "Streams attempts to use the test trigger but it is not defined anywhere", str(
+                e4.exception))
 
     def test_filters(self):
         cfg_good = {'filters': [{'name': 'person_filter',
@@ -404,7 +405,7 @@ class TestYamlFormat(unittest.TestCase):
             "Found action field in trigger, but it is not a string", str(
                 e2.exception))
         self.assertEqual(
-            "Trigger has a not defined action", str(
+            "Triggers attempts to use the test action but it is not defined anywhere", str(
                 e3.exception))
 
     def test_trigger_filters_errors(self):
@@ -461,7 +462,7 @@ class TestYamlFormat(unittest.TestCase):
             "Found filter element in trigger, but it is not a string", str(
                 e3.exception))
         self.assertEqual(
-            "Trigger has a not defined filter", str(
+            "Triggers attempts to use the test filter but it is not defined anywhere", str(
                 e4.exception))
 
     def test_validate(self):
