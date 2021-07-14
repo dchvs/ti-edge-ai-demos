@@ -11,6 +11,10 @@ gi.require_version('Gst', '1.0')
 gi.require_version('GLib', '2.0')
 
 
+class GstMediaError(RuntimeError):
+    pass
+
+
 class GstMedia():
     """
     Class that creates the GStreamer handler
@@ -57,17 +61,14 @@ class GstMedia():
 
         Raises
         ------
-        GLib.GError, ValueError
+        GstMediaError
             If the description fails to create the media
         """
 
         try:
             self._pipeline = gst.parse_launch(desc)
-        except ValueError as e:
-            logging.error("Unable to create the media")
-            return False
-
-        return True
+        except GLib.GError as e:
+            raise GstMediaError("Unable to create the media") from e
 
     def DeleteMedia(self):
         """Deletes the media object
@@ -77,41 +78,33 @@ class GstMedia():
             del self._pipeline
             self._pipeline = None
 
-        return True
-
     def PlayMedia(self):
         """Set the media state to playing
 
         Raises
         ------
-        GLib.GError, ValueError
+        GstMediaError
             If couldn't set the media state to playing
         """
 
         try:
             self._pipeline.set_state(gst.State.PLAYING)
-        except ValueError as e:
-            logging.error("Unable to play the media")
-            return False
-
-        return True
+        except GLib.GError as e:
+            raise GstMediaError("Unable to play the media") from e
 
     def StopMedia(self):
         """Set the media state to stopped
 
         Raises
         ------
-        GLib.GError, ValueError
+        GstMediaError
             If couldn't set the media state to stopped
         """
 
         try:
             self._pipeline.set_state(gst.State.NULL)
-        except ValueError as e:
-            logging.error("Unable to stop the media")
-            return False
-
-        return True
+        except GLib.GError as e:
+            raise GstMediaError("Unable to stop the media") from e
 
     def GetMedia(self):
         """Getter for the private media object
