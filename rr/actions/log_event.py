@@ -6,7 +6,7 @@
 import csv
 
 
-def log(path, media, image, inf_results):
+def log(path, media, image, inf_results, fieldnames):
     with open(path, 'a', newline='') as f:
         pass
 
@@ -20,8 +20,19 @@ def validate_csv(path):
 
 
 def set_file_headers(path):
+    fieldnames = [
+        'name',
+        'time',
+        'label',
+        'probability',
+        'bbox-x',
+        'bbox-y',
+        'bbox-width',
+        'bbox-height']
     with open(path, 'w', newline='') as f:
-        pass
+        csv_writer = csv.DictWriter(f, fieldnames=fieldnames)
+        csv_writer.writeheader()
+        return fieldnames
 
 
 class LogEventError(RuntimeError):
@@ -31,6 +42,7 @@ class LogEventError(RuntimeError):
 class LogEvent:
     def __init__(self, path):
         self._path = validate_csv(path)
+        set_file_headers(self._path)
 
     def execute():
         pass
