@@ -4,6 +4,7 @@
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
 import csv
+import threading
 
 
 def log(path, media, image, inf_results, fieldnames):
@@ -64,7 +65,10 @@ class LogEventError(RuntimeError):
 class LogEvent:
     def __init__(self, path):
         self._path = validate_csv(path)
-        set_file_headers(self._path)
+        self._fieldnames = set_file_headers(self._path)
+        self._mutex = threading.Lock()
 
-    def execute(media, image, inf_results):
-        pass
+    def execute(self, media, image, inf_results):
+        self._mutex.acquire()
+        log(self._path, media, image, inf_results, self._fieldnames)
+        self._mutex.release()

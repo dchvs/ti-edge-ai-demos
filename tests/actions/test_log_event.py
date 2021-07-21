@@ -129,6 +129,29 @@ class TestLogEventSuccess(unittest.TestCase):
             self.assertEqual(first_row_ret, next(reader))
             self.assertEqual(second_row_ret, next(reader))
 
+    def test_execute_success(self):
+        csv_file_good = 'tests/actions/test_log.csv'
+        media = mockMedia('test_media_name')
+        image = mockImage('2021-07-27 12:00:20')
+        inf_results = {
+            "instances": [
+                {
+                    "labels": [
+                        {
+                            "label": 'ZZZZ', "probability": 0.99}, {
+                            "label": 'AAAA', "probability": 0.01}, ], "bbox": {
+                        "x": 'X', "y": 'Y', "width": 'width', "height": 'height'}}, {
+                    "labels": [
+                        {
+                            "label": 'XXXX', "probability": 0.97}, {
+                            "label": 'WWWW', "probability": 0.01}, ], "bbox": {
+                        "x": 'X', "y": 'Y', "width": 'width', "height": 'height'}}]}
+
+        log_action = LogEvent(csv_file_good)
+        execute_ret = log_action.execute(media, image, inf_results)
+
+        self.assertEqual(None, execute_ret)
+
 
 if __name__ == '__main__':
     unittest.main()
