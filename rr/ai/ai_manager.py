@@ -11,7 +11,7 @@ from gi.repository import Gst as gst  # nopep8
 from gi.repository import GLib  # nopep8
 
 from TI.postprocess import PostProcessDetection
-from TI.preprocess import PreprocessDetection
+from TI.preprocess import PreProcessDetection
 from TI.runtimes import *
 
 
