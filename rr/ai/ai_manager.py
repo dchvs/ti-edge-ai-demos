@@ -101,7 +101,7 @@ class AIManager():
 
         RunTime = eval(preprocess.params.run_time)
         run_time = RunTime(preprocess.params)
-        results = run_time.run(img_preprocessed)
+        results = run_time.run(media)
 
         return results
 
