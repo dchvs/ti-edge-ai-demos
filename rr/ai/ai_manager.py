@@ -79,7 +79,7 @@ class AIManager():
 
         return img_preprocessed
 
-    def run_inference(self, media, model):
+    def run_inference(self, media, model, preprocess):
         """Apply inference to the media
 
         Parameters
@@ -89,6 +89,9 @@ class AIManager():
 
         inference_model : str
             The inference model to apply
+
+        preprocess : AI Preprocess object
+            The AI Preprocess object
 
         Raises
         ------
