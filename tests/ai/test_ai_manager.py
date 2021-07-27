@@ -59,6 +59,12 @@ class TestAIManager(unittest.TestCase):
         img = self.ai_manager.preprocess_detection(self.img, self.model)
         self.assertTrue(0 != img.size)
 
+    def testruntime(self):
+        preprocess = PreProcessDetection(self.img, self.model)
+        img = self.ai_manager.preprocess_detection(self.img, self.model)
+
+        results = self.ai_manager.run_inference(img, self.model, preprocess)
+
     def testpostprocess(self):
         pass
 
