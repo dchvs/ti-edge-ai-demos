@@ -10,6 +10,8 @@ gi.require_version('GLib', '2.0')  # nopep8
 from gi.repository import Gst as gst  # nopep8
 from gi.repository import GLib  # nopep8
 
+import cv2
+import numpy as np
 import random
 import unittest
 
@@ -19,6 +21,15 @@ from rr.gstreamer.ai_manager import AIManagerError
 
 def get_media():
     return IMedia()
+
+
+def create_img(width, height, rgb_color=(0, 0, 0)):
+    img = np.zeros((height, width, 3), np.uint8)
+
+    color = tuple(reversed(rgb_color))
+    img[:] = color
+
+    return img
 
 
 class TestAIManager(unittest.TestCase):
