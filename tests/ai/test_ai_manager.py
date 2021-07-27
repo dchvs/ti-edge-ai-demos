@@ -15,8 +15,10 @@ import numpy as np
 import random
 import unittest
 
-from rr.gstreamer.ai_manager import AIManager
-from rr.gstreamer.ai_manager import AIManagerError
+from TI.postprocess import PostProcessDetection
+from TI.preprocess import PreProcessDetection
+from rr.ai.ai_manager import AIManager
+from rr.ai.ai_manager import AIManagerError
 
 
 def get_media():
