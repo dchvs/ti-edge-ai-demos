@@ -39,10 +39,13 @@ class TestAIManager(unittest.TestCase):
         self.ai_manager = AIManager()
 
     def testnew_media(self):
+        pass
 
     def testpreprocess(self):
+        pass
 
     def testpostprocess(self):
+        pass
 
 
 class TestAIManagerFail(unittest.TestCase):
@@ -50,10 +53,13 @@ class TestAIManagerFail(unittest.TestCase):
         self.ai_manager = AIManager()
 
     def testnew_media(self):
+        pass
 
     def testpreprocess(self):
+        pass
 
     def testpostprocess(self):
+        pass
 
 
 if __name__ == '__main__':
