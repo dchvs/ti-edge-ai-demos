@@ -55,8 +55,9 @@ class TestAIManager(unittest.TestCase):
     def testnew_media(self):
         pass
 
-    def testpreprocess(self):
-        pass
+    def testpreprocess_detection(self):
+        img = self.ai_manager.preprocess_detection(self.img, self.model)
+        self.assertTrue(0 != img.size)
 
     def testpostprocess(self):
         pass
