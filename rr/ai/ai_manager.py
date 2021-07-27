@@ -10,6 +10,10 @@ gi.require_version('GLib', '2.0')  # nopep8
 from gi.repository import Gst as gst  # nopep8
 from gi.repository import GLib  # nopep8
 
+from TI.postprocess import PostProcessDetection
+from TI.preprocess import PreprocessDetection
+from TI.runtimes import *
+
 
 class AIManagerError(RuntimeError):
     pass
@@ -56,7 +60,7 @@ class AIManager():
             If couldn't get the media
         """
 
-    def preprocess(self, media, model):
+    def preprocess_detection(self, media, model):
         """Preprocess the media
 
         Parameters
@@ -69,6 +73,11 @@ class AIManager():
         AIManagerError
             If couldn't preprocess the media
         """
+
+        preprocess = PreProcessDetection(media, model)
+        img_preprocessed = preprocess.get_preprocessed_image(media)
+
+        return img_preprocessed
 
     def run_inference(self, media, model):
         """Apply inference to the media
@@ -87,7 +96,19 @@ class AIManager():
             If couldn't run the inference to the media
         """
 
-    def postprocess(self, media, inference_model):
+        RunTime = eval(preprocess.params.run_time)
+        run_time = RunTime(preprocess.params)
+        results = run_time.run(img_preprocessed)
+
+        return results
+
+    def postprocess_detection(
+            self,
+            media,
+            model,
+            results,
+            disp_width,
+            disp_height):
         """Postprocess the media
 
         Parameters
@@ -103,3 +124,9 @@ class AIManager():
         AIManagerError
             If couldn't postprocess the media
         """
+
+        postprocess = PostProcessDetection(
+            media, model, disp_width, disp_height)
+        img_postprocessed = postprocess.get_postprocessed_image(media, results)
+
+        return img_postprocessed
