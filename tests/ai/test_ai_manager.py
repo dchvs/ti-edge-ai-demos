@@ -20,6 +20,13 @@ from TI.preprocess import PreProcessDetection
 from rr.ai.ai_manager import AIManager
 from rr.ai.ai_manager import AIManagerError
 
+model = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
+width = 1920
+height = 1080
+color = (100, 100, 100)
+disp_width = 2040
+disp_height = 1920
+
 
 def get_media():
     return IMedia()
@@ -36,7 +43,14 @@ def create_img(width, height, rgb_color=(0, 0, 0)):
 
 class TestAIManager(unittest.TestCase):
     def setUp(self):
+        global model, width, height, disp_width, disp_height
+
+        self.model = model
+        self.img = create_img(width, height, rgb_color=color)
         self.ai_manager = AIManager()
+
+        self.disp_width = disp_width
+        self.disp_height = disp_height
 
     def testnew_media(self):
         pass
