@@ -65,8 +65,15 @@ class TestAIManager(unittest.TestCase):
 
         results = self.ai_manager.run_inference(img, self.model, preprocess)
 
-    def testpostprocess(self):
-        pass
+    def testpostprocess_detection(self):
+        preprocess = PreProcessDetection(self.img, self.model)
+        img = self.ai_manager.preprocess_detection(self.img, self.model)
+        results = self.ai_manager.run_inference(img, self.model, preprocess)
+
+        postprocess = PostProcessDetection(
+            self.img, self.model, self.disp_width, self.disp_height)
+        img = postprocess.get_postprocessed_image(self.img, results)
+        self.assertTrue(0 != img.size)
 
 
 class TestAIManagerFail(unittest.TestCase):
