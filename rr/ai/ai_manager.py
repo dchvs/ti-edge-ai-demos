@@ -41,26 +41,20 @@ class AIManager():
         Postprocess the media
     """
 
-    def __init__(self):
+    def __init__(self, media, model, disp_width, disp_height):
         """
         Constructor for the AI Manager object
         """
 
-    def new_media(self, media):
-        """Get a media input
+        self.preprocess_obj = PreProcessDetection(model)
 
-        Parameters
-        ----------
-        media : media input
-            The media received
+        RunTime = eval(self.preprocess_obj.params.run_time)
+        self.inference_obj = RunTime(self.preprocess_obj.params)
 
-        Raises
-        ------
-        AIManagerError
-            If couldn't get the media
-        """
+        self.postprocess_obj = PostProcessDetection(
+            model, disp_width, disp_height)
 
-    def preprocess_detection(self, media, model):
+    def preprocess_detection(self, media):
         """Preprocess the media
 
         Parameters
@@ -74,12 +68,11 @@ class AIManager():
             If couldn't preprocess the media
         """
 
-        preprocess = PreProcessDetection(media, model)
-        img_preprocessed = preprocess.get_preprocessed_image(media)
+        img_preprocessed = self.preprocess_obj.get_preprocessed_image(media)
 
         return img_preprocessed
 
-    def run_inference(self, media, model, preprocess):
+    def run_inference(self, media):
         """Apply inference to the media
 
         Parameters
@@ -99,19 +92,11 @@ class AIManager():
             If couldn't run the inference to the media
         """
 
-        RunTime = eval(preprocess.params.run_time)
-        run_time = RunTime(preprocess.params)
-        results = run_time.run(media)
+        results = self.inference_obj.run(media)
 
         return results
 
-    def postprocess_detection(
-            self,
-            media,
-            model,
-            results,
-            disp_width,
-            disp_height):
+    def postprocess_detection(self, media, results):
         """Postprocess the media
 
         Parameters
@@ -128,8 +113,7 @@ class AIManager():
             If couldn't postprocess the media
         """
 
-        postprocess = PostProcessDetection(
-            media, model, disp_width, disp_height)
-        img_postprocessed = postprocess.get_postprocessed_image(media, results)
+        img_postprocessed = self.postprocess_obj.get_postprocessed_image(
+            media, results)
 
         return img_postprocessed
