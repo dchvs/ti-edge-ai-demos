@@ -117,3 +117,43 @@ class AIManager():
             media, results)
 
         return img_postprocessed
+
+
+class AIManagerOnNewImage(AIManager):
+    """
+    Class that performs the AI processing
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    on_new_media(media : media input):
+        Get a media input
+
+    """
+
+    def on_new_media(self, callback, model, disp_width, disp_height):
+        """Get a media input
+
+        Parameters
+        ----------
+        callback: function
+            The callback function to receive the media
+
+        Raises
+        ------
+        AIManagerError
+            If couldn't get the media
+        """
+
+        media = callback()
+
+        media_preprocessed = self.preprocess_detection(media)
+
+        inference_results = self.run_inference(media_preprocessed)
+
+        img_postprocessed = self.postprocess_detection(
+            media, inference_results)
+
+        return img_postprocessed
