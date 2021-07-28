@@ -19,6 +19,7 @@ from TI.postprocess import PostProcessDetection
 from TI.preprocess import PreProcessDetection
 from rr.ai.ai_manager import AIManager
 from rr.ai.ai_manager import AIManagerError
+from rr.ai.ai_manager import AIManagerOnNewImage
 
 model = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
 width = 1920
@@ -47,7 +48,8 @@ class TestAIManager(unittest.TestCase):
 
         self.model = model
         self.img = create_img(width, height, rgb_color=color)
-        self.ai_manager = AIManager()
+        self.ai_manager = AIManager(
+            self.img, self.model, disp_width, disp_height)
 
         self.disp_width = disp_width
         self.disp_height = disp_height
@@ -56,29 +58,29 @@ class TestAIManager(unittest.TestCase):
         pass
 
     def testpreprocess_detection(self):
-        img = self.ai_manager.preprocess_detection(self.img, self.model)
+        img = self.ai_manager.preprocess_detection(self.img)
         self.assertTrue(0 != img.size)
 
     def testruntime(self):
-        preprocess = PreProcessDetection(self.img, self.model)
-        img = self.ai_manager.preprocess_detection(self.img, self.model)
+        preprocess = PreProcessDetection(self.model)
+        img = self.ai_manager.preprocess_detection(self.img)
 
-        results = self.ai_manager.run_inference(img, self.model, preprocess)
+        results = self.ai_manager.run_inference(img)
 
     def testpostprocess_detection(self):
-        preprocess = PreProcessDetection(self.img, self.model)
-        img = self.ai_manager.preprocess_detection(self.img, self.model)
-        results = self.ai_manager.run_inference(img, self.model, preprocess)
+        preprocess = PreProcessDetection(self.model)
+        img = self.ai_manager.preprocess_detection(self.img)
+        results = self.ai_manager.run_inference(img)
 
         postprocess = PostProcessDetection(
-            self.img, self.model, self.disp_width, self.disp_height)
+            self.model, self.disp_width, self.disp_height)
         img = postprocess.get_postprocessed_image(self.img, results)
         self.assertTrue(0 != img.size)
 
 
 class TestAIManagerFail(unittest.TestCase):
     def setUp(self):
-        self.ai_manager = AIManager()
+        pass
 
     def testnew_media(self):
         pass
