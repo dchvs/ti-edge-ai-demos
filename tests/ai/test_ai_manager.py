@@ -99,20 +99,6 @@ class TestAIManager(unittest.TestCase):
         self.assertTrue(0 != img.size)
 
 
-class TestAIManagerFail(unittest.TestCase):
-    def setUp(self):
-        pass
-
-    def testnew_media(self):
-        pass
-
-    def testpreprocess(self):
-        pass
-
-    def testpostprocess(self):
-        pass
-
-
 class TestAIManagerOnNewImage(unittest.TestCase):
     def setUp(self):
         global model, width, height, disp_width, disp_height
