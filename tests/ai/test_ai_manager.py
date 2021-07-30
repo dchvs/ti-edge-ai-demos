@@ -24,27 +24,26 @@ disp_width = 2040
 disp_height = 1920
 
 
-def create_img(width, height, rgb_color=(0, 0, 0)):
-    img = np.zeros((height, width, 3), np.uint8)
+class MockImage():
+    def __init__(self, width, height, color):
+        self.mock_img = self.create_img(width, height, rgb_color=color)
 
-    color = tuple(reversed(rgb_color))
-    img[:] = color
+    def create_img(self, width, height, rgb_color=(0, 0, 0)):
+        img = np.zeros((height, width, 3), np.uint8)
 
-    return img
+        color = tuple(reversed(rgb_color))
+        img[:] = color
 
-
-def mock_img():
-    global width, height, color
-
-    return create_img(width, height, rgb_color=color)
+        return img
 
 
 class TestAIManager(unittest.TestCase):
     def setUp(self):
         global model, width, height, disp_width, disp_height
+        global width, height, color
 
         self.model = model
-        self.img = create_img(width, height, rgb_color=color)
+        self.img = MockImage(width, height, color).mock_img
         self.ai_manager = AIManager(
             self.model,
             disp_width,
@@ -77,12 +76,13 @@ class TestAIManager(unittest.TestCase):
 class TestAIManagerOnNewImage(unittest.TestCase):
     def setUp(self):
         global model, width, height, disp_width, disp_height
+        global width, height, color
 
         self.model = model
         self.disp_width = disp_width
         self.disp_height = disp_height
 
-        self.img = mock_img()
+        self.img = MockImage(width, height, color).mock_img
 
         self.mock_on_new_prediction_cb = MagicMock()
         self.mock_on_new_postprocess_cb = MagicMock()
