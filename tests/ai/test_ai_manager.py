@@ -4,12 +4,6 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
-import gi  # nopep8
-gi.require_version('Gst', '1.0')  # nopep8
-gi.require_version('GLib', '2.0')  # nopep8
-from gi.repository import Gst as gst  # nopep8
-from gi.repository import GLib  # nopep8
-
 import cv2
 import numpy as np
 import random
@@ -28,10 +22,6 @@ height = 1080
 color = (100, 100, 100)
 disp_width = 2040
 disp_height = 1920
-
-
-def get_media():
-    return IMedia()
 
 
 def create_img(width, height, rgb_color=(0, 0, 0)):
@@ -74,9 +64,6 @@ class TestAIManager(unittest.TestCase):
 
         self.disp_width = disp_width
         self.disp_height = disp_height
-
-    def testnew_media(self):
-        pass
 
     def testpreprocess_detection(self):
         img = self.ai_manager.preprocess_detection(self.img)
