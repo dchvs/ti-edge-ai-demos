@@ -33,14 +33,14 @@ class AIManager():
 
     Methods
     -------
-    preprocess_detection(media : media input)
-        Preprocess the media according to the model
+    preprocess_detection(image : image input)
+        Preprocess the image according to the model
 
-    run_inference(media : media input):
-        Apply inference to the media
+    run_inference(image : image input):
+        Apply inference to the image
 
-    postprocess_detection(media : media input, results : run_inference return):
-        Postprocess the media according to the inference results
+    postprocess_detection(image : image input, results : run_inference return):
+        Postprocess the image according to the inference results
     """
 
     def __init__(
@@ -65,31 +65,31 @@ class AIManager():
         self.on_new_prediction_cb = on_new_prediction_cb
         self.on_new_postprocess_cb = on_new_postprocess_cb
 
-    def preprocess_detection(self, media):
-        """Preprocess the media
+    def preprocess_detection(self, image):
+        """Preprocess the image
 
         Parameters
         ----------
-        media : media input
-            The media to preprocess
+        image : image input
+            The image to preprocess
 
         Raises
         ------
         AIManagerError
-            If couldn't preprocess the media
+            If couldn't preprocess the image
         """
 
-        img_preprocessed = self.preprocess_obj.get_preprocessed_image(media)
+        img_preprocessed = self.preprocess_obj.get_preprocessed_image(image)
 
         return img_preprocessed
 
-    def run_inference(self, media):
-        """Apply inference to the media
+    def run_inference(self, image):
+        """Apply inference to the image
 
         Parameters
         ----------
-        media : media input
-            The media to preprocess
+        image : image input
+            The image to preprocess
 
         inference_model : str
             The inference model to apply
@@ -100,20 +100,20 @@ class AIManager():
         Raises
         ------
         AIManagerError
-            If couldn't run the inference to the media
+            If couldn't run the inference to the image
         """
 
-        results = self.inference_obj.run(media)
+        results = self.inference_obj.run(image)
 
         return results
 
-    def postprocess_detection(self, media, results):
-        """Postprocess the media
+    def postprocess_detection(self, image, results):
+        """Postprocess the image
 
         Parameters
         ----------
-        media : media input
-            The media to postprocess
+        image : image input
+            The image to postprocess
 
         inference_model : str
             The inference model to apply
@@ -121,11 +121,11 @@ class AIManager():
         Raises
         ------
         AIManagerError
-            If couldn't postprocess the media
+            If couldn't postprocess the image
         """
 
         img_postprocessed = self.postprocess_obj.get_postprocessed_image(
-            media, results)
+            image, results)
 
         return img_postprocessed
 
@@ -139,32 +139,30 @@ class AIManagerOnNewImage(AIManager):
 
     Methods
     -------
-    on_new_media(media : media input):
-        Get a media input
 
     """
 
-    def process_image(self, media, model, disp_width, disp_height):
-        """Get a media input
+    def process_image(self, image, model, disp_width, disp_height):
+        """Get a image input
 
         Parameters
         ----------
         callback: function
-            The callback function to receive the media
+            The callback function to receive the image
 
         Raises
         ------
         AIManagerError
-            If couldn't get the media
+            If couldn't get the image
         """
 
-        media_preprocessed = self.preprocess_detection(media)
+        image_preprocessed = self.preprocess_detection(image)
 
-        inference_results = self.run_inference(media_preprocessed)
+        inference_results = self.run_inference(image_preprocessed)
 
-        self.on_new_prediction_cb(media_preprocessed, inference_results)
+        self.on_new_prediction_cb(image_preprocessed, inference_results)
 
-        media_postprocessed = self.postprocess_detection(
-            media, inference_results)
+        image_postprocessed = self.postprocess_detection(
+            image, inference_results)
 
-        self.on_new_postprocess_cb(media_preprocessed)
+        self.on_new_postprocess_cb(image_preprocessed)
