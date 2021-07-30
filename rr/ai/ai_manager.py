@@ -47,9 +47,7 @@ class AIManager():
             self,
             model,
             disp_width,
-            disp_height,
-            on_new_prediction_cb,
-            on_new_postprocess_cb):
+            disp_height):
         """
         Constructor for the AI Manager object
         """
@@ -61,9 +59,6 @@ class AIManager():
 
         self.postprocess_obj = PostProcessDetection(
             model, disp_width, disp_height)
-
-        self.on_new_prediction_cb = on_new_prediction_cb
-        self.on_new_postprocess_cb = on_new_postprocess_cb
 
     def preprocess_detection(self, image):
         """Preprocess the image
@@ -141,6 +136,19 @@ class AIManagerOnNewImage(AIManager):
     -------
 
     """
+
+    def __init__(
+            self,
+            model,
+            disp_width,
+            disp_height,
+            on_new_prediction_cb,
+            on_new_postprocess_cb):
+
+        super().__init__(model, disp_width, disp_height)
+
+        self.on_new_prediction_cb = on_new_prediction_cb
+        self.on_new_postprocess_cb = on_new_postprocess_cb
 
     def process_image(self, image, model, disp_width, disp_height):
         """Get a image input
