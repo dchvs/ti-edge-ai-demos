@@ -25,23 +25,31 @@ class AIManager():
 
     Attributes
     ----------
+    preprocess_obj : PreProcessDetection object
+        The PreProcessDetection object
+
+    preprocess_obj : PreProcessDetection object
+        The PreProcessDetection object
 
     Methods
     -------
-    new_media(media : media input):
-        Get a media input
+    preprocess_detection(media : media input)
+        Preprocess the media according to the model
 
-    preprocess(media : media input, model : str)
-        Preprocess the media
-
-    run_inference(media : media input, model : str):
+    run_inference(media : media input):
         Apply inference to the media
 
-    postprocess(self, media, inference_model):
-        Postprocess the media
+    postprocess_detection(media : media input, results : run_inference return):
+        Postprocess the media according to the inference results
     """
 
-    def __init__(self, media, model, disp_width, disp_height):
+    def __init__(
+            self,
+            model,
+            disp_width,
+            disp_height,
+            on_new_prediction_cb,
+            on_new_postprocess_cb):
         """
         Constructor for the AI Manager object
         """
@@ -53,6 +61,9 @@ class AIManager():
 
         self.postprocess_obj = PostProcessDetection(
             model, disp_width, disp_height)
+
+        self.on_new_prediction_cb = on_new_prediction_cb
+        self.on_new_postprocess_cb = on_new_postprocess_cb
 
     def preprocess_detection(self, media):
         """Preprocess the media
@@ -133,7 +144,7 @@ class AIManagerOnNewImage(AIManager):
 
     """
 
-    def on_new_media(self, callback, model, disp_width, disp_height):
+    def process_image(self, media, model, disp_width, disp_height):
         """Get a media input
 
         Parameters
@@ -147,13 +158,13 @@ class AIManagerOnNewImage(AIManager):
             If couldn't get the media
         """
 
-        media = callback()
-
         media_preprocessed = self.preprocess_detection(media)
 
         inference_results = self.run_inference(media_preprocessed)
 
-        img_postprocessed = self.postprocess_detection(
+        self.on_new_prediction_cb(media_preprocessed, inference_results)
+
+        media_postprocessed = self.postprocess_detection(
             media, inference_results)
 
-        return img_postprocessed
+        self.on_new_postprocess_cb(media_preprocessed)
