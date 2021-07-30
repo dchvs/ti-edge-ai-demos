@@ -14,6 +14,7 @@ import cv2
 import numpy as np
 import random
 import unittest
+from unittest.mock import MagicMock
 
 from TI.postprocess import PostProcessDetection
 from TI.preprocess import PreProcessDetection
@@ -42,10 +43,20 @@ def create_img(width, height, rgb_color=(0, 0, 0)):
     return img
 
 
-def send_img():
+def mock_img():
     global width, height, color
 
     return create_img(width, height, rgb_color=color)
+
+
+def mock_on_new_prediction_cb(img, inference_results):
+    global width, height, color
+
+    return create_img(width, height, rgb_color=color)
+
+
+def mock_on_new_postprocess_cb(img):
+    pass
 
 
 class TestAIManager(unittest.TestCase):
@@ -55,7 +66,11 @@ class TestAIManager(unittest.TestCase):
         self.model = model
         self.img = create_img(width, height, rgb_color=color)
         self.ai_manager = AIManager(
-            self.img, self.model, disp_width, disp_height)
+            self.model,
+            disp_width,
+            disp_height,
+            mock_on_new_prediction_cb,
+            mock_on_new_postprocess_cb)
 
         self.disp_width = disp_width
         self.disp_height = disp_height
@@ -106,13 +121,24 @@ class TestAIManagerOnNewImage(unittest.TestCase):
         self.disp_width = disp_width
         self.disp_height = disp_height
 
-        self.ai_manager = AIManagerOnNewImage(
-            send_img, model, disp_width, disp_height)
+        self.img = mock_img()
 
-    def teston_new_media(self):
-        result_img = self.ai_manager.on_new_media(
-            send_img, self.model, disp_width, disp_height)
-        self.assertTrue(0 != result_img.size)
+        self.mock_on_new_prediction_cb = MagicMock()
+        self.mock_on_new_postprocess_cb = MagicMock()
+
+        self.ai_manager = AIManagerOnNewImage(
+            model,
+            disp_width,
+            disp_height,
+            self.mock_on_new_prediction_cb,
+            self.mock_on_new_postprocess_cb)
+
+    def testprocess_image(self):
+        self.ai_manager.process_image(
+            self.img, self.model, self.disp_width, self.disp_height)
+
+        self.mock_on_new_prediction_cb.assert_called_once()
+        self.mock_on_new_postprocess_cb.assert_called_once()
 
 
 if __name__ == '__main__':
