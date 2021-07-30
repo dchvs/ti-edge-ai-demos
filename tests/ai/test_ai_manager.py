@@ -39,16 +39,6 @@ def mock_img():
     return create_img(width, height, rgb_color=color)
 
 
-def mock_on_new_prediction_cb(img, inference_results):
-    global width, height, color
-
-    return create_img(width, height, rgb_color=color)
-
-
-def mock_on_new_postprocess_cb(img):
-    pass
-
-
 class TestAIManager(unittest.TestCase):
     def setUp(self):
         global model, width, height, disp_width, disp_height
@@ -58,9 +48,7 @@ class TestAIManager(unittest.TestCase):
         self.ai_manager = AIManager(
             self.model,
             disp_width,
-            disp_height,
-            mock_on_new_prediction_cb,
-            mock_on_new_postprocess_cb)
+            disp_height)
 
         self.disp_width = disp_width
         self.disp_height = disp_height
