@@ -10,18 +10,19 @@ gi.require_version('GLib', '2.0')  # nopep8
 from gi.repository import Gst as gst
 from gi.repository import GLib
 
-from rr.gstreamer.gstmedia import GstMedia
-from rr.gstreamer.gstmedia import GstMediaError
 import unittest
 
+from rr.gstreamer.gst_media import GstMedia
+from rr.gstreamer.gst_media import GstMediaError
 
-def _get_mediaState(media):
+
+def _get_media_State(media):
     return media.get_state(gst.CLOCK_TIME_NONE)[1]
 
 
 class TestGstMedia(unittest.TestCase):
     def setUp(self):
-        self.desc = "videotestsrc ! fakesink"
+        self.desc = "videotestsrc is-live=true ! fakesink async=false"
 
         self.gstmedia = GstMedia()
 
@@ -35,21 +36,21 @@ class TestGstMedia(unittest.TestCase):
         assert self.gstmedia.get_media() is None, "Failed to delete the media object properly"
 
     def testplay_media(self):
-        media_state = _get_mediaState(self.gstmedia.get_media())
+        media_state = _get_media_State(self.gstmedia.get_media())
         self.assertEqual(gst.State.NULL, media_state)
 
         self.gstmedia.play_media()
-        media_state = _get_mediaState(self.gstmedia.get_media())
+        media_state = _get_media_State(self.gstmedia.get_media())
         self.assertEqual(gst.State.PLAYING, media_state)
 
     def teststop_media(self):
         self.gstmedia.play_media()
-        media_state = _get_mediaState(self.gstmedia.get_media())
+        media_state = _get_media_State(self.gstmedia.get_media())
         self.assertEqual(gst.State.PLAYING, media_state)
 
         self.gstmedia.stop_media()
 
-        media_state = _get_mediaState(self.gstmedia.get_media())
+        media_state = _get_media_State(self.gstmedia.get_media())
         self.assertEqual(gst.State.NULL, media_state)
 
     def testdelete_multiple_times(self):
@@ -62,7 +63,7 @@ class TestGstMedia(unittest.TestCase):
 class TestGstMediaFail(unittest.TestCase):
     def testcreate_media(self):
         # Force desc to make media fail
-        self.desc = "videotestsrc ! "
+        self.desc = "videotestsrc is-live=true ! "
         self.gstmedia = GstMedia()
 
         with self.assertRaisesRegex(GstMediaError, "Unable to create the media"):
@@ -77,7 +78,7 @@ class TestGstMediaFail(unittest.TestCase):
         with self.assertRaisesRegex(GstMediaError, "Unable to play the media"):
             self.gstmedia.play_media()
 
-        media_state = _get_mediaState(self.gstmedia.get_media())
+        media_state = _get_media_State(self.gstmedia.get_media())
         self.assertNotEqual(gst.State.PLAYING, media_state)
 
     def teststop_media(self):
@@ -90,7 +91,7 @@ class TestGstMediaFail(unittest.TestCase):
         with self.assertRaisesRegex(GstMediaError, "Unable to stop the media"):
             self.gstmedia.stop_media()
 
-        media_state = _get_mediaState(self.gstmedia.get_media())
+        media_state = _get_media_State(self.gstmedia.get_media())
         self.assertNotEqual(gst.State.PLAYING, media_state)
 
 
