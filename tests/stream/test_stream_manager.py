@@ -44,7 +44,7 @@ class TestStreamManager(unittest.TestCase):
         ai_manager.process_image = MagicMock(
             mock_image, model, disp_width, disp_height)
 
-        desc = "videotestsrc is-live=true ! appsink name=appsink async=false emit-signals=true"
+        desc = "videotestsrc is-live=true ! video/x-raw,width=1980,height=1280,format=BGRx ! appsink name=appsink async=false emit-signals=true"
         key = "media1"
 
         media = IMedia()
@@ -52,6 +52,8 @@ class TestStreamManager(unittest.TestCase):
 
         media_manager = MockMediaManager()
         media_manager.add_media(key, media)
+
+        media_manager.play_media()
 
         stream_manager = StreamManager(
             ai_manager,
