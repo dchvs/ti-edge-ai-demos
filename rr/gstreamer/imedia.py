@@ -101,6 +101,18 @@ class IMedia(Media):
         except MediaError as e:
             raise IMediaError("Unable to stop the media") from e
 
+    def push_buffer(self, on_new_buffer):
+        """
+
+        Raises
+        ------
+        IMediaError
+        """
+        try:
+            self.media.push_buffer(on_new_buffer)
+        except MediaError as e:
+            raise IMediaError("Unable to push buffer with the media") from e
+
     def get_media(self):
         """Getter for the media object
 
