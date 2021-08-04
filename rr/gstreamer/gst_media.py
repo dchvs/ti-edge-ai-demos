@@ -4,11 +4,41 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
+import time
 import gi  # nopep8
 gi.require_version('Gst', '1.0')  # nopep8
 gi.require_version('GLib', '2.0')  # nopep8
 from gi.repository import Gst as gst  # nopep8
 from gi.repository import GLib  # nopep8
+
+def construct_image_from_gst_sample(sample):
+    buf = sample.get_buffer()
+    caps = sample.get_caps()
+
+    shape_ = (caps.get_structure(0).get_value("height"),
+              caps.get_structure(0).get_value("width"),
+              # Switch this value according to the caps format
+              3)
+
+    image_array = np.ndarray(
+        shape=shape_,
+        dtype=np.uint8,
+        buffer=buf.extract_dup(
+            0,
+            buf.get_size()))
+
+    return image_array
+
+
+def _on_new_buffer(appsink, data):
+    global image_array_
+
+    sample = appsink.emit("pull-sample")
+
+    image_array = construct_image_from_gst_sample(sample)
+    image_array_ = image_array
+
+    return gst.FlowReturn.OK
 
 
 class GstMediaError(RuntimeError):
@@ -103,6 +133,15 @@ class GstMedia():
         ret = self._pipeline.set_state(gst.State.NULL)
         if gst.StateChangeReturn.FAILURE == ret:
             raise GstMediaError("Unable to stop the media")
+
+    def push_buffer(self, on_new_buffer):
+        global image_array_
+
+        appsink = self._pipeline.get_by_name("appsink")
+        appsink.connect("new-sample", _on_new_buffer, appsink)
+
+        time.sleep(1)
+        on_new_buffer(image_array_)
 
     def get_media(self):
         """Getter for the private media object
