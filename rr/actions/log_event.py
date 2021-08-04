@@ -27,18 +27,18 @@ def log(path, media, image, inf_results, fieldnames):
     media_name = media.get_name()
     image_time = image.get_timestamp()
 
-    f = open(path, 'a', newline='')
-    csv_writer = csv.DictWriter(f, fieldnames=fieldnames)
-    for instance in inf_results['instances']:
-        label_max = find_max_probability(instance['labels'])
-        csv_writer.writerow({'name': media_name,
-                             'time': image_time,
-                             'label': label_max['label'],
-                             'probability': label_max['probability'],
-                             'bbox-x': instance['bbox']['x'],
-                             'bbox-y': instance['bbox']['y'],
-                             'bbox-width': instance['bbox']['width'],
-                             'bbox-height': instance['bbox']['height']})
+    with open(path, 'a', newline='') as f:
+        csv_writer = csv.DictWriter(f, fieldnames=fieldnames)
+        for instance in inf_results['instances']:
+            label_max = find_max_probability(instance['labels'])
+            csv_writer.writerow({'name': media_name,
+                                 'time': image_time,
+                                 'label': label_max['label'],
+                                 'probability': label_max['probability'],
+                                 'bbox-x': instance['bbox']['x'],
+                                 'bbox-y': instance['bbox']['y'],
+                                 'bbox-width': instance['bbox']['width'],
+                                 'bbox-height': instance['bbox']['height']})
 
 
 def find_max_probability(labels):
