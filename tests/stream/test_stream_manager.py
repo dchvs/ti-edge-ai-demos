@@ -20,17 +20,9 @@ disp_width = 2040
 disp_height = 1920
 
 
-def mock_create_image(width, height, rgb_color=(0, 0, 0)):
-    image = np.empty((height, width, 3), np.uint8)
-    color = tuple(reversed(rgb_color))
-    image[:] = color
-
-    return image
-
-
 class MockMediaManager(MediaManager):
-    def push_buffer(self, callback):
-        callback(mock_create_image(1980, 1280, rgb_color=(100, 100, 100)))
+    def install_callback(self, callback):
+        self.callback = callback
 
 
 class TestStreamManager(unittest.TestCase):
