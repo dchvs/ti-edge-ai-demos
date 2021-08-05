@@ -42,3 +42,13 @@ class StreamManager():
 
         self.ai_manager = ai_manager
         self.media_manager = media_manager
+
+        cb = OnNewImage(ai_manager)
+        self.media_manager.push_buffer(cb)
+
+    def start(self):
+        """
+        Start the stream server
+        """
+
+        self.media_manager.play()
