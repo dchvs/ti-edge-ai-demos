@@ -6,7 +6,8 @@
 import unittest
 
 import csv
-from rr.actions.log_event import LogEvent, LogEventError, log, validate_csv, set_file_headers, find_max_probability, log
+import os
+from rr.actions.log_event import LogEvent, LogEventError
 
 
 class mockMedia():
@@ -25,59 +26,14 @@ class mockImage():
         return self._timestamp
 
 
-class TestLogEventSuccess(unittest.TestCase):
+class TestLogEvent(unittest.TestCase):
+    csv_file_good = 'tests/actions/test_log.csv'
 
     def setUp(self):
-        open('tests/actions/test_log.csv', 'w').close()
-
-    def test_validate_csv_success(self):
-        csv_file_good = 'test_path/test.csv'
-        validate_good = validate_csv(csv_file_good)
-
-        self.assertEqual(csv_file_good, validate_good)
-
-    def test_validate_csv_error(self):
-        csv_file_invalid = 'test_path/test.txt'
-
-        with self.assertRaises(LogEventError) as e:
-            validate_fail = validate_csv(csv_file_invalid)
-
-        self.assertEqual(
-            "The file used for logging must have a .csv file extension", str(
-                e.exception))
-
-    def test_set_header_success(self):
-        csv_file_good = 'tests/actions/test_log.csv'
-        fieldnames = [
-            'name',
-            'time',
-            'label',
-            'probability',
-            'bbox-x',
-            'bbox-y',
-            'bbox-width',
-            'bbox-height']
-
-        result_fieldname = set_file_headers(csv_file_good)
-
-        with open(csv_file_good) as f:
-            reader = csv.reader(f)
-            first_line = next(reader)
-
-        self.assertEqual(fieldnames, first_line)
-        self.assertEqual(fieldnames, result_fieldname)
-
-    def test_max_probability_success(self):
-        labels = [{"label": 'ZZZZ', "probability": 0.99},
-                  {"label": 'AAAA', "probability": 0.01}]
-
-        label_max = find_max_probability(labels)
-        expected_label = {"label": 'ZZZZ', "probability": 0.99}
-
-        self.assertEqual(expected_label, label_max)
+        if os.path.exists(self.csv_file_good):
+            os.remove(self.csv_file_good)
 
     def test_log_success(self):
-        csv_file_good = 'tests/actions/test_log.csv'
         media = mockMedia('test_media_name')
         image = mockImage('2021-07-27 12:00:20')
         inf_results = {
@@ -93,17 +49,9 @@ class TestLogEventSuccess(unittest.TestCase):
                             "label": 'XXXX', "probability": 0.97}, {
                             "label": 'WWWW', "probability": 0.01}, ], "bbox": {
                         "x": 'X', "y": 'Y', "width": 'width', "height": 'height'}}]}
-        fieldnames = [
-            'name',
-            'time',
-            'label',
-            'probability',
-            'bbox-x',
-            'bbox-y',
-            'bbox-width',
-            'bbox-height']
 
-        log(csv_file_good, media, image, inf_results, fieldnames)
+        log_action = LogEvent(self.csv_file_good)
+        log_action.execute(media, image, inf_results)
 
         first_row_ret = [
             'test_media_name',
@@ -114,6 +62,7 @@ class TestLogEventSuccess(unittest.TestCase):
             'Y',
             'width',
             'height']
+
         second_row_ret = [
             'test_media_name',
             '2021-07-27 12:00:20',
@@ -124,33 +73,31 @@ class TestLogEventSuccess(unittest.TestCase):
             'width',
             'height']
 
-        with open(csv_file_good) as f:
+        with open(self.csv_file_good) as f:
             reader = csv.reader(f)
+            self.assertEqual(log_action._fieldnames, next(reader))
             self.assertEqual(first_row_ret, next(reader))
             self.assertEqual(second_row_ret, next(reader))
 
-    def test_execute_success(self):
-        csv_file_good = 'tests/actions/test_log.csv'
-        media = mockMedia('test_media_name')
-        image = mockImage('2021-07-27 12:00:20')
-        inf_results = {
-            "instances": [
-                {
-                    "labels": [
-                        {
-                            "label": 'ZZZZ', "probability": 0.99}, {
-                            "label": 'AAAA', "probability": 0.01}, ], "bbox": {
-                        "x": 'X', "y": 'Y', "width": 'width', "height": 'height'}}, {
-                    "labels": [
-                        {
-                            "label": 'XXXX', "probability": 0.97}, {
-                            "label": 'WWWW', "probability": 0.01}, ], "bbox": {
-                        "x": 'X', "y": 'Y', "width": 'width', "height": 'height'}}]}
+    def test_log_no_parent_dir(self):
+        no_parent = 'tests/actions/no/parent/dir/test_log.csv'
 
-        log_action = LogEvent(csv_file_good)
-        execute_ret = log_action.execute(media, image, inf_results)
+        with self.assertRaises(LogEventError) as e:
+            log_action = LogEvent(no_parent)
 
-        self.assertEqual(None, execute_ret)
+        self.assertEqual(
+            "Unable to open logging events file for writing", str(
+                e.exception))
+
+    def test_log_non_writable(self):
+        no_parent = '/'
+
+        with self.assertRaises(LogEventError) as e:
+            log_action = LogEvent(no_parent)
+
+        self.assertEqual(
+            "Unable to open logging events file for writing", str(
+                e.exception))
 
 
 if __name__ == '__main__':

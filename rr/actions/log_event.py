@@ -7,38 +7,23 @@ import csv
 import threading
 
 
-def log(path, media, image, inf_results, fieldnames):
-    """ Logs the event to the logging file
+class LogEventError(RuntimeError):
+    pass
+
+
+def open_file(path):
+    """ Validates and opens a file from the given path
 
     Parameters
     ----------
     path : str
         The path to the logging file
-    media : media obj
-        The media object
-    image : image obj
-        The image object
-    inf_results : dict
-        The inference results
-    fieldnames : list
-        The list with the file fieldnames
     """
-
-    media_name = media.get_name()
-    image_time = image.get_timestamp()
-
-    with open(path, 'a', newline='') as f:
-        csv_writer = csv.DictWriter(f, fieldnames=fieldnames)
-        for instance in inf_results['instances']:
-            label_max = find_max_probability(instance['labels'])
-            csv_writer.writerow({'name': media_name,
-                                 'time': image_time,
-                                 'label': label_max['label'],
-                                 'probability': label_max['probability'],
-                                 'bbox-x': instance['bbox']['x'],
-                                 'bbox-y': instance['bbox']['y'],
-                                 'bbox-width': instance['bbox']['width'],
-                                 'bbox-height': instance['bbox']['height']})
+    try:
+        return open(path, 'a', newline='')
+    except Exception as e:
+        raise LogEventError(
+            "Unable to open logging events file for writing") from e
 
 
 def find_max_probability(labels):
@@ -58,53 +43,21 @@ def find_max_probability(labels):
     return label_max_prob
 
 
-def validate_csv(path):
-    """ Validates that the file is a csv file
-
-    Parameters
-    ----------
-    path : str
-        The path to the csv file
-
-    Raises
-    ------
-    LogEventError
-        If the file is not a csv file
-    """
-
-    if path.endswith('.csv'):
-        return path
-    else:
-        raise LogEventError(
-            "The file used for logging must have a .csv file extension")
-
-
-def set_file_headers(path):
+def init_writer(log_file, headers):
     """ Sets the headers for the logging file
 
     Parameters
     ----------
-    path : str
-        The path to the csv file
+    log_file : stream
+        An open stream to write the headers to
+    headers : List(str)
+        A list of strings containing the headers to write
     """
 
-    fieldnames = [
-        'name',
-        'time',
-        'label',
-        'probability',
-        'bbox-x',
-        'bbox-y',
-        'bbox-width',
-        'bbox-height']
-    with open(path, 'w', newline='') as f:
-        csv_writer = csv.DictWriter(f, fieldnames=fieldnames)
-        csv_writer.writeheader()
-        return fieldnames
+    csv_writer = csv.DictWriter(log_file, fieldnames=headers)
+    csv_writer.writeheader()
 
-
-class LogEventError(RuntimeError):
-    pass
+    return csv_writer
 
 
 class LogEvent():
@@ -126,13 +79,58 @@ class LogEvent():
         Execute the file logging
     """
 
+    _fieldnames = [
+        'name',
+        'time',
+        'label',
+        'probability',
+        'bbox-x',
+        'bbox-y',
+        'bbox-width',
+        'bbox-height'
+    ]
+
     def __init__(self, path):
         """ Constructor for the Log Event object
         """
 
-        self._path = validate_csv(path)
-        self._fieldnames = set_file_headers(self._path)
+        self._path = path
+        self._file = None
+        self._file = open_file(self._path)
+        self._writer = init_writer(self._file, self._fieldnames)
         self._mutex = threading.Lock()
+
+    def __del__(self):
+        if self._file:
+            self._file.close()
+
+    def _log(self, media, image, inf_results):
+        """ Logs the event to the logging file
+
+        Parameters
+        ----------
+        media : media obj
+            The media object
+        image : image obj
+            The image object
+        inf_results : dict
+            The inference results
+        """
+
+        media_name = media.get_name()
+        image_time = image.get_timestamp()
+
+        for instance in inf_results['instances']:
+            label_max = find_max_probability(instance['labels'])
+            self._writer.writerow({'name': media_name,
+                                  'time': image_time,
+                                   'label': label_max['label'],
+                                   'probability': label_max['probability'],
+                                   'bbox-x': instance['bbox']['x'],
+                                   'bbox-y': instance['bbox']['y'],
+                                   'bbox-width': instance['bbox']['width'],
+                                   'bbox-height': instance['bbox']['height']})
+        self._file.flush()
 
     def execute(self, media, image, inf_results):
         """ Executes the log action
@@ -148,5 +146,5 @@ class LogEvent():
         """
 
         self._mutex.acquire()
-        log(self._path, media, image, inf_results, self._fieldnames)
+        self._log(media, image, inf_results)
         self._mutex.release()
