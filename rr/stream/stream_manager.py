@@ -51,4 +51,4 @@ class StreamManager():
         Start the stream server
         """
 
-        self.media_manager.play()
+        self.media_manager.play_media()
