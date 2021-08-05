@@ -43,6 +43,8 @@ class MediaManager():
 
         self._Dict = {}
 
+        self.callback = None
+
     def add_media(self, key, media):
         """Install a new media into a dictionary
 
@@ -116,6 +118,13 @@ class MediaManager():
                 self._Dict[key].stop_media()
             except IMediaError as e:
                 raise MediaManagerError("Unable to stop media") from e
+
+    def install_callback(self, callback):
+        for key in self._Dict:
+            try:
+                self._Dict[key].install_callback(callback)
+            except IMediaError as e:
+                raise MediaManagerError("Unable to install callback") from e
 
     def _get_media_dict(self):
         return self._Dict
