@@ -24,14 +24,6 @@ disp_height = 1920
 mock_image = MockImage()
 
 
-class MockMediaManager(MediaManager):
-    def install_callback(self, callback):
-        self.callback = callback
-
-    def play_media(self):
-        self.callback(mock_image)
-
-
 class TestStreamManager(unittest.TestCase):
     def testsuccess(self):
         self.mock_on_new_prediction_cb = MagicMock()
@@ -50,7 +42,7 @@ class TestStreamManager(unittest.TestCase):
         media = GstMedia()
         media.create_media(desc)
 
-        media_manager = MockMediaManager()
+        media_manager = MediaManager()
         media_manager.add_media(key, media)
 
         stream_manager = StreamManager(
