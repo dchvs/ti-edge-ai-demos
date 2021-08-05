@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from rr.ai.ai_manager import AIManagerOnNewImage
-from rr.gstreamer.imedia import IMedia
+from rr.gstreamer.gst_media import GstMedia
 from rr.gstreamer.media_manager import MediaManager
 from rr.stream.stream_manager import StreamManager
 from rr.stream.stream_manager import OnNewImage
@@ -47,7 +47,7 @@ class TestStreamManager(unittest.TestCase):
         desc = "videotestsrc is-live=true ! video/x-raw,width=640,height=480,format=BGRx ! appsink name=appsink async=false emit-signals=true"
         key = "media1"
 
-        media = IMedia()
+        media = GstMedia()
         media.create_media(desc)
 
         media_manager = MockMediaManager()
