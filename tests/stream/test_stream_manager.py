@@ -28,12 +28,13 @@ def mock_create_image(width, height, rgb_color=(0, 0, 0)):
     return image
 
 
-def push_buffer(callback):
-    callback(mock_create_image(1980, 1280, rgb_color=(100, 100, 100)))
+class MockMediaManager(MediaManager):
+    def push_buffer(self, callback):
+        callback(mock_create_image(1980, 1280, rgb_color=(100, 100, 100)))
 
 
 class TestStreamManager(unittest.TestCase):
-    def setUp(self):
+    def testsuccess(self):
         self.mock_on_new_prediction_cb = MagicMock()
         self.mock_on_new_postprocess_cb = MagicMock()
 
@@ -47,19 +48,10 @@ class TestStreamManager(unittest.TestCase):
         media = IMedia()
         media.create_media(desc)
 
-        mock_on_new_image_cb = MagicMock()
-
-        media_manager = MediaManager()
+        media_manager = MockMediaManager()
         media_manager.add_media(key, media)
 
-        push_buffer(mock_on_new_image_cb)
-
         stream_manager = StreamManager(ai_manager, media_manager)
-
-        mock_on_new_image_cb.assert_called_once()
-
-    def teststream(self):
-        pass
 
 
 if __name__ == '__main__':
