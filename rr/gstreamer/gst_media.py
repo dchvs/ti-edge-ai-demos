@@ -4,12 +4,15 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
-import time
 import gi  # nopep8
 gi.require_version('Gst', '1.0')  # nopep8
 gi.require_version('GLib', '2.0')  # nopep8
 from gi.repository import Gst as gst  # nopep8
 from gi.repository import GLib  # nopep8
+
+import numpy as np
+import time
+
 
 def construct_image_from_gst_sample(sample):
     buf = sample.get_buffer()
@@ -28,17 +31,6 @@ def construct_image_from_gst_sample(sample):
             buf.get_size()))
 
     return image_array
-
-
-def _on_new_buffer(appsink, data):
-    global image_array_
-
-    sample = appsink.emit("pull-sample")
-
-    image_array = construct_image_from_gst_sample(sample)
-    image_array_ = image_array
-
-    return gst.FlowReturn.OK
 
 
 class GstMediaError(RuntimeError):
@@ -80,6 +72,7 @@ class GstMedia():
         gst.init(None)
 
         self._pipeline = None
+        self.callback = None
 
     def create_media(self, desc):
         """Creates the media object from a string description
@@ -121,6 +114,9 @@ class GstMedia():
         if gst.StateChangeReturn.SUCCESS != ret:
             raise GstMediaError("Unable to play the media")
 
+        # Send the buffer images to the installed callback
+        self.on_new_buffer()
+
     def stop_media(self):
         """Set the media state to stopped
 
@@ -134,14 +130,23 @@ class GstMedia():
         if gst.StateChangeReturn.FAILURE == ret:
             raise GstMediaError("Unable to stop the media")
 
-    def push_buffer(self, on_new_buffer):
-        global image_array_
+    def install_callback(self, callback):
+        self.callback = callback
 
+    def on_new_buffer(self):
         appsink = self._pipeline.get_by_name("appsink")
-        appsink.connect("new-sample", _on_new_buffer, appsink)
+        appsink.connect("new-sample", self._on_new_buffer, appsink)
 
         time.sleep(1)
-        on_new_buffer(image_array_)
+
+    def _on_new_buffer(self, appsink, data):
+        sample = appsink.emit("pull-sample")
+
+        image_array = construct_image_from_gst_sample(sample)
+
+        self.callback(image_array)
+
+        return gst.FlowReturn.OK
 
     def get_media(self):
         """Getter for the private media object
