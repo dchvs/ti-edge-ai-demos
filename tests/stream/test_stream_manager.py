@@ -21,7 +21,7 @@ disp_height = 1920
 
 
 def mock_create_image(width, height, rgb_color=(0, 0, 0)):
-    image = np.zeros((height, width, 3), np.uint8)
+    image = np.empty((height, width, 3), np.uint8)
     color = tuple(reversed(rgb_color))
     image[:] = color
 
