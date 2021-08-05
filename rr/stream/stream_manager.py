@@ -26,7 +26,7 @@ class StreamManagerError(RuntimeError):
 
 class StreamManager():
     """
-    Class that orchestrate the stream interoperations
+    Class that orchestrates the stream interoperations
 
     Attributes
     ----------
