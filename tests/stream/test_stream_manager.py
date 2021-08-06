@@ -53,7 +53,12 @@ class TestStreamManager(unittest.TestCase):
         media_manager = MockMediaManager()
         media_manager.add_media(key, media)
 
-        stream_manager = StreamManager(ai_manager, media_manager)
+        stream_manager = StreamManager(
+            ai_manager,
+            media_manager,
+            model,
+            disp_width,
+            disp_height)
 
         stream_manager.play()
         ai_manager.process_image.assert_called_once_with(
