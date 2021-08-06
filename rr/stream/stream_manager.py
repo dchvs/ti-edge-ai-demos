@@ -57,4 +57,7 @@ class StreamManager():
         Start the stream server
         """
 
-        self.media_manager.play_media()
+        try:
+            self.media_manager.play_media()
+        except MediaManagerError as e:
+            raise StreamManagerError("Unable to play the stream") from e
