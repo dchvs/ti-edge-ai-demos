@@ -13,11 +13,15 @@ disp_height = 1920
 
 
 class OnNewImage():
-    def __init__(self, ai_manager):
+    def __init__(self, ai_manager, model, disp_width, disp_height):
         self.ai_manager = ai_manager
+        self.model = model
+        self.disp_width = disp_width
+        self.disp_height = disp_height
 
     def __call__(self, image):
-        self.ai_manager.process_image(image, model, disp_width, disp_height)
+        self.ai_manager.process_image(
+            image, self.model, self.disp_width, self.disp_height)
 
 
 class StreamManagerError(RuntimeError):
@@ -43,7 +47,7 @@ class StreamManager():
         self.ai_manager = ai_manager
         self.media_manager = media_manager
 
-        cb = OnNewImage(ai_manager)
+        cb = OnNewImage(ai_manager, model, disp_width, disp_height)
         self.media_manager.install_callback(cb)
 
     def play(self):
