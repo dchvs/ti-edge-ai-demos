@@ -7,10 +7,6 @@
 from rr.ai.ai_manager import AIManagerOnNewImage
 from rr.gstreamer.media_manager import MediaManager
 
-model = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
-disp_width = 2040
-disp_height = 1920
-
 
 class OnNewImage():
     def __init__(self, ai_manager, model, disp_width, disp_height):
@@ -39,7 +35,13 @@ class StreamManager():
     -------
     """
 
-    def __init__(self, ai_manager, media_manager):
+    def __init__(
+            self,
+            ai_manager,
+            media_manager,
+            model,
+            disp_width,
+            disp_height):
         """
         Constructor for the Stream Manager object
         """
