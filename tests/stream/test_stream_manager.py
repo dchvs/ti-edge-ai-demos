@@ -4,8 +4,6 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
-import numpy as np
-import cv2
 import unittest
 from unittest.mock import MagicMock
 
