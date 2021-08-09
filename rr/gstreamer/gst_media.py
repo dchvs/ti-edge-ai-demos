@@ -141,13 +141,15 @@ class GstMedia():
             appsink = self._pipeline.get_by_name("appsink")
             appsink.connect("new-sample", self._on_new_buffer, appsink)
             time.sleep(1)
-        except BaseException:
-            raise GstMediaError("Unable to get sample from buffer")
+        except AttributeError as e:
+            raise GstMediaError("Unable to get sample from buffer") from e
 
     def _on_new_buffer(self, appsink, data):
         sample = appsink.emit("pull-sample")
 
         image_array = construct_image_from_gst_sample(sample)
+        if image_array is None:
+            return gst.FlowReturn.ERROR
 
         self.callback(image_array)
 
