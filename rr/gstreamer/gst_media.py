@@ -142,7 +142,7 @@ class GstMedia():
             appsink.connect("new-sample", self._on_new_buffer, appsink)
             time.sleep(1)
         except AttributeError as e:
-            raise GstMediaError("Unable to get sample from buffer") from e
+            raise GstMediaError("Unable to install buffer callback") from e
 
     def _on_new_buffer(self, appsink, data):
         sample = appsink.emit("pull-sample")
