@@ -7,6 +7,7 @@ import unittest
 
 import os
 from rr.actions.gst_recording_media import GstRecordingMedia
+from rr.actions.gst_recording_media import GstRecordingMediaError
 
 import gi  # nopep8
 gi.require_version('Gst', '1.0')  # nopep8
@@ -59,7 +60,7 @@ class TestGstRecordingMedia(unittest.TestCase):
         reader = cv.VideoCapture(filename)
         self.assertEqual(True, reader.isOpened())
 
-        for i in range(num_bufs):
+        for i in range(num_bufs - 1):
             ret, frame = reader.read()
             self.assertEqual(True, ret)
             self.assertEqual(True, frame is not None)
@@ -67,6 +68,14 @@ class TestGstRecordingMedia(unittest.TestCase):
         ret, frame = reader.read()
         self.assertEqual(False, ret)
         self.assertEqual(None, frame)
+
+    def test_recording_fail(self):
+        filename = 'invalid/path/file.ts'
+
+        with self.assertRaises(GstRecordingMediaError) as e:
+            rec = GstRecordingMedia(filename)
+
+        self.assertEqual("Invalid path for recording file", str(e.exception))
 
 
 if __name__ == '__main__':
