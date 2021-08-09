@@ -13,25 +13,6 @@ from gi.repository import Gst as gst  # nopep8
 from gi.repository import GLib  # nopep8
 
 
-def construct_image_from_gst_sample(sample):
-    buf = sample.get_buffer()
-    caps = sample.get_caps()
-
-    shape_ = (caps.get_structure(0).get_value("height"),
-              caps.get_structure(0).get_value("width"),
-              # Switch this value according to the caps format
-              3)
-
-    image_array = np.ndarray(
-        shape=shape_,
-        dtype=np.uint8,
-        buffer=buf.extract_dup(
-            0,
-            buf.get_size()))
-
-    return image_array
-
-
 class GstMediaError(RuntimeError):
     pass
 
@@ -147,11 +128,23 @@ class GstMedia():
     def _on_new_buffer(self, appsink, data):
         sample = appsink.emit("pull-sample")
 
-        image_array = construct_image_from_gst_sample(sample)
-        if image_array is None:
+        buf = sample.get_buffer()
+        caps = sample.get_caps()
+
+        shape_ = (caps.get_structure(0).get_value("height"),
+                  caps.get_structure(0).get_value("width"),
+                  # Switch this value according to the caps format
+                  3)
+
+        gst_memory = buf.get_all_memory()
+        ret, minfo = gst_memory.map(gst.MapFlags.READ)
+
+        if minfo.data is None:
             return gst.FlowReturn.ERROR
 
-        self.callback(image_array)
+        self.callback(minfo.data)
+
+        gst_memory.unmap(minfo)
 
         return gst.FlowReturn.OK
 
