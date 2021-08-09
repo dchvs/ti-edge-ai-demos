@@ -15,15 +15,15 @@ from rr.gstreamer.gst_media import GstMedia
 
 
 class GstRecordingMedia(GstMedia):
-    def __init__(self):
+    def __init__(self, filename):
         super().__init__()
+        self._filename = filename
 
     def _init_pipe(self, image):
-        desc = "appsrc name=src ! video/x-raw,width=%d,height=%d,format=%s,framerate=30/1 ! videoconvert ! x264enc speed-preset=ultrafast tune=zerolatency ! h264parse ! mpegtsmux ! filesink location=/tmp/file.ts name=sink" % (
-            image.get_width(), image.get_height(), GstVideo.VideoFormat.to_string(image.get_format()))
+        desc = "appsrc name=src ! video/x-raw,width=%d,height=%d,format=%s,framerate=30/1 ! videoconvert ! x264enc speed-preset=ultrafast tune=zerolatency ! h264parse ! mpegtsmux ! filesink location=%s" % (
+            image.get_width(), image.get_height(), GstVideo.VideoFormat.to_string(image.get_format()), self._filename)
         self.create_media(desc)
         self._appsrc = self._pipeline.get_by_name('src')
-        self._filesink = self._pipeline.get_by_name('sink')
 
         self.play_media()
 
@@ -34,4 +34,5 @@ class GstRecordingMedia(GstMedia):
         self._appsrc.emit("push-buffer", buffer)
 
     def __del__(self):
+        self.stop_media()
         self.delete_media()

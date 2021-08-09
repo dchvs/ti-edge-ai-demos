@@ -45,8 +45,9 @@ class MockImage():
 
 class TestGstRecordingMedia(unittest.TestCase):
     def test_recording_success(self):
+        filename = '/tmp/file.ts'
         img = MockImage()
-        rec = GstRecordingMedia()
+        rec = GstRecordingMedia(filename)
         num_bufs = 10
 
         for i in range(num_bufs):
@@ -55,12 +56,13 @@ class TestGstRecordingMedia(unittest.TestCase):
         rec.stop_media()
         ret = None
 
-        reader = cv.VideoCapture('/tmp/file.ts')
+        reader = cv.VideoCapture(filename)
         self.assertEqual(True, reader.isOpened())
 
         for i in range(num_bufs):
             ret, frame = reader.read()
             self.assertEqual(True, ret)
+            self.assertEqual(True, frame is not None)
 
         ret, frame = reader.read()
         self.assertEqual(False, ret)
