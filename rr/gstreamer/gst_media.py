@@ -115,7 +115,7 @@ class GstMedia():
             raise GstMediaError("Unable to play the media")
 
         # Send the buffer images to the installed callback
-        self.on_new_buffer()
+        self.install_buffer_callback()
 
     def stop_media(self):
         """Set the media state to stopped
@@ -136,7 +136,7 @@ class GstMedia():
 
         self.callback = callback
 
-    def on_new_buffer(self):
+    def install_buffer_callback(self):
         try:
             appsink = self._pipeline.get_by_name("appsink")
             appsink.connect("new-sample", self._on_new_buffer, appsink)
