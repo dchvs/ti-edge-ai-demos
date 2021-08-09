@@ -4,7 +4,7 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
-from rr.gstreamer.imedia import IMediaError
+from rr.gstreamer.gst_media import GstMediaError as MediaError
 
 
 class MediaManagerError(RuntimeError):
@@ -101,7 +101,7 @@ class MediaManager():
         for key in self._Dict:
             try:
                 self._Dict[key].play_media()
-            except IMediaError as e:
+            except MediaError as e:
                 raise MediaManagerError("Unable to start media") from e
 
     def stop_media(self):
@@ -116,14 +116,14 @@ class MediaManager():
         for key in self._Dict:
             try:
                 self._Dict[key].stop_media()
-            except IMediaError as e:
+            except MediaError as e:
                 raise MediaManagerError("Unable to stop media") from e
 
     def install_callback(self, callback):
         for key in self._Dict:
             try:
                 self._Dict[key].install_callback(callback)
-            except IMediaError as e:
+            except MediaError as e:
                 raise MediaManagerError("Unable to install callback") from e
 
     def _get_media_dict(self):
