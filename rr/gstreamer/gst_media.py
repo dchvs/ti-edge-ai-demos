@@ -5,7 +5,6 @@
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
 import numpy as np
-import time
 
 import gi  # nopep8
 gi.require_version('Gst', '1.0')  # nopep8
@@ -114,8 +113,9 @@ class GstMedia():
         if gst.StateChangeReturn.SUCCESS != ret:
             raise GstMediaError("Unable to play the media")
 
-        # Send the buffer images to the installed callback
-        self.install_buffer_callback()
+        # Install the buffer callback that passes the image media to a client
+        if self.callback is not None:
+            self.install_buffer_callback()
 
     def stop_media(self):
         """Set the media state to stopped
@@ -140,7 +140,7 @@ class GstMedia():
         try:
             appsink = self._pipeline.get_by_name("appsink")
             appsink.connect("new-sample", self._on_new_buffer, appsink)
-            time.sleep(1)
+
         except AttributeError as e:
             raise GstMediaError("Unable to install buffer callback") from e
 
