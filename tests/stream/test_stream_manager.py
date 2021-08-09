@@ -37,7 +37,7 @@ class TestStreamManager(unittest.TestCase):
         ai_manager.process_image = MagicMock(
             mock_image, model, disp_width, disp_height)
 
-        desc = "videotestsrc is-live=true ! video/x-raw,width=640,height=480,format=BGRx ! appsink name=appsink async=false emit-signals=true"
+        desc = "videotestsrc num-buffers=1 is-live=true ! video/x-raw,width=640,height=480,format=BGRx ! appsink name=appsink async=false emit-signals=true"
         key = "media1"
 
         media = GstMedia()
