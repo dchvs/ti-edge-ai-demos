@@ -89,7 +89,7 @@ class GstMedia():
         """
 
         ret = self._pipeline.set_state(gst.State.PLAYING)
-        if gst.StateChangeReturn.SUCCESS != ret:
+        if gst.StateChangeReturn.FAILURE == ret:
             raise GstMediaError("Unable to play the media")
 
         # Install the buffer callback that passes the image media to a client
