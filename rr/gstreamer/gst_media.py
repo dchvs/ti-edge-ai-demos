@@ -131,13 +131,18 @@ class GstMedia():
             raise GstMediaError("Unable to stop the media")
 
     def install_callback(self, callback):
+        if callback is None:
+            raise GstMediaError("Invalid callback")
+
         self.callback = callback
 
     def on_new_buffer(self):
-        appsink = self._pipeline.get_by_name("appsink")
-        appsink.connect("new-sample", self._on_new_buffer, appsink)
-
-        time.sleep(1)
+        try:
+            appsink = self._pipeline.get_by_name("appsink")
+            appsink.connect("new-sample", self._on_new_buffer, appsink)
+            time.sleep(1)
+        except BaseException:
+            raise GstMediaError("Unable to get sample from buffer")
 
     def _on_new_buffer(self, appsink, data):
         sample = appsink.emit("pull-sample")
