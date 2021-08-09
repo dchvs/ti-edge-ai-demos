@@ -4,6 +4,7 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
+import time
 import unittest
 from unittest.mock import MagicMock
 
@@ -53,8 +54,8 @@ class TestStreamManager(unittest.TestCase):
             disp_height)
 
         stream_manager.play()
-        ai_manager.process_image.assert_called_once_with(
-            mock_image, model, disp_width, disp_height)
+        time.sleep(1)
+        ai_manager.process_image.assert_called_once()
 
 
 if __name__ == '__main__':
