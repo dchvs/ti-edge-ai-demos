@@ -51,6 +51,7 @@ class GstMedia():
 
         self._pipeline = None
         self.callback = None
+        self.callback_sample = None
 
     def create_media(self, desc):
         """Creates the media object from a string description
@@ -109,11 +110,13 @@ class GstMedia():
         if gst.StateChangeReturn.FAILURE == ret:
             raise GstMediaError("Unable to stop the media")
 
-    def install_callback(self, callback):
+    def install_callbacks(self, callback, callback_sample):
         if callback is None:
             raise GstMediaError("Invalid callback")
 
         self.callback = callback
+
+        self.callback_sample = callback_sample
 
     def install_buffer_callback(self):
         try:
@@ -137,6 +140,10 @@ class GstMedia():
         self.callback(minfo.data)
 
         gst_memory.unmap(minfo)
+
+        # Callback the GstSample object to other process
+        if callback_sample is not None:
+            self.callback_sample(sample)
 
         return gst.FlowReturn.OK
 
