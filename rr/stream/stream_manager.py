@@ -50,7 +50,7 @@ class StreamManager():
         self.media_manager = media_manager
 
         cb = OnNewImage(ai_manager, model, disp_width, disp_height)
-        self.media_manager.install_callback(cb)
+        self.media_manager.install_callbacks(cb, None)
 
     def play(self):
         """
