@@ -9,6 +9,7 @@ from unittest.mock import MagicMock
 from rr.actions.action_manager import Filter, FilterError
 from rr.actions.action_manager import Action, ActionError
 from rr.actions.action_manager import Trigger, TriggerError
+from rr.actions.action_manager import ActionManager
 
 
 class TestFilter(unittest.TestCase):
@@ -163,3 +164,25 @@ class TestTrigger(unittest.TestCase):
             Trigger.make(self.desc, [self.action], self.filters)
 
         self.assertEqual('Unknown filter "mock_filter3"', str(e.exception))
+
+
+class MockTrigger:
+    def __init__(self):
+        self.execute = MagicMock()
+
+
+class TestActionManager(unittest.TestCase):
+
+    def test_action_manager_success(self):
+        t1 = MockTrigger()
+        t2 = MockTrigger()
+
+        am = ActionManager([t1, t2])
+        am.execute(None, None, None)
+
+        t1.execute.assert_called()
+        t2.execute.assert_called()
+
+    def test_action_manager_no_triggers(self):
+        am = ActionManager(None)
+        am.execute(None, None, None)

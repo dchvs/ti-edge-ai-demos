@@ -4,7 +4,6 @@
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
 from rr.actions.log_event import LogEvent
-from copy import deepcopy
 
 
 class FilterError(RuntimeError):
@@ -109,3 +108,15 @@ class Trigger:
                 raise TriggerError('Unknown filter "%s"' % req)
 
         return Trigger(name, action, filters)
+
+
+class ActionManager:
+    def __init__(self, triggers):
+        self._triggers = triggers
+
+    def execute(self, prediction, image, media):
+        if self._triggers is None:
+            return
+
+        for trigger in self._triggers:
+            trigger.execute(prediction, image, media)
