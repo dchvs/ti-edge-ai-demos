@@ -9,6 +9,7 @@ from rr.actions.record_event import RecordEvent
 
 media_name = "media0"
 timestamp = '2021-07-27-12:00:20'
+trigger_status = True
 
 
 class mockMedia():
@@ -22,11 +23,8 @@ class MockImage():
 
 
 class MockFilter():
-    def __init__(self):
-        self.enable_buffer_flow = False
-
-    def set_enabled(self, status):
-        self.enable_buffer_flow = status
+    def is_triggered(self):
+        return trigger_status
 
 
 class TestRecordEvent(unittest.TestCase):
