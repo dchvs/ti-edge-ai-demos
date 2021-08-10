@@ -6,6 +6,7 @@
 import unittest
 
 from rr.actions.action_manager import Filter, FilterError
+from rr.actions.action_manager import Action, ActionError
 
 
 class TestFilter(unittest.TestCase):
@@ -60,3 +61,14 @@ class TestFilter(unittest.TestCase):
             {"labels": [{"class": "snake", "probability": 0.9}]}]}
 
         self.common(self._desc, pred, False)
+
+
+class TestAction(unittest.TestCase):
+
+    def test_make_unkown_action(self):
+        unknown = {"type": "unknown"}
+
+        with self.assertRaises(ActionError) as e:
+            Action.make(unknown)
+
+        self.assertEqual('Unkown action "unknown"', str(e.exception))

@@ -50,7 +50,7 @@ class TestLogEvent(unittest.TestCase):
                             "label": 'WWWW', "probability": 0.01}, ], "bbox": {
                         "x": 'X', "y": 'Y', "width": 'width', "height": 'height'}}]}
 
-        log_action = LogEvent(self.csv_file_good)
+        log_action = LogEvent("name", self.csv_file_good)
         log_action.execute(media, image, inf_results)
 
         first_row_ret = [
@@ -83,7 +83,7 @@ class TestLogEvent(unittest.TestCase):
         no_parent = 'tests/actions/no/parent/dir/test_log.csv'
 
         with self.assertRaises(LogEventError) as e:
-            log_action = LogEvent(no_parent)
+            log_action = LogEvent("name", no_parent)
 
         self.assertEqual(
             "Unable to open logging events file for writing", str(
@@ -93,7 +93,7 @@ class TestLogEvent(unittest.TestCase):
         no_parent = '/'
 
         with self.assertRaises(LogEventError) as e:
-            log_action = LogEvent(no_parent)
+            log_action = LogEvent("name", no_parent)
 
         self.assertEqual(
             "Unable to open logging events file for writing", str(

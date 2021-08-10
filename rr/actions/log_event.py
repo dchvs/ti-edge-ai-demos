@@ -90,10 +90,11 @@ class LogEvent():
         'bbox-height'
     ]
 
-    def __init__(self, path):
+    def __init__(self, name, path):
         """ Constructor for the Log Event object
         """
 
+        self._name = name
         self._path = path
         self._file = None
         self._file = open_file(self._path)
@@ -148,3 +149,13 @@ class LogEvent():
         self._mutex.acquire()
         self._log(media, image, inf_results)
         self._mutex.release()
+
+    @classmethod
+    def make(cls, desc):
+        try:
+            name = desc["name"]
+            location = desc["location"]
+        except KeyError as e:
+            raise LogEventError("Malformed log event description") from e
+
+        return LogEvent(location)
