@@ -143,7 +143,8 @@ class GstMedia():
 
         # Callback the GstSample object to other process
         if self.callback_sample is not None:
-            self.callback_sample(sample)
+            gst_sample = GstSample(sample)
+            self.callback_sample(gst_sample)
 
         return gst.FlowReturn.OK
 
@@ -154,13 +155,10 @@ class GstMedia():
 
 
 class GstSample():
-    def __init__(self):
-        self.sample = None
+    def __init__(self, sample):
+        self.sample = sample
         self.map_flags = gst.MapFlags.READ or gst.MapFlags.WRITE
         self.gst_memory_obj = None
-
-    def add_gst_sample(self, sample):
-        self.sample = sample
 
     def get_shape_from_caps(self):
         caps = self.sample.get_caps()
