@@ -127,12 +127,6 @@ class GstMedia():
         sample = appsink.emit("pull-sample")
 
         buf = sample.get_buffer()
-        caps = sample.get_caps()
-
-        shape_ = (caps.get_structure(0).get_value("height"),
-                  caps.get_structure(0).get_value("width"),
-                  # Switch this value according to the caps format
-                  3)
 
         gst_memory = buf.get_all_memory()
         ret, minfo = gst_memory.map(gst.MapFlags.READ)
