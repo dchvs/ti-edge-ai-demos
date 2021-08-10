@@ -142,7 +142,7 @@ class GstMedia():
         gst_memory.unmap(minfo)
 
         # Callback the GstSample object to other process
-        if callback_sample is not None:
+        if self.callback_sample is not None:
             self.callback_sample(sample)
 
         return gst.FlowReturn.OK
