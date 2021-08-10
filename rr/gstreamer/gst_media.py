@@ -151,3 +151,35 @@ class GstMedia():
         """Getter for the private media object
         """
         return self._pipeline
+
+
+class GstSample():
+    def __init__(self):
+        self.sample = None
+        self.map_flags = gst.MapFlags.READ or gst.MapFlags.WRITE
+        self.gst_memory_obj = None
+
+    def add_gst_sample(self, sample):
+        self.sample = sample
+
+    def get_shape_from_caps(self):
+        caps = self.sample.get_caps()
+        h, w, format = (caps.get_structure(0).get_value("height"),
+                        caps.get_structure(0).get_value("width"),
+                        caps.get_structure(0).get_value("format")
+                        )
+
+        return h, w, format
+
+    def map_buffer(self):
+        buf = self.sample.get_buffer()
+        self.gst_memory_obj = buf.get_all_memory()
+
+        ret, minfo = self.gst_memory_obj.map(self.map_flags)
+        if ret is None:
+            return ret
+
+        return minfo
+
+    def unmap_buffer(self, minfo):
+        self.gst_memory_obj.unmap(minfo)
