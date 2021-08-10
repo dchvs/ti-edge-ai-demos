@@ -20,14 +20,15 @@ class RecordEvent():
 
         self._execute_mutex.acquire()
 
-        if inf_filter.is_triggered():
-            self._check_dict(media_name)
+        self._check_dict(media_name)
 
+        if inf_filter.is_triggered():
             rec_status = self._medias_dict[media_name]['recording']
 
             if not rec_status:
                 timestamp = image.get_timestamp()
-                filename = self._rec_dir + "/" + "detection_recording_" + timestamp + ".ts"
+                filename = self._rec_dir + "/" + "detection_recording_" + \
+                    media_name + "_" + timestamp + ".ts"
                 self._medias_dict[media_name]['rec_media'] = GstRecordingMedia(
                     filename)
 
@@ -60,6 +61,6 @@ class RecordEvent():
 
     def _stop_recording(self, media_name):
         self._stop_rec_mutex.acquire()
-        self._medias_dict[media_name]['recording'] = False
         self._medias_dict[media_name]['rec_media'].stop_media()
+        self._medias_dict[media_name]['recording'] = False
         self._stop_rec_mutex.release()
