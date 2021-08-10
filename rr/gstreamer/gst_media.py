@@ -4,8 +4,6 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
-import numpy as np
-
 import gi  # nopep8
 gi.require_version('Gst', '1.0')  # nopep8
 gi.require_version('GLib', '2.0')  # nopep8
