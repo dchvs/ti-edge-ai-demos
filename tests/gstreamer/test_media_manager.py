@@ -7,13 +7,13 @@
 import random
 import unittest
 
-from rr.gstreamer.imedia import IMedia
+from rr.gstreamer.gst_media import GstMedia as Media
 from rr.gstreamer.media_manager import MediaManager
 from rr.gstreamer.media_manager import MediaManagerError
 
 
 def get_media():
-    return IMedia()
+    return Media()
 
 
 class TestMediaManager(unittest.TestCase):

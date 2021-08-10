@@ -4,11 +4,12 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
+import time
 import unittest
 from unittest.mock import MagicMock
 
 from rr.ai.ai_manager import AIManagerOnNewImage
-from rr.gstreamer.imedia import IMedia
+from rr.gstreamer.gst_media import GstMedia
 from rr.gstreamer.media_manager import MediaManager
 from rr.stream.stream_manager import StreamManager
 from rr.stream.stream_manager import OnNewImage
@@ -24,14 +25,6 @@ disp_height = 1920
 mock_image = MockImage()
 
 
-class MockMediaManager(MediaManager):
-    def install_callback(self, callback):
-        self.callback = callback
-
-    def play_media(self):
-        self.callback(mock_image)
-
-
 class TestStreamManager(unittest.TestCase):
     def testsuccess(self):
         self.mock_on_new_prediction_cb = MagicMock()
@@ -44,13 +37,13 @@ class TestStreamManager(unittest.TestCase):
         ai_manager.process_image = MagicMock(
             mock_image, model, disp_width, disp_height)
 
-        desc = "videotestsrc is-live=true ! fakesink async=false"
+        desc = "videotestsrc num-buffers=1 is-live=true ! video/x-raw,width=640,height=480,format=BGRx ! appsink name=appsink async=false emit-signals=true"
         key = "media1"
 
-        media = IMedia()
+        media = GstMedia()
         media.create_media(desc)
 
-        media_manager = MockMediaManager()
+        media_manager = MediaManager()
         media_manager.add_media(key, media)
 
         stream_manager = StreamManager(
@@ -61,8 +54,8 @@ class TestStreamManager(unittest.TestCase):
             disp_height)
 
         stream_manager.play()
-        ai_manager.process_image.assert_called_once_with(
-            mock_image, model, disp_width, disp_height)
+        time.sleep(1)
+        ai_manager.process_image.assert_called_once()
 
 
 if __name__ == '__main__':

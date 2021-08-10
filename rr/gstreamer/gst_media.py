@@ -50,6 +50,7 @@ class GstMedia():
         gst.init(None)
 
         self._pipeline = None
+        self.callback = None
 
     def create_media(self, desc):
         """Creates the media object from a string description
@@ -91,6 +92,10 @@ class GstMedia():
         if gst.StateChangeReturn.SUCCESS != ret:
             raise GstMediaError("Unable to play the media")
 
+        # Install the buffer callback that passes the image media to a client
+        if self.callback is not None:
+            self.install_buffer_callback()
+
     def stop_media(self):
         """Set the media state to stopped
 
@@ -103,6 +108,37 @@ class GstMedia():
         ret = self._pipeline.set_state(gst.State.NULL)
         if gst.StateChangeReturn.FAILURE == ret:
             raise GstMediaError("Unable to stop the media")
+
+    def install_callback(self, callback):
+        if callback is None:
+            raise GstMediaError("Invalid callback")
+
+        self.callback = callback
+
+    def install_buffer_callback(self):
+        try:
+            appsink = self._pipeline.get_by_name("appsink")
+            appsink.connect("new-sample", self._on_new_buffer, appsink)
+
+        except AttributeError as e:
+            raise GstMediaError("Unable to install buffer callback") from e
+
+    def _on_new_buffer(self, appsink, data):
+        sample = appsink.emit("pull-sample")
+
+        buf = sample.get_buffer()
+
+        gst_memory = buf.get_all_memory()
+        ret, minfo = gst_memory.map(gst.MapFlags.READ)
+
+        if minfo.data is None:
+            return gst.FlowReturn.ERROR
+
+        self.callback(minfo.data)
+
+        gst_memory.unmap(minfo)
+
+        return gst.FlowReturn.OK
 
     def get_media(self):
         """Getter for the private media object
