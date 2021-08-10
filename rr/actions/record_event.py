@@ -12,12 +12,13 @@ class RecordEvent():
     def __init__(self, rec_dir):
         self._rec_dir = rec_dir
         self._medias_dict = {}
-        self._mutex = Lock()
+        self._execute_mutex = Lock()
+        self._stop_rec_mutex = Lock()
 
     def execute(self, media, image, rec_time, inf_filter):
         media_name = media.get_name()
 
-        self._mutex.acquire()
+        self._execute_mutex.acquire()
 
         if inf_filter.is_triggered():
             self._check_dict(media_name)
@@ -35,9 +36,9 @@ class RecordEvent():
         rec_status = self._medias_dict[media_name]['recording']
         if rec_status:
             rec_media = self._medias_dict[media_name]['rec_media']
-            # rec_media.push_image(image)
+            rec_media.push_image(image)
 
-        self._mutex.release()
+        self._execute_mutex.release()
 
     def _start_timer(self, media_name, rec_time, inf_filter):
         media = self._medias_dict[media_name]
@@ -58,4 +59,7 @@ class RecordEvent():
             self._medias_dict[media_name]['timer'] = None
 
     def _stop_recording(self, media_name):
-        pass
+        self._stop_rec_mutex.acquire()
+        self._medias_dict[media_name]['recording'] = False
+        self._medias_dict[media_name]['rec_media'].stop_media()
+        self._stop_rec_mutex.release()
