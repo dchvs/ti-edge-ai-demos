@@ -70,7 +70,7 @@ class TestRecordEvent(unittest.TestCase):
         timestamp = '2021-07-27-12:00:20'
         img = MockImage(timestamp)
         fil = MockFilter(True)
-        num_bufs = 400
+        num_bufs = 10
         rec_time = 5.0
         event_rec = RecordEvent(rec_dir)
 
@@ -98,7 +98,7 @@ class TestRecordEvent(unittest.TestCase):
         timestamp = '2022-08-27-12:00:20'
         img = MockImage(timestamp)
         fil = MockFilter(False)
-        num_bufs = 150
+        num_bufs = 10
         rec_time = 5.0
         event_rec = RecordEvent(rec_dir)
 
