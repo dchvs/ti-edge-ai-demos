@@ -16,6 +16,7 @@ from rr.ai.ai_manager import AIManager
 from rr.ai.ai_manager import AIManagerError
 from rr.ai.ai_manager import AIManagerOnNewImage
 from rr.gstreamer.gst_media import GstImage
+from rr.gstreamer.gst_media import GstMedia
 
 model = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
 width = 1920
@@ -104,6 +105,12 @@ class TestAIManagerOnNewImage(unittest.TestCase):
     def testprocess_image(self):
         image = MagicMock()
         image.get_data = MagicMock(return_value=self.img)
+
+        gst_media_obj = GstMedia()
+        desc = "videotestsrc is-live=true ! fakesink async=false"
+        gst_media_obj.create_media(desc)
+        gst_media_obj.play_media()
+        image.get_gst_media_obj = MagicMock(return_value=gst_media_obj)
 
         self.ai_manager.process_image(
             image, self.model, self.disp_width, self.disp_height)
