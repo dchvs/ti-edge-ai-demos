@@ -127,14 +127,6 @@ class GstMedia():
     def _on_new_buffer(self, appsink, data):
         sample = appsink.emit("pull-sample")
 
-        buf = sample.get_buffer()
-
-        gst_memory_obj = buf.get_all_memory()
-        ret, minfo = gst_memory_obj.map(gst.MapFlags.READ)
-
-        if minfo.data is None:
-            return gst.FlowReturn.ERROR
-
         caps = sample.get_caps()
         width, height, format = (caps.get_structure(0).get_value("width"),
                                  caps.get_structure(0).get_value("height"),
@@ -142,12 +134,10 @@ class GstMedia():
                                  )
 
         gst_image = GstImage(
-            minfo,
             width,
             height,
             format,
-            sample,
-            gst_memory_obj)
+            sample)
 
         self.callback(gst_image)
 
@@ -160,14 +150,19 @@ class GstMedia():
 
 
 class GstImage():
-    def __init__(self, minfo, width, height, format, sample, gst_memory_obj):
+    def __init__(self, width, height, format, sample):
         self.sample = sample
-        self.gst_memory_obj = gst_memory_obj
 
-        self.minfo = minfo
+        self._gst_memory_obj = None
+        self.minfo = None
+
         self.width = width
         self.height = height
         self.format = format
+
+        # Map the buffer
+        self.map_flags = gst.MapFlags.READ
+        self._map_buffer()
 
     def get_width(self):
         return self.width
@@ -184,8 +179,17 @@ class GstImage():
     def get_sample(self):
         return self.sample
 
+    def _map_buffer(self):
+        buf = self.sample.get_buffer()
+
+        self._gst_memory_obj = buf.get_all_memory()
+        ret, self.minfo = self._gst_memory_obj.map(self.map_flags)
+
+        if self.minfo.data is None:
+            return gst.FlowReturn.ERROR
+
     def _unmap_buffer(self):
-        self.gst_memory_obj.unmap(self.minfo.data)
+        self._gst_memory_obj.unmap(self.minfo.data)
 
     def __del__(self):
         self._unmap_buffer()
