@@ -45,6 +45,7 @@ class StreamManager():
 
     def __init__(
             self,
+            action_manager,
             ai_manager,
             media_manager,
             model,
