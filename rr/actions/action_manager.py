@@ -112,7 +112,7 @@ class Trigger:
 
 class ActionManager:
     def __init__(self, triggers):
-        self.callback = callback
+        self.callback = None
         self._triggers = triggers
 
     def install_callback(self, callback):
