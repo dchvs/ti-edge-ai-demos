@@ -137,7 +137,8 @@ class GstMedia():
             width,
             height,
             format,
-            sample)
+            sample,
+            self)
 
         self.callback(gst_image)
 
@@ -150,8 +151,9 @@ class GstMedia():
 
 
 class GstImage():
-    def __init__(self, width, height, format, sample):
+    def __init__(self, width, height, format, sample, gst_media_obj):
         self.sample = sample
+        self.gst_media_obj = gst_media_obj
 
         self._gst_memory_obj = None
         self.minfo = None
@@ -178,6 +180,9 @@ class GstImage():
 
     def get_sample(self):
         return self.sample
+
+    def get_gst_media_obj(self):
+        return self.gst_media_obj
 
     def _map_buffer(self):
         buf = self.sample.get_buffer()
