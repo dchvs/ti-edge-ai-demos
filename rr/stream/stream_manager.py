@@ -63,7 +63,7 @@ class StreamManager():
         self.media_manager.install_callback(cb)
 
         cb_prediction = OnNewPrediction(action_manager)
-        self.action_manager.install_callback(cb_prediction)
+        self.ai_manager.install_callback(cb_prediction)
 
     def play(self):
         """
