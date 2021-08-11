@@ -6,10 +6,11 @@
 import unittest
 from unittest.mock import MagicMock
 
-from rr.actions.action_manager import Filter, FilterError
-from rr.actions.action_manager import Action, ActionError
-from rr.actions.action_manager import Trigger, TriggerError
+
 from rr.actions.action_manager import ActionManager
+from rr.actions.action_manager import Action, ActionError
+from rr.actions.action_manager import Filter, FilterError
+from rr.actions.action_manager import Trigger, TriggerError
 
 
 class TestFilter(unittest.TestCase):
