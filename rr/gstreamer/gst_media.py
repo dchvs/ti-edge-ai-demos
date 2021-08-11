@@ -110,13 +110,11 @@ class GstMedia():
         if gst.StateChangeReturn.FAILURE == ret:
             raise GstMediaError("Unable to stop the media")
 
-    def install_callbacks(self, callback, callback_sample):
+    def install_callback(self, callback):
         if callback is None:
             raise GstMediaError("Invalid callback")
 
         self.callback = callback
-
-        self.callback_sample = callback_sample
 
     def install_buffer_callback(self):
         try:
@@ -131,20 +129,27 @@ class GstMedia():
 
         buf = sample.get_buffer()
 
-        gst_memory = buf.get_all_memory()
-        ret, minfo = gst_memory.map(gst.MapFlags.READ)
+        gst_memory_obj = buf.get_all_memory()
+        ret, minfo = gst_memory_obj.map(gst.MapFlags.READ)
 
         if minfo.data is None:
             return gst.FlowReturn.ERROR
 
-        self.callback(minfo.data)
+        caps = sample.get_caps()
+        width, height, format = (caps.get_structure(0).get_value("width"),
+                                 caps.get_structure(0).get_value("height"),
+                                 caps.get_structure(0).get_value("format")
+                                 )
 
-        gst_memory.unmap(minfo)
+        gst_image = GstImage(
+            minfo,
+            width,
+            height,
+            format,
+            sample,
+            gst_memory_obj)
 
-        # Callback the GstSample object to other process
-        if self.callback_sample is not None:
-            gst_sample = GstSample(sample)
-            self.callback_sample(gst_sample)
+        self.callback(gst_image)
 
         return gst.FlowReturn.OK
 
@@ -154,30 +159,31 @@ class GstMedia():
         return self._pipeline
 
 
-class GstSample():
-    def __init__(self, sample):
+class GstImage():
+    def __init__(self, minfo, width, height, format, sample, gst_memory_obj):
         self.sample = sample
         self.map_flags = gst.MapFlags.READ or gst.MapFlags.WRITE
-        self.gst_memory_obj = None
+        self.gst_memory_obj = gst_memory_obj
 
-    def get_shape_from_caps(self):
-        caps = self.sample.get_caps()
-        h, w, format = (caps.get_structure(0).get_value("height"),
-                        caps.get_structure(0).get_value("width"),
-                        caps.get_structure(0).get_value("format")
-                        )
+        self.minfo = minfo
+        self.width = width
+        self.height = height
+        self.format = format
 
-        return h, w, format
+    def get_width(self):
+        return self.width
 
-    def map_buffer(self):
-        buf = self.sample.get_buffer()
-        self.gst_memory_obj = buf.get_all_memory()
+    def get_height(self):
+        return self.height
 
-        ret, minfo = self.gst_memory_obj.map(self.map_flags)
-        if ret is None:
-            return ret
+    def get_format(self):
+        return self.format
 
-        return minfo
+    def get_image(self):
+        return self.minfo.data
 
-    def unmap_buffer(self, minfo):
-        self.gst_memory_obj.unmap(minfo)
+    def get_sample(self):
+        return self.sample
+
+    def unmap_buffer(self):
+        self.gst_memory_obj.unmap(self.minfo.data)

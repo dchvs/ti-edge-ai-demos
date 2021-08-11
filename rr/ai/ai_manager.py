@@ -144,7 +144,7 @@ class AIManagerOnNewImage(AIManager):
         self.on_new_prediction_cb = on_new_prediction_cb
         self.on_new_postprocess_cb = on_new_postprocess_cb
 
-    def process_image(self, image, model, disp_width, disp_height):
+    def process_image(self, gst_image, model, disp_width, disp_height):
         """Get a image input
 
         Parameters
@@ -157,6 +157,8 @@ class AIManagerOnNewImage(AIManager):
         AIManagerError
             If couldn't get the image
         """
+
+        image = gst_image.get_image()
 
         image_preprocessed = self.preprocess_detection(image)
 

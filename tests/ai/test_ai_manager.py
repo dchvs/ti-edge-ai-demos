@@ -15,6 +15,7 @@ from TI.preprocess import PreProcessDetection
 from rr.ai.ai_manager import AIManager
 from rr.ai.ai_manager import AIManagerError
 from rr.ai.ai_manager import AIManagerOnNewImage
+from rr.gstreamer.gst_media import GstImage
 
 model = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
 width = 1920
@@ -101,8 +102,11 @@ class TestAIManagerOnNewImage(unittest.TestCase):
             self.mock_on_new_postprocess_cb)
 
     def testprocess_image(self):
+        gst_image = MagicMock()
+        gst_image.get_image = MagicMock(return_value=self.img)
+
         self.ai_manager.process_image(
-            self.img, self.model, self.disp_width, self.disp_height)
+            gst_image, self.model, self.disp_width, self.disp_height)
 
         self.mock_on_new_prediction_cb.assert_called_once()
         self.mock_on_new_postprocess_cb.assert_called_once()
