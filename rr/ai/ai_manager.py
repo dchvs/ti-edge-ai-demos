@@ -158,7 +158,7 @@ class AIManagerOnNewImage(AIManager):
             If couldn't get the image
         """
 
-        image = gst_image.get_image()
+        image = gst_image.get_data()
 
         image_preprocessed = self.preprocess_detection(image)
 
