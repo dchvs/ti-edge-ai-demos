@@ -23,7 +23,6 @@ width = 320
 height = 240
 fmt = GstVideo.VideoFormat.RGBA
 size = 320 * 240 * 4
-data = np.zeros((size))
 
 
 class MockImage():
@@ -40,8 +39,11 @@ class MockImage():
         return fmt
 
     def get_buffer(self):
-        buf = Gst.Buffer.new_wrapped_full(0, data, size, 0, None, None)
+        data = np.zeros((size))
+        buf = Gst.Buffer.new_wrapped(data)
         buf.pts = self._pts
+        buf.dts = self._pts
+        buf.duration = 33333333
         self._pts = self._pts + 33333333
         return buf
 
