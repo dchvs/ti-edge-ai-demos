@@ -71,7 +71,7 @@ class TestRecordEvent(unittest.TestCase):
         img = MockImage(timestamp)
         fil = MockFilter(True)
         num_bufs = 10
-        rec_time = 5.0
+        rec_time = 15.0
         event_rec = RecordEvent(rec_dir)
 
         media0 = mockMedia("media0")
@@ -83,6 +83,8 @@ class TestRecordEvent(unittest.TestCase):
             if i == 2:
                 fil.trigger_status = False
             event_rec.execute(media1, img, rec_time, fil)
+
+        event_rec.stop_recordings()
 
         path_media0 = "/tmp/detection_recording_media0_" + timestamp + ".ts"
         path_media1 = "/tmp/detection_recording_media1_" + timestamp + ".ts"

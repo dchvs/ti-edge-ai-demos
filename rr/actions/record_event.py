@@ -14,6 +14,11 @@ class RecordingMedia():
         self.is_recording = recording
         self.timer = timer
 
+    def __del__(self):
+        if self.is_recording:
+            self.timer.cancel()
+            self.rec_media.stop_media()
+
 
 class RecordEvent():
     def __init__(self, rec_dir):
@@ -65,3 +70,7 @@ class RecordEvent():
         self._medias_dict[media_name].rec_media.stop_media()
         self._medias_dict[media_name].is_recording = False
         self._mutex.release()
+
+    def stop_recordings(self):
+        for media in list(self._medias_dict):
+            del self._medias_dict[media]
