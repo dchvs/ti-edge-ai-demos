@@ -163,9 +163,10 @@ class AIManagerOnNewImage(AIManager):
             If couldn't get the image
         """
 
-        image = image.get_data()
+        gst_media = image.get_gst_media_obj()
+        img = image.get_data()
 
-        image_preprocessed = self.preprocess_detection(image)
+        image_preprocessed = self.preprocess_detection(img)
 
         inference_results = self.run_inference(image_preprocessed)
 
@@ -175,3 +176,8 @@ class AIManagerOnNewImage(AIManager):
             image, inference_results)
 
         self.on_new_postprocess_cb(image_preprocessed)
+
+        self.on_new_prediction_cb_(
+            inference_results,
+            image_postprocessed,
+            gst_media)
