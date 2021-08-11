@@ -144,6 +144,11 @@ class AIManagerOnNewImage(AIManager):
         self.on_new_prediction_cb = on_new_prediction_cb
         self.on_new_postprocess_cb = on_new_postprocess_cb
 
+        self.on_new_prediction_cb_ = None
+
+    def install_callback(self, on_new_prediction_cb_):
+        self.on_new_prediction_cb_ = on_new_prediction_cb_
+
     def process_image(self, image, model, disp_width, disp_height):
         """Get a image input
 
