@@ -128,7 +128,7 @@ class DisplayManager():
         desc += xpos_desc
         desc += ypos_desc
         desc += " ! queue ! video/x-raw,width=" + str(DISPLAY_WIDTH) + ",height=" + str(
-            DISPLAY_HEIGHT) + " ! kmssink force-modesetting=true sync=false async=false "
+            DISPLAY_HEIGHT) + " ! kmssink force-modesetting=true sync=false async=false qos=false "
 
         for key in self._list:
             desc += " interpipesrc listen-to=" + key + " format=time ! queue ! videoscale ! video/x-raw,width=" + \
