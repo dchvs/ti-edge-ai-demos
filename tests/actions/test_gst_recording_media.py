@@ -8,6 +8,8 @@ import unittest
 import os
 from rr.actions.gst_recording_media import GstRecordingMedia
 from rr.actions.gst_recording_media import GstRecordingMediaError
+from rr.gstreamer.gst_media import GstMediaError
+
 
 import gi  # nopep8
 gi.require_version('Gst', '1.0')  # nopep8
@@ -71,11 +73,13 @@ class TestGstRecordingMedia(unittest.TestCase):
 
     def test_recording_fail(self):
         filename = 'invalid/path/file.ts'
+        img = MockImage()
+        rec = GstRecordingMedia(filename)
 
-        with self.assertRaises(GstRecordingMediaError) as e:
-            rec = GstRecordingMedia(filename)
+        with self.assertRaises(GstMediaError) as e:
+            rec.push_image(img)
 
-        self.assertEqual("Invalid path for recording file", str(e.exception))
+        self.assertEqual("Unable to play the media", str(e.exception))
 
 
 if __name__ == '__main__':

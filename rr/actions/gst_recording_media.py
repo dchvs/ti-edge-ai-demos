@@ -22,15 +22,7 @@ class GstRecordingMediaError(RuntimeError):
 class GstRecordingMedia(GstMedia):
     def __init__(self, filename):
         super().__init__()
-        self._filename = None
-        self._set_filename(filename)
-
-    def _set_filename(self, filename):
-        parent_dir = os.path.dirname(filename)
-        if not os.path.isdir(parent_dir):
-            raise GstRecordingMediaError("Invalid path for recording file")
-        else:
-            self._filename = filename
+        self._filename = filename
 
     def _init_pipe(self, image):
         desc = "appsrc name=src ! video/x-raw,width=%d,height=%d,format=%s,framerate=30/1 ! videoconvert ! x264enc speed-preset=ultrafast tune=zerolatency ! h264parse ! mpegtsmux ! filesink location=%s" % (
