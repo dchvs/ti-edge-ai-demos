@@ -112,7 +112,14 @@ class Trigger:
 
 class ActionManager:
     def __init__(self, triggers):
+        self.callback = callback
         self._triggers = triggers
+
+    def install_callback(self, callback):
+        if callback is None:
+            raise ActionError("Invalid callback")
+
+        self.callback = callback
 
     def execute(self, prediction, image, media):
         if self._triggers is None:
