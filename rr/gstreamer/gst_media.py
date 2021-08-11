@@ -179,7 +179,7 @@ class GstImage():
     def get_format(self):
         return self.format
 
-    def get_image(self):
+    def get_data(self):
         return self.minfo.data
 
     def get_sample(self):
