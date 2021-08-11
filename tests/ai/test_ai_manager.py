@@ -112,6 +112,8 @@ class TestAIManagerOnNewImage(unittest.TestCase):
         gst_media_obj.play_media()
         image.get_gst_media_obj = MagicMock(return_value=gst_media_obj)
 
+        cb = MagicMock(None, self.img, gst_media_obj)
+        self.ai_manager.install_callback(cb)
         self.ai_manager.process_image(
             image, self.model, self.disp_width, self.disp_height)
 
