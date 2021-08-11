@@ -103,7 +103,7 @@ class TestAIManagerOnNewImage(unittest.TestCase):
 
     def testprocess_image(self):
         gst_image = MagicMock()
-        gst_image.get_image = MagicMock(return_value=self.img)
+        gst_image.get_data = MagicMock(return_value=self.img)
 
         self.ai_manager.process_image(
             gst_image, self.model, self.disp_width, self.disp_height)
