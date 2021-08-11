@@ -158,6 +158,8 @@ class AIManagerOnNewImage(AIManager):
             If couldn't get the image
         """
 
+        image = image.get_data()
+
         image_preprocessed = self.preprocess_detection(image)
 
         inference_results = self.run_inference(image_preprocessed)

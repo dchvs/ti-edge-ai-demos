@@ -51,6 +51,7 @@ class GstMedia():
 
         self._pipeline = None
         self.callback = None
+        self.callback_sample = None
 
     def create_media(self, desc):
         """Creates the media object from a string description
@@ -126,17 +127,19 @@ class GstMedia():
     def _on_new_buffer(self, appsink, data):
         sample = appsink.emit("pull-sample")
 
-        buf = sample.get_buffer()
+        caps = sample.get_caps()
+        width, height, format = (caps.get_structure(0).get_value("width"),
+                                 caps.get_structure(0).get_value("height"),
+                                 caps.get_structure(0).get_value("format")
+                                 )
 
-        gst_memory = buf.get_all_memory()
-        ret, minfo = gst_memory.map(gst.MapFlags.READ)
+        gst_image = GstImage(
+            width,
+            height,
+            format,
+            sample)
 
-        if minfo.data is None:
-            return gst.FlowReturn.ERROR
-
-        self.callback(minfo.data)
-
-        gst_memory.unmap(minfo)
+        self.callback(gst_image)
 
         return gst.FlowReturn.OK
 
@@ -144,3 +147,49 @@ class GstMedia():
         """Getter for the private media object
         """
         return self._pipeline
+
+
+class GstImage():
+    def __init__(self, width, height, format, sample):
+        self.sample = sample
+
+        self._gst_memory_obj = None
+        self.minfo = None
+
+        self.width = width
+        self.height = height
+        self.format = format
+
+        # Map the buffer
+        self.map_flags = gst.MapFlags.READ
+        self._map_buffer()
+
+    def get_width(self):
+        return self.width
+
+    def get_height(self):
+        return self.height
+
+    def get_format(self):
+        return self.format
+
+    def get_data(self):
+        return self.minfo.data
+
+    def get_sample(self):
+        return self.sample
+
+    def _map_buffer(self):
+        buf = self.sample.get_buffer()
+
+        self._gst_memory_obj = buf.get_all_memory()
+        ret, self.minfo = self._gst_memory_obj.map(self.map_flags)
+
+        if self.minfo.data is None:
+            return gst.FlowReturn.ERROR
+
+    def _unmap_buffer(self):
+        self._gst_memory_obj.unmap(self.minfo.data)
+
+    def __del__(self):
+        self._unmap_buffer()
