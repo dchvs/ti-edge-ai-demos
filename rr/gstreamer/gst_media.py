@@ -162,7 +162,6 @@ class GstMedia():
 class GstImage():
     def __init__(self, minfo, width, height, format, sample, gst_memory_obj):
         self.sample = sample
-        self.map_flags = gst.MapFlags.READ or gst.MapFlags.WRITE
         self.gst_memory_obj = gst_memory_obj
 
         self.minfo = minfo
