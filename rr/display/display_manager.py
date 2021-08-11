@@ -11,6 +11,8 @@ w = 320
 h = 240
 
 MAX_STREAMS = 8
+DISPLAY_WIDTH = 1280
+DISPLAY_HEIGHT = 720
 
 #Define streams order in display
 xpos = [0,w,0,w,2*w,2*w,3*w,3*w]
@@ -119,7 +121,7 @@ class DisplayManager():
 
         desc += xpos_desc
         desc += ypos_desc
-        desc += " ! queue ! xvimagesink sync=false async=false "
+        desc += " ! queue ! video/x-raw,width="+str(DISPLAY_WIDTH)+",height="+str(DISPLAY_HEIGHT)+" ! kmssink force-modesetting=true sync=false async=false "
 
         for key in self._list:
             desc += " interpipesrc listen-to="+key+" format=time ! queue ! videoscale ! video/x-raw,width="+str(w)+",height="+str(h)+" ! mixer. "

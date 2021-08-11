@@ -13,7 +13,6 @@ from rr.gstreamer.media_manager import MediaManager
 #Use 8 or less, otherwise the display manager will throw an exception
 NUM_STREAMS = 8
 STREAM_NAME_PREFIX = "stream"
-TIME_TO_WAIT = 5
 
 def main():
     print ("Display Manager Example Application")
@@ -33,7 +32,7 @@ def main():
     media_manager.play_media()
     display_manager.play_display()
 
-    time.sleep(TIME_TO_WAIT)
+    input("Press Enter to close demo...")
 
     display_manager.stop_display()
     display_manager.delete_display()

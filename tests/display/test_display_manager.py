@@ -36,7 +36,7 @@ class TestDisplayManager(unittest.TestCase):
         self.assertTrue(self.stream_name not in list)
 
     def test_create_display(self):
-        display_desc = "videomixer name=mixer  sink_0::xpos=0 sink_0::ypos=0 ! queue ! xvimagesink sync=false async=false  interpipesrc listen-to=stream0 format=time ! queue ! videoscale ! video/x-raw,width=320,height=240 ! mixer. "
+        display_desc = "videomixer name=mixer  sink_0::xpos=0 sink_0::ypos=0 ! queue ! video/x-raw,width=1280,height=720 ! kmssink force-modesetting=true sync=false async=false  interpipesrc listen-to=stream0 format=time ! queue ! videoscale ! video/x-raw,width=320,height=240 ! mixer. "
         self.display_manager.create_display()
         self.assertEqual(display_desc, self.display_manager._get_display_desc())
 
