@@ -15,9 +15,9 @@ class OnNewImage():
         self.disp_width = disp_width
         self.disp_height = disp_height
 
-    def __call__(self, gst_image):
+    def __call__(self, image):
         self.ai_manager.process_image(
-            gst_image, self.model, self.disp_width, self.disp_height)
+            image, self.model, self.disp_width, self.disp_height)
 
 
 class StreamManagerError(RuntimeError):

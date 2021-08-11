@@ -102,11 +102,11 @@ class TestAIManagerOnNewImage(unittest.TestCase):
             self.mock_on_new_postprocess_cb)
 
     def testprocess_image(self):
-        gst_image = MagicMock()
-        gst_image.get_data = MagicMock(return_value=self.img)
+        image = MagicMock()
+        image.get_data = MagicMock(return_value=self.img)
 
         self.ai_manager.process_image(
-            gst_image, self.model, self.disp_width, self.disp_height)
+            image, self.model, self.disp_width, self.disp_height)
 
         self.mock_on_new_prediction_cb.assert_called_once()
         self.mock_on_new_postprocess_cb.assert_called_once()
