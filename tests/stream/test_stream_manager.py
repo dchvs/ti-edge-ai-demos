@@ -76,9 +76,14 @@ class TestStreamManager(unittest.TestCase):
         trigger = Trigger(self.desc, self.action, self.filters)
         action_manager = ActionManager(trigger)
 
+        gst_media_obj = GstMedia()
+        desc = "videotestsrc is-live=true ! fakesink async=false"
+        gst_media_obj.create_media(desc)
+        gst_media_obj.play_media()
+
         prediction = {"mock": "prediction"}
         action_manager.execute = MagicMock(
-            prediction, mock_image, mock_trigger_media)
+            prediction, mock_image, gst_media_obj)
 
         self.mock_on_new_prediction_cb = MagicMock()
         self.mock_on_new_postprocess_cb = MagicMock()
