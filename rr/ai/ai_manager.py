@@ -173,7 +173,7 @@ class AIManagerOnNewImage(AIManager):
         self.on_new_prediction_cb(image_preprocessed, inference_results)
 
         image_postprocessed = self.postprocess_detection(
-            image, inference_results)
+            img, inference_results)
 
         self.on_new_postprocess_cb(image_preprocessed)
 
