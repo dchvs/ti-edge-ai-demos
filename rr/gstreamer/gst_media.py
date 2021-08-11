@@ -185,5 +185,8 @@ class GstImage():
     def get_sample(self):
         return self.sample
 
-    def unmap_buffer(self):
+    def _unmap_buffer(self):
         self.gst_memory_obj.unmap(self.minfo.data)
+
+    def __del__(self):
+        self._unmap_buffer()
