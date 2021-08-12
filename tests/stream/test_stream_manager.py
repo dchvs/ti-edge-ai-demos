@@ -36,9 +36,9 @@ class MockImage:
 
     def get_mock_image():
         return np.zeros(
-            default_width *
-            default_height *
-            default_dimentions,
+            (default_width *
+             default_height *
+             default_dimentions),
             np.uint8)
 
 
