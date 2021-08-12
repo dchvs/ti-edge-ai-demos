@@ -164,7 +164,11 @@ class AIManagerOnNewImage(AIManager):
         """
 
         gst_media = image.get_gst_media_obj()
-        img = image.get_data()
+
+        img = np.ndarray(
+            shape=(image.get_height(), image.get_width(), 3),
+            dtype=np.uint8,
+            buffer=image.get_data())
 
         image_preprocessed = self.preprocess_detection(img)
 
