@@ -112,7 +112,6 @@ class Trigger:
 
 class ActionManager:
     def __init__(self, triggers):
-        self.callback = None
         self._triggers = triggers
 
     def execute(self, prediction, image, media):
