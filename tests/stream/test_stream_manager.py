@@ -4,6 +4,7 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
+import numpy as np
 import time
 import unittest
 from unittest.mock import MagicMock
@@ -25,10 +26,14 @@ class MockTriggerMedia:
     pass
 
 
+def get_mock_image():
+    return np.zeros(320 * 240 * 3)
+
+
 model = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
 disp_width = 2040
 disp_height = 1920
-mock_image = MockImage()
+mock_image = get_mock_image()
 mock_trigger_media = MockTriggerMedia()
 
 
@@ -93,6 +98,7 @@ class TestStreamManager(unittest.TestCase):
         action_manager = ActionManager(trigger)
 
         prediction = {"mock": "prediction"}
+        mock_image = get_mock_image()
         action_manager.execute = MagicMock(prediction, mock_image, media)
 
         stream_manager = StreamManager(
