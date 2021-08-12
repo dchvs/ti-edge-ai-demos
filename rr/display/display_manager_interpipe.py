@@ -9,7 +9,6 @@ from rr.gstreamer.gst_media import GstMediaError
 
 w = 320
 h = 240
-img_format = 'RGB'
 
 MAX_STREAMS = 8
 DISPLAY_WIDTH = 1280
@@ -64,14 +63,16 @@ class DisplayManager():
         self._media = GstMedia()
         self._display_desc = None
         self._list = []
-        self._appsrc_dict = {}
 
-    def add_stream(self, media):
+    def add_stream(self, key):
         """
         Install a new stream in the display list
         """
-        if media is None:
-            raise DisplayManagerError("Invalid media object")
+        if key is None:
+            raise DisplayManagerError("Invalid key")
+
+        if not isinstance(key, str):
+            raise DisplayManagerError("Invalid key")
 
         if self._display_desc is not None:
             raise DisplayManagerError(
@@ -80,17 +81,15 @@ class DisplayManager():
         if MAX_STREAMS == len(self._list):
             raise DisplayManagerError("Max number of streams reached")
 
-        media_name = media.get_name()
-        if media_name not in self._list:
-            self._list.append(media_name)
-            self._appsrc_dict[media_name] = media.get_media()
+        if key not in self._list:
+            self._list.append(key)
         else:
             raise DisplayManagerError(
                 "Stream already exists in display manager")
 
     def remove_stream(self, key):
         """
-        Remove a stream from the display list and medias dictionary
+        Remove a stream from the display list
         """
         if key is None:
             raise DisplayManagerError("Invalid key")
@@ -104,16 +103,9 @@ class DisplayManager():
 
         if key in self._list:
             self._list.remove(key)
-            self._appsrc_dict.pop(key)
         else:
             raise DisplayManagerError(
                 "Stream doesn't exist in display manager")
-
-    def push_image(self, image, media):
-        media_name = media.get_name()
-        appsrc = appsrc_dict[media_name]
-        buffer = image.get_buffer()
-        appsrc.emit("push-buffer", buffer)
 
     def create_display(self):
         """
@@ -139,8 +131,8 @@ class DisplayManager():
             DISPLAY_HEIGHT) + " ! kmssink force-modesetting=true sync=false async=false qos=false "
 
         for key in self._list:
-            desc += " appsrc name=" + key + " format=time ! queue ! width=" + str(w) + ",height=" + str(
-                h) + ",format=" + img_format + ",framerate=30/1" + " ! videoscale ! video/x-raw,width=" + str(w) + ",height=" + str(h) + " ! mixer. "
+            desc += " interpipesrc listen-to=" + key + " format=time ! queue ! videoscale ! video/x-raw,width=" + \
+                str(w) + ",height=" + str(h) + " ! mixer. "
 
         self._display_desc = desc
         self._media.create_media(self._display_desc)
