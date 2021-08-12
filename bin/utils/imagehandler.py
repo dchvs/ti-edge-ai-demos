@@ -9,6 +9,8 @@ import logging
 import numpy as np
 import sys
 
+default_dimentions = 3
+
 
 class ImageHandler:
     """
@@ -40,3 +42,10 @@ class ImageHandler:
         except cv2.error as e:
             logging.error("Unable to resize image")
             sys.exit(1)
+
+    def buffer_to_np_array(data, width, height):
+        img = np.ndarray(shape=(height, width, 3),
+                         dtype=np.uint8,
+                         buffer=data)
+
+        return img
