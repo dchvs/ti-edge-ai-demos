@@ -58,7 +58,23 @@ class MockTriggerAction:
 
 class TestStreamManager(unittest.TestCase):
     def testsuccess(self):
+        self.mock_on_new_prediction_cb = MagicMock()
+        self.mock_on_new_postprocess_cb = MagicMock()
 
+        ai_manager = AIManagerOnNewImage(model, disp_width, disp_height,
+                                         self.mock_on_new_prediction_cb,
+                                         self.mock_on_new_postprocess_cb)
+
+        desc = "videotestsrc num-buffers=1 is-live=true ! video/x-raw,width=640,height=480,format=BGRx ! appsink name=appsink async=false emit-signals=true"
+        key = "media1"
+
+        media = GstMedia()
+        media.create_media(desc)
+
+        media_manager = MediaManager()
+        media_manager.add_media(key, media)
+
+        # ActionManager setup
         self.desc = {
             "name": "trigger_name",
             "action": "mock_action",
@@ -76,33 +92,8 @@ class TestStreamManager(unittest.TestCase):
         trigger = Trigger(self.desc, self.action, self.filters)
         action_manager = ActionManager(trigger)
 
-        gst_media_obj = GstMedia()
-        desc = "videotestsrc is-live=true ! fakesink async=false"
-        gst_media_obj.create_media(desc)
-        gst_media_obj.play_media()
-
         prediction = {"mock": "prediction"}
-        action_manager.execute = MagicMock(
-            prediction, mock_image, gst_media_obj)
-
-        self.mock_on_new_prediction_cb = MagicMock()
-        self.mock_on_new_postprocess_cb = MagicMock()
-
-        ai_manager = AIManagerOnNewImage(model, disp_width, disp_height,
-                                         self.mock_on_new_prediction_cb,
-                                         self.mock_on_new_postprocess_cb)
-
-        ai_manager.process_image = MagicMock(
-            mock_image, model, disp_width, disp_height)
-
-        desc = "videotestsrc num-buffers=1 is-live=true ! video/x-raw,width=640,height=480,format=BGRx ! appsink name=appsink async=false emit-signals=true"
-        key = "media1"
-
-        media = GstMedia()
-        media.create_media(desc)
-
-        media_manager = MediaManager()
-        media_manager.add_media(key, media)
+        action_manager.execute = MagicMock(prediction, mock_image, media)
 
         stream_manager = StreamManager(
             action_manager,
@@ -114,7 +105,7 @@ class TestStreamManager(unittest.TestCase):
 
         stream_manager.play()
         time.sleep(1)
-        ai_manager.process_image.assert_called_once()
+
         action_manager.execute.assert_called_once()
 
 
