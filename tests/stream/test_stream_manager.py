@@ -27,6 +27,7 @@ disp_width = 2040
 disp_height = 1920
 default_width = 320
 default_height = 240
+default_dimentions = 3
 
 
 class MockImage:
@@ -34,7 +35,11 @@ class MockImage:
         pass
 
     def get_mock_image():
-        return np.zeros(default_width * default_height * 3, np.uint8)
+        return np.zeros(
+            default_width *
+            default_height *
+            default_dimentions,
+            np.uint8)
 
 
 class MockTriggerFilter1:
