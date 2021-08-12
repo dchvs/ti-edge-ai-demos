@@ -92,15 +92,10 @@ class TestAIManagerOnNewImage(unittest.TestCase):
         self.mock_image = MockImage(width, height, color)
         self.img = self.mock_image.get_image()
 
-        self.mock_on_new_prediction_cb = MagicMock()
-        self.mock_on_new_postprocess_cb = MagicMock()
-
         self.ai_manager = AIManagerOnNewImage(
             model,
             disp_width,
-            disp_height,
-            self.mock_on_new_prediction_cb,
-            self.mock_on_new_postprocess_cb)
+            disp_height)
 
     def testprocess_image(self):
         image = MagicMock()
@@ -116,9 +111,6 @@ class TestAIManagerOnNewImage(unittest.TestCase):
         self.ai_manager.install_callback(cb)
         self.ai_manager.process_image(
             image, self.model, self.disp_width, self.disp_height)
-
-        self.mock_on_new_prediction_cb.assert_called_once()
-        self.mock_on_new_postprocess_cb.assert_called_once()
 
 
 if __name__ == '__main__':

@@ -138,14 +138,9 @@ class AIManagerOnNewImage(AIManager):
             self,
             model,
             disp_width,
-            disp_height,
-            on_new_prediction_cb,
-            on_new_postprocess_cb):
+            disp_height):
 
         super().__init__(model, disp_width, disp_height)
-
-        self.on_new_prediction_cb = on_new_prediction_cb
-        self.on_new_postprocess_cb = on_new_postprocess_cb
 
         self.on_new_prediction_cb_ = None
 
@@ -179,12 +174,8 @@ class AIManagerOnNewImage(AIManager):
 
         inference_results = self.run_inference(image_preprocessed)
 
-        self.on_new_prediction_cb(image_preprocessed, inference_results)
-
         image_postprocessed = self.postprocess_detection(
             img, inference_results)
-
-        self.on_new_postprocess_cb(image_preprocessed)
 
         self._on_new_prediction_mutex.acquire()
         self.on_new_prediction_cb_(

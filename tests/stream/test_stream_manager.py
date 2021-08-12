@@ -68,12 +68,7 @@ class MockTriggerAction:
 
 class TestStreamManager(unittest.TestCase):
     def testsuccess(self):
-        self.mock_on_new_prediction_cb = MagicMock()
-        self.mock_on_new_postprocess_cb = MagicMock()
-
-        ai_manager = AIManagerOnNewImage(model, disp_width, disp_height,
-                                         self.mock_on_new_prediction_cb,
-                                         self.mock_on_new_postprocess_cb)
+        ai_manager = AIManagerOnNewImage(model, disp_width, disp_height)
 
         desc = "videotestsrc num-buffers=1 is-live=true ! video/x-raw,width=640,height=480,format=BGRx ! appsink name=appsink async=false emit-signals=true"
         key = "media1"
