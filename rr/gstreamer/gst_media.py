@@ -181,7 +181,7 @@ class GstImage():
     def get_sample(self):
         return self.sample
 
-    def get_gst_media_obj(self):
+    def get_media(self):
         return self.gst_media_obj
 
     def _map_buffer(self):

@@ -170,7 +170,7 @@ class AIManagerOnNewImage(AIManager):
             If couldn't get the image
         """
 
-        gst_media = image.get_gst_media_obj()
+        gst_media = image.get_media()
 
         img = ImageHandler.buffer_to_np_array(
             image.get_data(), image.get_width(), image.get_height())
