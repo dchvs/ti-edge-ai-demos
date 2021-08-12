@@ -149,10 +149,12 @@ class AIManagerOnNewImage(AIManager):
 
         self.on_new_prediction_cb_ = None
 
-        self._mutex = Lock()
+        self._on_new_prediction_mutex = Lock()
 
     def install_callback(self, on_new_prediction_cb_):
+        self._on_new_prediction_mutex.acquire()
         self.on_new_prediction_cb_ = on_new_prediction_cb_
+        self._on_new_prediction_mutex.release()
 
     def process_image(self, image, model, disp_width, disp_height):
         """Get a image input
@@ -167,8 +169,6 @@ class AIManagerOnNewImage(AIManager):
         AIManagerError
             If couldn't get the image
         """
-
-        self._mutex.acquire()
 
         gst_media = image.get_gst_media_obj()
 
@@ -186,9 +186,10 @@ class AIManagerOnNewImage(AIManager):
 
         self.on_new_postprocess_cb(image_preprocessed)
 
+        self._on_new_prediction_mutex.acquire()
         self.on_new_prediction_cb_(
             inference_results,
             image_postprocessed,
             gst_media)
 
-        self._mutex.release()
+        self._on_new_prediction_mutex.release()
