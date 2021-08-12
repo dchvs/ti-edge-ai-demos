@@ -4,6 +4,7 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
+from bin.utils.imagehandler import ImageHandler
 from TI.postprocess import PostProcessDetection
 from TI.preprocess import PreProcessDetection
 from TI.runtimes import *
@@ -165,10 +166,8 @@ class AIManagerOnNewImage(AIManager):
 
         gst_media = image.get_gst_media_obj()
 
-        img = np.ndarray(
-            shape=(image.get_height(), image.get_width(), 3),
-            dtype=np.uint8,
-            buffer=image.get_data())
+        img = ImageHandler.buffer_to_np_array(
+            image.get_data(), image.get_width(), image.get_height())
 
         image_preprocessed = self.preprocess_detection(img)
 
