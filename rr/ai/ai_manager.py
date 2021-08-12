@@ -4,6 +4,8 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
+from threading import Timer, Lock
+
 from bin.utils.imagehandler import ImageHandler
 from TI.postprocess import PostProcessDetection
 from TI.preprocess import PreProcessDetection
@@ -147,6 +149,8 @@ class AIManagerOnNewImage(AIManager):
 
         self.on_new_prediction_cb_ = None
 
+        self._mutex = Lock()
+
     def install_callback(self, on_new_prediction_cb_):
         self.on_new_prediction_cb_ = on_new_prediction_cb_
 
@@ -163,6 +167,8 @@ class AIManagerOnNewImage(AIManager):
         AIManagerError
             If couldn't get the image
         """
+
+        self._mutex.acquire()
 
         gst_media = image.get_gst_media_obj()
 
@@ -184,3 +190,5 @@ class AIManagerOnNewImage(AIManager):
             inference_results,
             image_postprocessed,
             gst_media)
+
+        self._mutex.release()
