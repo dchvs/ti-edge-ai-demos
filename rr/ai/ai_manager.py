@@ -4,7 +4,7 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
-from threading import Timer, Lock
+from threading import Lock
 
 from bin.utils.imagehandler import ImageHandler
 from TI.postprocess import PostProcessDetection
