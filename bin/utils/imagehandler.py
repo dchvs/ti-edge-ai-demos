@@ -44,7 +44,7 @@ class ImageHandler:
             sys.exit(1)
 
     def buffer_to_np_array(data, width, height):
-        img = np.ndarray(shape=(height, width, 3),
+        img = np.ndarray(shape=(height, width, default_dimentions),
                          dtype=np.uint8,
                          buffer=data)
 
