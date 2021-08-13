@@ -193,8 +193,10 @@ class GstImage():
         if self.minfo.data is None:
             return gst.FlowReturn.ERROR
 
+        return gst.FlowReturn.OK
+
     def _unmap_buffer(self):
-        self._gst_memory_obj.unmap(self.minfo.data)
+        self._gst_memory_obj.unmap(self.minfo)
 
     def __del__(self):
         self._unmap_buffer()
