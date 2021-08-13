@@ -190,7 +190,7 @@ class GstImage():
         self._gst_memory_obj = buf.get_all_memory()
         ret, self.minfo = self._gst_memory_obj.map(self.map_flags)
 
-        if self.minfo.data is None:
+        if ret is not True:
             return gst.FlowReturn.ERROR
 
         return gst.FlowReturn.OK
