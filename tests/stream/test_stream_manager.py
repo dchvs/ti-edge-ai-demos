@@ -70,7 +70,7 @@ class TestStreamManager(unittest.TestCase):
     def testsuccess(self):
         ai_manager = AIManagerOnNewImage(model, disp_width, disp_height)
 
-        desc = "videotestsrc num-buffers=1 is-live=true ! video/x-raw,width=640,height=480,format=BGRx ! appsink name=appsink async=false emit-signals=true"
+        desc = "videotestsrc num-buffers=1 is-live=true ! video/x-raw,width=320,height=240,format=BGRx ! appsink name=appsink async=false emit-signals=true"
         key = "media1"
 
         media = GstMedia()
