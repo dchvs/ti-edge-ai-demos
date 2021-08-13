@@ -182,12 +182,12 @@ class AIManagerOnNewImage(AIManager):
             image_postprocessed.tobytes(), size)
 
         # Create GstImage
-        _sample = image.get_sample()
-        _caps = _sample.get_caps()
-        sample_ = GstUtils.sample_new(buffer, _caps)
-        image_ = GstImage(w, h, c, sample_, image.get_media())
+        sample = image.get_sample()
+        caps = sample.get_caps()
+        sample2 = GstUtils.sample_new(buffer, caps)
+        image2 = GstImage(w, h, c, sample2, image.get_media())
 
         self.on_new_prediction_cb_(
             inference_results,
-            image_,
+            image2,
             gst_media)
