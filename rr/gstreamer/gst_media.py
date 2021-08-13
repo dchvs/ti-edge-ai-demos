@@ -18,26 +18,20 @@ class GstMediaError(RuntimeError):
 class GstMedia():
     """
     Class that creates the GStreamer handler
-
     Attributes
     ----------
     _pipeline : GstElement
         A private GStreamer pipeline object
-
     Methods
     -------
     create_media(desc : str)
         Creates the media object from a string description
-
     delete_media()
         Deletes the media object
-
     play_media()
         Set the media state to playing
-
     stop_media()
         Set the media state to stopped
-
     get_media()
         Getter for the private media object
     """
@@ -49,18 +43,17 @@ class GstMedia():
 
         gst.init(None)
 
+        self._name = None
         self._pipeline = None
         self.callback = None
         self.callback_sample = None
 
-    def create_media(self, desc):
+    def create_media(self, name, desc):
         """Creates the media object from a string description
-
         Parameters
         ----------
         desc : str
             The media description to create
-
         Raises
         ------
         GstMediaError
@@ -69,6 +62,7 @@ class GstMedia():
 
         try:
             self._pipeline = gst.parse_launch(desc)
+            self._name = name
         except GLib.GError as e:
             raise GstMediaError("Unable to create the media") from e
 
@@ -82,7 +76,6 @@ class GstMedia():
 
     def play_media(self):
         """Set the media state to playing
-
         Raises
         ------
         GstMediaError
@@ -99,7 +92,6 @@ class GstMedia():
 
     def stop_media(self):
         """Set the media state to stopped
-
         Raises
         ------
         GstMediaError
@@ -143,6 +135,11 @@ class GstMedia():
         self.callback(gst_image)
 
         return gst.FlowReturn.OK
+
+    def get_name(self):
+        """Getter for the private media name
+        """
+        return self._name
 
     def get_media(self):
         """Getter for the private media object
