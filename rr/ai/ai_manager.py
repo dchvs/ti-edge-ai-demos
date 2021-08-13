@@ -146,12 +146,8 @@ class AIManagerOnNewImage(AIManager):
 
         self.on_new_prediction_cb_ = None
 
-        self._on_new_prediction_mutex = Lock()
-
     def install_callback(self, on_new_prediction_cb_):
-        self._on_new_prediction_mutex.acquire()
         self.on_new_prediction_cb_ = on_new_prediction_cb_
-        self._on_new_prediction_mutex.release()
 
     def process_image(self, image, model, disp_width, disp_height):
         """Get a image input
@@ -191,9 +187,7 @@ class AIManagerOnNewImage(AIManager):
         sample_ = GstUtils.sample_new(buffer, _caps)
         image_ = GstImage(w, h, c, sample_, image.get_media())
 
-        self._on_new_prediction_mutex.acquire()
         self.on_new_prediction_cb_(
             inference_results,
             image_,
             gst_media)
-        self._on_new_prediction_mutex.release()
