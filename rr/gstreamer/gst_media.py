@@ -200,3 +200,14 @@ class GstImage():
 
     def __del__(self):
         self._unmap_buffer()
+
+
+class GstUtils():
+    def __init__(self):
+        pass
+
+    def buffer_new_wrapped_full(data, size):
+        return gst.Buffer.new_wrapped_full(0, data, size, 0, None, None)
+
+    def sample_new(buffer, caps):
+        return gst.Sample.new(buffer, caps, None, None)
