@@ -137,7 +137,8 @@ class GstMedia():
             width,
             height,
             format,
-            sample)
+            sample,
+            self)
 
         self.callback(gst_image)
 
@@ -150,8 +151,9 @@ class GstMedia():
 
 
 class GstImage():
-    def __init__(self, width, height, format, sample):
+    def __init__(self, width, height, format, sample, gst_media_obj):
         self.sample = sample
+        self.gst_media_obj = gst_media_obj
 
         self._gst_memory_obj = None
         self.minfo = None
@@ -161,7 +163,7 @@ class GstImage():
         self.format = format
 
         # Map the buffer
-        self.map_flags = gst.MapFlags.READ
+        self.map_flags = gst.MapFlags.READ or gst.MapFlags.WRITE
         self._map_buffer()
 
     def get_width(self):
@@ -179,17 +181,33 @@ class GstImage():
     def get_sample(self):
         return self.sample
 
+    def get_media(self):
+        return self.gst_media_obj
+
     def _map_buffer(self):
         buf = self.sample.get_buffer()
 
         self._gst_memory_obj = buf.get_all_memory()
         ret, self.minfo = self._gst_memory_obj.map(self.map_flags)
 
-        if self.minfo.data is None:
+        if ret is not True:
             return gst.FlowReturn.ERROR
 
+        return gst.FlowReturn.OK
+
     def _unmap_buffer(self):
-        self._gst_memory_obj.unmap(self.minfo.data)
+        self._gst_memory_obj.unmap(self.minfo)
 
     def __del__(self):
         self._unmap_buffer()
+
+
+class GstUtils():
+    def __init__(self):
+        pass
+
+    def buffer_new_wrapped_full(data, size):
+        return gst.Buffer.new_wrapped_full(0, data, size, 0, None, None)
+
+    def sample_new(buffer, caps):
+        return gst.Sample.new(buffer, caps, None, None)

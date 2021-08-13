@@ -16,6 +16,8 @@ from rr.ai.ai_manager import AIManager
 from rr.ai.ai_manager import AIManagerError
 from rr.ai.ai_manager import AIManagerOnNewImage
 from rr.gstreamer.gst_media import GstImage
+from rr.gstreamer.gst_media import GstMedia
+from rr.gstreamer.gst_media import GstUtils
 
 model = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
 width = 1920
@@ -91,25 +93,31 @@ class TestAIManagerOnNewImage(unittest.TestCase):
         self.mock_image = MockImage(width, height, color)
         self.img = self.mock_image.get_image()
 
-        self.mock_on_new_prediction_cb = MagicMock()
-        self.mock_on_new_postprocess_cb = MagicMock()
-
         self.ai_manager = AIManagerOnNewImage(
             model,
             disp_width,
-            disp_height,
-            self.mock_on_new_prediction_cb,
-            self.mock_on_new_postprocess_cb)
+            disp_height)
 
     def testprocess_image(self):
         image = MagicMock()
         image.get_data = MagicMock(return_value=self.img)
 
+        gst_media_obj = GstMedia()
+        desc = "videotestsrc is-live=true ! fakesink async=false"
+        gst_media_obj.create_media(desc)
+        gst_media_obj.play_media()
+        image.get_media = MagicMock(return_value=gst_media_obj)
+
+        h, w, c = self.img.shape
+        size = h * w * c
+        buf = GstUtils.buffer_new_wrapped_full(self.img.tobytes(), size)
+        sample = GstUtils.sample_new(buf, None)
+        image.get_sample = MagicMock(return_value=sample)
+
+        cb = MagicMock(None, self.img, gst_media_obj)
+        self.ai_manager.install_callback(cb)
         self.ai_manager.process_image(
             image, self.model, self.disp_width, self.disp_height)
-
-        self.mock_on_new_prediction_cb.assert_called_once()
-        self.mock_on_new_postprocess_cb.assert_called_once()
 
 
 if __name__ == '__main__':

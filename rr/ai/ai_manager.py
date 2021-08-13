@@ -4,6 +4,11 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
+from threading import Lock
+
+from bin.utils.imagehandler import ImageHandler
+from rr.gstreamer.gst_media import GstImage
+from rr.gstreamer.gst_media import GstUtils
 from TI.postprocess import PostProcessDetection
 from TI.preprocess import PreProcessDetection
 from TI.runtimes import *
@@ -135,14 +140,14 @@ class AIManagerOnNewImage(AIManager):
             self,
             model,
             disp_width,
-            disp_height,
-            on_new_prediction_cb,
-            on_new_postprocess_cb):
+            disp_height):
 
         super().__init__(model, disp_width, disp_height)
 
-        self.on_new_prediction_cb = on_new_prediction_cb
-        self.on_new_postprocess_cb = on_new_postprocess_cb
+        self.on_new_prediction_cb_ = None
+
+    def install_callback(self, on_new_prediction_cb_):
+        self.on_new_prediction_cb_ = on_new_prediction_cb_
 
     def process_image(self, image, model, disp_width, disp_height):
         """Get a image input
@@ -158,15 +163,31 @@ class AIManagerOnNewImage(AIManager):
             If couldn't get the image
         """
 
-        image = image.get_data()
+        gst_media = image.get_media()
 
-        image_preprocessed = self.preprocess_detection(image)
+        img = ImageHandler.buffer_to_np_array(
+            image.get_data(), image.get_width(), image.get_height())
+
+        image_preprocessed = self.preprocess_detection(img)
 
         inference_results = self.run_inference(image_preprocessed)
 
-        self.on_new_prediction_cb(image_preprocessed, inference_results)
-
         image_postprocessed = self.postprocess_detection(
-            image, inference_results)
+            img, inference_results)
 
-        self.on_new_postprocess_cb(image_preprocessed)
+        # Create GstBuffer from postprocess image
+        h, w, c = image_postprocessed.shape
+        size = h * w * c
+        buffer = GstUtils.buffer_new_wrapped_full(
+            image_postprocessed.tobytes(), size)
+
+        # Create GstImage
+        sample = image.get_sample()
+        caps = sample.get_caps()
+        sample2 = GstUtils.sample_new(buffer, caps)
+        image2 = GstImage(w, h, c, sample2, image.get_media())
+
+        self.on_new_prediction_cb_(
+            inference_results,
+            image2,
+            gst_media)
