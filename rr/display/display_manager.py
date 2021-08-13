@@ -83,7 +83,6 @@ class DisplayManager():
         media_name = media.get_name()
         if media_name not in self._list:
             self._list.append(media_name)
-            self._appsrc_dict[media_name] = media.get_media()
         else:
             raise DisplayManagerError(
                 "Stream already exists in display manager")
@@ -143,7 +142,11 @@ class DisplayManager():
                 h) + ",format=" + img_format + ",framerate=30/1" + " ! videoscale ! video/x-raw,width=" + str(w) + ",height=" + str(h) + " ! mixer. "
 
         self._display_desc = desc
-        self._media.create_media(self._display_desc)
+        self._media.create_media("display", self._display_desc)
+
+        for key in self._list:
+            appsrc = self._media.get_media().get_by_name(key)
+            self._appsrc_dict[key] = appsrc
 
     def play_display(self):
         """
