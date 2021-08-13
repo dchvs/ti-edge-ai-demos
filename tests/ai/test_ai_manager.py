@@ -17,6 +17,7 @@ from rr.ai.ai_manager import AIManagerError
 from rr.ai.ai_manager import AIManagerOnNewImage
 from rr.gstreamer.gst_media import GstImage
 from rr.gstreamer.gst_media import GstMedia
+from rr.gstreamer.gst_media import GstUtils
 
 model = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
 width = 1920
@@ -106,6 +107,12 @@ class TestAIManagerOnNewImage(unittest.TestCase):
         gst_media_obj.create_media(desc)
         gst_media_obj.play_media()
         image.get_media = MagicMock(return_value=gst_media_obj)
+
+        h, w, c = self.img.shape
+        size = h * w * c
+        buf = GstUtils.buffer_new_wrapped_full(self.img.tobytes(), size)
+        sample = GstUtils.sample_new(buf, None)
+        image.get_sample = MagicMock(return_value=sample)
 
         cb = MagicMock(None, self.img, gst_media_obj)
         self.ai_manager.install_callback(cb)
