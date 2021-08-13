@@ -163,7 +163,7 @@ class GstImage():
         self.format = format
 
         # Map the buffer
-        self.map_flags = gst.MapFlags.READ
+        self.map_flags = gst.MapFlags.READ or gst.MapFlags.WRITE
         self._map_buffer()
 
     def get_width(self):
