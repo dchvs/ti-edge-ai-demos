@@ -7,6 +7,8 @@
 from threading import Lock
 
 from bin.utils.imagehandler import ImageHandler
+from rr.gstreamer.gst_media import GstImage
+from rr.gstreamer.gst_media import GstUtils
 from TI.postprocess import PostProcessDetection
 from TI.preprocess import PreProcessDetection
 from TI.runtimes import *
@@ -177,10 +179,21 @@ class AIManagerOnNewImage(AIManager):
         image_postprocessed = self.postprocess_detection(
             img, inference_results)
 
+        # Create GstBuffer from postprocess image
+        h, w, c = image_postprocessed.shape
+        size = h * w * c
+        buffer = GstUtils.buffer_new_wrapped_full(
+            image_postprocessed.tobytes(), size)
+
+        # Create GstImage
+        _sample = image.get_sample()
+        _caps = _sample.get_caps()
+        sample_ = GstUtils.sample_new(buffer, _caps)
+        image_ = GstImage(w, h, c, sample_, image.get_media())
+
         self._on_new_prediction_mutex.acquire()
         self.on_new_prediction_cb_(
             inference_results,
-            image_postprocessed,
+            image_,
             gst_media)
-
         self._on_new_prediction_mutex.release()
