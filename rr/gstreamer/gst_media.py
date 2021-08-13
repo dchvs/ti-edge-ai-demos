@@ -181,6 +181,11 @@ class GstImage():
     def get_media(self):
         return self.gst_media_obj
 
+    def get_timestamp(self):
+        sample = self.get_sample()
+        buf = sample.get_buffer()
+        return buf.pts
+
     def _map_buffer(self):
         buf = self.sample.get_buffer()
 
