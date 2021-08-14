@@ -104,7 +104,7 @@ class TestAIManagerOnNewImage(unittest.TestCase):
 
         gst_media_obj = GstMedia()
         desc = "videotestsrc is-live=true ! fakesink async=false"
-        gst_media_obj.create_media(desc)
+        gst_media_obj.create_media("name", desc)
         gst_media_obj.play_media()
         image.get_media = MagicMock(return_value=gst_media_obj)
 

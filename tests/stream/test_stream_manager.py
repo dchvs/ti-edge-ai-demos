@@ -12,6 +12,7 @@ from unittest.mock import MagicMock
 from rr.actions.action_manager import ActionManager
 from rr.actions.action_manager import Trigger, TriggerError
 from rr.ai.ai_manager import AIManagerOnNewImage
+from rr.display.display_manager import DisplayManager
 from rr.gstreamer.gst_media import GstMedia
 from rr.gstreamer.media_manager import MediaManager
 from rr.stream.stream_manager import OnNewImage
@@ -96,6 +97,7 @@ class TestStreamManager(unittest.TestCase):
 
         trigger = Trigger(self.desc, self.action, self.filters)
         action_manager = ActionManager([trigger])
+        display_manager = DisplayManager()
 
         prediction = {"mock": "prediction"}
         mock_image = MockImage.get_mock_image()
@@ -104,6 +106,7 @@ class TestStreamManager(unittest.TestCase):
         stream_manager = StreamManager(
             action_manager,
             ai_manager,
+            display_manager,
             media_manager,
             model,
             disp_width,

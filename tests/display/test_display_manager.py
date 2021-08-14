@@ -12,8 +12,9 @@ from gi.repository import GLib
 
 import unittest
 
-from rr.display.display_manager import DisplayManager
-from rr.display.display_manager import DisplayManagerError
+from rr.display.display_manager_interpipe import DisplayManager
+from rr.display.display_manager_interpipe import DisplayManagerError
+
 
 def _get_media_State(media):
     return media.get_state(gst.CLOCK_TIME_NONE)[1]
@@ -38,7 +39,9 @@ class TestDisplayManager(unittest.TestCase):
     def test_create_display(self):
         display_desc = "videomixer name=mixer  sink_0::xpos=0 sink_0::ypos=0 ! queue ! video/x-raw,width=1280,height=720 ! kmssink force-modesetting=true sync=false async=false  interpipesrc listen-to=stream0 format=time ! queue ! videoscale ! video/x-raw,width=320,height=240 ! mixer. "
         self.display_manager.create_display()
-        self.assertEqual(display_desc, self.display_manager._get_display_desc())
+        self.assertEqual(
+            display_desc,
+            self.display_manager._get_display_desc())
 
     def test_play_display(self):
         self.test_create_display()
@@ -66,6 +69,7 @@ class TestDisplayManager(unittest.TestCase):
         self.display_manager.delete_display()
         self.assertEqual(None, self.display_manager._get_display_desc())
 
+
 class TestDisplayManagerFail(unittest.TestCase):
     def setUp(self):
         self.display_manager = DisplayManager()
@@ -79,7 +83,7 @@ class TestDisplayManagerFail(unittest.TestCase):
     def test_add_stream_not_string(self):
         with self.assertRaisesRegex(DisplayManagerError, "Invalid key"):
             self.display_manager.add_stream(1)
-            
+
     def test_add_stream_duplicated(self):
         with self.assertRaisesRegex(DisplayManagerError, "Stream already exists in display manager"):
             self.display_manager.add_stream(self.stream_name)
@@ -99,7 +103,7 @@ class TestDisplayManagerFail(unittest.TestCase):
         self.display_manager.add_stream("stream7")
         with self.assertRaisesRegex(DisplayManagerError, "Max number of streams reached"):
             self.display_manager.add_stream("stream8")
-            
+
     def test_remove_stream_none(self):
         with self.assertRaisesRegex(DisplayManagerError, "Invalid key"):
             self.display_manager.remove_stream(None)
@@ -138,6 +142,7 @@ class TestDisplayManagerFail(unittest.TestCase):
     def test_delete_display_not_created(self):
         with self.assertRaisesRegex(DisplayManagerError, "Display description not created yet"):
             self.display_manager.stop_display()
+
 
 if __name__ == '__main__':
     unittest.main()

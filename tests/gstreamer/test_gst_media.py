@@ -23,10 +23,11 @@ def _get_media_State(media):
 class TestGstMedia(unittest.TestCase):
     def setUp(self):
         self.desc = "videotestsrc is-live=true ! fakesink async=false"
+        self.name = "test_media"
 
         self.gstmedia = GstMedia()
 
-        self.gstmedia.create_media(self.desc)
+        self.gstmedia.create_media(self.name, self.desc)
 
     def testcreate_media(self):
         self.assertTrue(isinstance(self.gstmedia.get_media(), gst.Pipeline))
@@ -64,16 +65,18 @@ class TestGstMediaFail(unittest.TestCase):
     def testcreate_media(self):
         # Force desc to make media fail
         self.desc = "videotestsrc is-live=true ! "
+        self.name = "test_media"
         self.gstmedia = GstMedia()
 
         with self.assertRaisesRegex(GstMediaError, "Unable to create the media"):
-            self.gstmedia.create_media(self.desc)
+            self.gstmedia.create_media(self.name, self.desc)
 
     def testplay_media(self):
         # Force blocking of playing state
         self.desc = "fakesrc ! fakesink async=false state-error=3"
+        self.name = "test_media"
         self.gstmedia = GstMedia()
-        self.gstmedia.create_media(self.desc)
+        self.gstmedia.create_media(self.name, self.desc)
 
         with self.assertRaisesRegex(GstMediaError, "Unable to play the media"):
             self.gstmedia.play_media()
@@ -84,8 +87,9 @@ class TestGstMediaFail(unittest.TestCase):
     def teststop_media(self):
         # Force blocking of stopped state
         self.desc = "fakesrc ! fakesink async=false state-error=5"
+        self.name = "test_media"
         self.gstmedia = GstMedia()
-        self.gstmedia.create_media(self.desc)
+        self.gstmedia.create_media(self.name, self.desc)
 
         self.gstmedia.play_media()
         with self.assertRaisesRegex(GstMediaError, "Unable to stop the media"):

@@ -21,11 +21,13 @@ class OnNewImage():
 
 
 class OnNewPrediction():
-    def __init__(self, action_manager):
+    def __init__(self, action_manager, display_manager):
         self.action_manager = action_manager
+        self.display_manager = display_manager
 
     def __call__(self, prediction, image, media):
         self.action_manager.execute(prediction, image, media)
+        self.display_manager.push_image(image, media)
 
 
 class StreamManagerError(RuntimeError):
@@ -47,6 +49,7 @@ class StreamManager():
             self,
             action_manager,
             ai_manager,
+            display_manager,
             media_manager,
             model,
             disp_width,
@@ -58,11 +61,12 @@ class StreamManager():
         self.ai_manager = ai_manager
         self.media_manager = media_manager
         self.action_manager = action_manager
+        self.display_manager = display_manager
 
         cb = OnNewImage(ai_manager, model, disp_width, disp_height)
         self.media_manager.install_callback(cb)
 
-        cb_prediction = OnNewPrediction(action_manager)
+        cb_prediction = OnNewPrediction(action_manager, display_manager)
         self.ai_manager.install_callback(cb_prediction)
 
     def play(self):
