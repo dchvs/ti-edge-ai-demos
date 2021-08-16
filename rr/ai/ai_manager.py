@@ -14,6 +14,31 @@ from TI.preprocess import PreProcessDetection
 from TI.runtimes import *
 
 
+def format_inf_results(timestamp, inference_results):
+    dict_instances = {}
+    dict_labels = {}
+
+    class_IDs, scores, bounding_boxes = inference_results
+
+    for i in enumerate(np.squeeze(scores, axis=0)):
+        label = "label"
+        fieldnames = {
+            'time': timestamp,
+            'label': label,
+            'probability': scores,
+            'bbox-x': bounding_boxes[0][0],
+            'bbox-y': bounding_boxes[0][1],
+            'bbox-width': bounding_boxes[0][2],
+            'bbox-height': bounding_boxes[0][3],
+        }
+
+        dict_labels.update({"labels": fieldnames})
+
+    dict_instances.update({"instances": dict_labels})
+
+    return dict_instances
+
+
 class AIManagerError(RuntimeError):
     pass
 
@@ -187,7 +212,10 @@ class AIManagerOnNewImage(AIManager):
         sample2 = GstUtils.sample_new(buffer, caps)
         image2 = GstImage(w, h, c, sample2, image.get_media())
 
+        timestamp = image2.get_timestamp()
+        inference_results2 = format_inf_results(timestamp, inference_results)
+
         self.on_new_prediction_cb_(
-            inference_results,
+            inference_results2,
             image2,
             gst_media)
