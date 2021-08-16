@@ -18,6 +18,7 @@ from rr.ai.ai_manager import AIManagerOnNewImage
 from rr.gstreamer.gst_media import GstImage
 from rr.gstreamer.gst_media import GstMedia
 from rr.gstreamer.gst_media import GstUtils
+from bin.utils.imagehandler import ImageHandler
 
 model = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
 width = 1920
@@ -25,11 +26,15 @@ height = 1080
 color = (100, 100, 100)
 disp_width = 2040
 disp_height = 1920
+img_path = "./data/0004.jpg"
 
 
 class MockImage():
     def __init__(self, width, height, color):
+        img_handler = ImageHandler()
+
         self.mock_img = self._create_img(width, height, rgb_color=color)
+        self.real_img = img_handler.load_image(img_path)
 
     def _create_img(self, width, height, rgb_color=(0, 0, 0)):
         img = np.zeros((height, width, 3), np.uint8)
@@ -40,7 +45,7 @@ class MockImage():
         return img
 
     def get_image(self):
-        return self.mock_img
+        return self.real_img
 
 
 class TestAIManager(unittest.TestCase):
