@@ -20,12 +20,12 @@ def format_inf_results(timestamp, inference_results):
 
     class_IDs, scores, bounding_boxes = inference_results
 
-    for i in enumerate(np.squeeze(scores, axis=0)):
+    for i, score in enumerate(np.squeeze(scores, axis=0)):
         label = "label"
         fieldnames = {
             'time': timestamp,
             'label': label,
-            'probability': scores,
+            'probability': score,
             'bbox-x': bounding_boxes[0][0],
             'bbox-y': bounding_boxes[0][1],
             'bbox-width': bounding_boxes[0][2],
