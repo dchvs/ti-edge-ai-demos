@@ -4,6 +4,8 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
+import cv2
+import numpy as np
 from threading import Lock
 
 from bin.utils.imagehandler import ImageHandler
@@ -14,26 +16,23 @@ from TI.preprocess import PreProcessDetection
 from TI.runtimes import *
 
 
-def format_inf_results(timestamp, classname, inference_results):
+def format_inf_results(classname, inference_results):
     dict_instances = {}
     dict_labels = {}
 
     class_IDs, scores, bounding_boxes = inference_results
 
+    keys = ["x", "y", "width", "height"]
     for i, score in enumerate(np.squeeze(scores, axis=0)):
         fieldnames = {
-            'time': timestamp,
             'label': classname,
-            'probability': score,
-            'bbox-x': bounding_boxes[0][0],
-            'bbox-y': bounding_boxes[0][1],
-            'bbox-width': bounding_boxes[0][2],
-            'bbox-height': bounding_boxes[0][3],
+            'probability': scores[0][i].T,
+            'bbox': dict(zip(keys, bounding_boxes[0][i].T)),
         }
 
-        dict_labels.update({"labels": fieldnames})
+        dict_labels.update({"labels": [fieldnames]})
 
-        dict_instances.update({"instance_" + str(i): dict_labels})
+        dict_instances.update({"instance_" + str(i): [dict_labels]})
 
     return dict_instances
 
@@ -214,10 +213,8 @@ class AIManagerOnNewImage(AIManager):
         sample2 = GstUtils.sample_new(buffer, caps)
         image2 = GstImage(w, h, c, sample2, image.get_media())
 
-        timestamp = image2.get_timestamp()
         classname = self.get_classname()
-        inference_results2 = format_inf_results(
-            timestamp, classname, inference_results)
+        inference_results2 = format_inf_results(classname, inference_results)
 
         self.on_new_prediction_cb_(
             inference_results2,
