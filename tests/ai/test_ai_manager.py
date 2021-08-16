@@ -104,8 +104,13 @@ class TestAIManagerOnNewImage(unittest.TestCase):
             disp_height)
 
     def testprocess_image(self):
+        h, w, c = self.img.shape
+        size = h * w * c
+
         image = MagicMock()
         image.get_data = MagicMock(return_value=self.img)
+        image.get_width = MagicMock(return_value=w)
+        image.get_height = MagicMock(return_value=h)
 
         gst_media_obj = GstMedia()
         desc = "videotestsrc is-live=true ! fakesink async=false"
@@ -113,8 +118,6 @@ class TestAIManagerOnNewImage(unittest.TestCase):
         gst_media_obj.play_media()
         image.get_media = MagicMock(return_value=gst_media_obj)
 
-        h, w, c = self.img.shape
-        size = h * w * c
         buf = GstUtils.buffer_new_wrapped_full(self.img.tobytes(), size)
         sample = GstUtils.sample_new(buf, None)
         image.get_sample = MagicMock(return_value=sample)
