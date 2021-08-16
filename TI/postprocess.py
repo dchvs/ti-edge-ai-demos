@@ -91,6 +91,11 @@ class PostProcess:
 
 
 class PostProcessDetection(PostProcess):
+    def __init__(self, model, disp_width, disp_height):
+        super().__init__(model, disp_width, disp_height)
+
+        self.classname = None
+
     def overlay_bounding_box(self, frame, results, classnames, score_thresh,
                              scalex, scaley, label_offset, formatter):
         class_IDs, scores, bounding_boxes = results
@@ -122,6 +127,8 @@ class PostProcessDetection(PostProcess):
                         0.5,
                         text_color)
 
+        self.classname = classnames[class_id]
+
         return frame
 
     def get_postprocessed_image(self, img, results):
@@ -150,3 +157,6 @@ class PostProcessDetection(PostProcess):
                                  self.disp_height - img_height)
 
         return img
+
+    def get_classname(self):
+        return self.classname
