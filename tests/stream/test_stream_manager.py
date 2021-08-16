@@ -17,6 +17,7 @@ from rr.gstreamer.gst_media import GstMedia
 from rr.gstreamer.media_manager import MediaManager
 from rr.stream.stream_manager import OnNewImage
 from rr.stream.stream_manager import StreamManager
+from bin.utils.imagehandler import ImageHandler
 
 
 class MockTriggerMedia:
@@ -29,18 +30,16 @@ disp_height = 1920
 default_width = 320
 default_height = 240
 default_dimentions = 3
+img_path = "./data/0004.jpg"
 
 
 class MockImage:
-    def __init__():
-        pass
+    def __init__(self):
+        img_handler = ImageHandler()
+        self.real_img = img_handler.load_image(img_path)
 
-    def get_mock_image():
-        return np.zeros(
-            (default_width *
-             default_height *
-             default_dimentions),
-            np.uint8)
+    def get_mock_image(self):
+        return self.real_img
 
 
 class MockTriggerFilter1:
@@ -75,7 +74,7 @@ class TestStreamManager(unittest.TestCase):
         key = "media1"
 
         media = GstMedia()
-        media.create_media(desc)
+        media.create_media("name", desc)
 
         media_manager = MediaManager()
         media_manager.add_media(key, media)
@@ -100,7 +99,8 @@ class TestStreamManager(unittest.TestCase):
         display_manager = DisplayManager()
 
         prediction = {"mock": "prediction"}
-        mock_image = MockImage.get_mock_image()
+        img = MockImage()
+        mock_image = img.get_mock_image()
         action_manager.execute = MagicMock(prediction, mock_image, media)
 
         stream_manager = StreamManager(
