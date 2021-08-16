@@ -34,7 +34,7 @@ def format_inf_results(timestamp, inference_results):
 
         dict_labels.update({"labels": fieldnames})
 
-    dict_instances.update({"instances": dict_labels})
+        dict_instances.update({"instance_" + str(i): dict_labels})
 
     return dict_instances
 
