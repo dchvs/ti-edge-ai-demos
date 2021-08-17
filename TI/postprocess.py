@@ -127,7 +127,7 @@ class PostProcessDetection(PostProcess):
                         0.5,
                         text_color)
 
-        self.classname = classnames[class_id]
+            self.classname = classnames[class_id]
 
         return frame
 
