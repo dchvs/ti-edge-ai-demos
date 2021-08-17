@@ -23,16 +23,21 @@ def format_inf_results(classname, inference_results):
     class_IDs, scores, bounding_boxes = inference_results
 
     keys = ["x", "y", "width", "height"]
+    instances = []
     for i, score in enumerate(np.squeeze(scores, axis=0)):
+        prob = scores[0][i]
+
         fieldnames = {
             'label': classname,
-            'probability': scores[0][i].T,
-            'bbox': dict(zip(keys, bounding_boxes[0][i].T)),
+            'probability': prob,
         }
 
         dict_labels.update({"labels": [fieldnames]})
+        dict_labels.update({"bbox": dict(zip(keys, bounding_boxes[0][i]))})
 
-        dict_instances.update({"instance_" + str(i): [dict_labels]})
+        instances.append(dict_labels)
+
+    dict_instances.update({"instances": instances})
 
     return dict_instances
 
