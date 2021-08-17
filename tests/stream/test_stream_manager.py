@@ -98,6 +98,10 @@ class TestStreamManager(unittest.TestCase):
         action_manager = ActionManager([trigger])
         display_manager = DisplayManager()
 
+        streams = []
+        streams.append(media)
+        display_manager.add_stream(media)
+
         prediction = {"mock": "prediction"}
         img = MockImage()
         mock_image = img.get_mock_image()
