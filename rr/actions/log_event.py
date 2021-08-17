@@ -133,7 +133,14 @@ class LogEvent():
                                    'bbox-height': instance['bbox']['height']})
         self._file.flush()
 
-    def execute(self, media, image, inf_results):
+    def _is_triggered(self, filters):
+        for f in filters:
+            if f.is_triggered():
+                return True
+
+        return False
+
+    def execute(self, media, image, inf_results, inf_filter):
         """ Executes the log action
 
         Parameters
@@ -146,9 +153,15 @@ class LogEvent():
             The inference results
         """
 
+        if not self._is_triggered(inf_filter):
+            return
+
         self._mutex.acquire()
         self._log(media, image, inf_results)
         self._mutex.release()
+
+    def get_name(self):
+        return self._name
 
     @classmethod
     def make(cls, desc):
@@ -158,4 +171,4 @@ class LogEvent():
         except KeyError as e:
             raise LogEventError("Malformed log event description") from e
 
-        return LogEvent(location)
+        return LogEvent(name, location)
