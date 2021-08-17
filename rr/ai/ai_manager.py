@@ -4,6 +4,8 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
+import cv2
+import numpy as np
 from threading import Lock
 
 from bin.utils.imagehandler import ImageHandler
@@ -12,6 +14,32 @@ from rr.gstreamer.gst_media import GstUtils
 from TI.postprocess import PostProcessDetection
 from TI.preprocess import PreProcessDetection
 from TI.runtimes import *
+
+
+def format_inf_results(classname, inference_results):
+    dict_instances = {}
+
+    class_IDs, scores, bounding_boxes = inference_results
+
+    keys = ["x", "y", "width", "height"]
+    instances = []
+    for i, score in enumerate(np.squeeze(scores, axis=0)):
+        dict_labels = {}
+        prob = scores[0][i]
+
+        fieldnames = {
+            'label': classname,
+            'probability': prob
+        }
+
+        dict_labels.update({"labels": [fieldnames]})
+        dict_labels.update({"bbox": dict(zip(keys, bounding_boxes[0][i]))})
+
+        instances.append(dict_labels)
+
+    dict_instances.update({"instances": instances})
+
+    return dict_instances
 
 
 class AIManagerError(RuntimeError):
@@ -123,6 +151,9 @@ class AIManager():
 
         return img_postprocessed
 
+    def get_classname(self):
+        return self.postprocess_obj.get_classname()
+
 
 class AIManagerOnNewImage(AIManager):
     """
@@ -187,7 +218,10 @@ class AIManagerOnNewImage(AIManager):
         sample2 = GstUtils.sample_new(buffer, caps)
         image2 = GstImage(w, h, c, sample2, image.get_media())
 
+        classname = self.get_classname()
+        inference_results2 = format_inf_results(classname, inference_results)
+
         self.on_new_prediction_cb_(
-            inference_results,
+            inference_results2,
             image2,
             gst_media)
