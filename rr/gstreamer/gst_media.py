@@ -62,7 +62,6 @@ class GstMedia():
 
         try:
             self._pipeline = gst.parse_launch(desc)
-            print("desc = ", desc)
             self._name = name
         except GLib.GError as e:
             raise GstMediaError("Unable to create the media") from e
