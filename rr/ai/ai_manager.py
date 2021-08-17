@@ -18,18 +18,18 @@ from TI.runtimes import *
 
 def format_inf_results(classname, inference_results):
     dict_instances = {}
-    dict_labels = {}
 
     class_IDs, scores, bounding_boxes = inference_results
 
     keys = ["x", "y", "width", "height"]
     instances = []
     for i, score in enumerate(np.squeeze(scores, axis=0)):
+        dict_labels = {}
         prob = scores[0][i]
 
         fieldnames = {
             'label': classname,
-            'probability': prob,
+            'probability': prob
         }
 
         dict_labels.update({"labels": [fieldnames]})
