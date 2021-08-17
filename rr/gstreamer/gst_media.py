@@ -22,6 +22,9 @@ class GstMedia():
     ----------
     _pipeline : GstElement
         A private GStreamer pipeline object
+    _triggers : List(Trigger)
+        An optional list of triggers to execute on each image
+
     Methods
     -------
     create_media(desc : str)
@@ -47,6 +50,7 @@ class GstMedia():
         self._pipeline = None
         self.callback = None
         self.callback_sample = None
+        self._triggers = []
 
     def create_media(self, name, desc):
         """Creates the media object from a string description
@@ -145,6 +149,34 @@ class GstMedia():
         """Getter for the private media object
         """
         return self._pipeline
+
+    def set_triggers(self, triggers):
+        self._triggers = triggers
+
+    def get_triggers(self):
+        return self._triggers
+
+    @classmethod
+    def make(cls, desc, all_triggers):
+        pipe = 'rtspsrc location=%s ! queue ! rtph264depay ! h264parse ! avdec_h264 ! queue ! videoconvert ! videoscale ! video/x-raw,width=320,height=240,format=RGB ! appsink emit-signals=true name=appsink' % (
+                desc["uri"])
+        media = GstMedia()
+        media.create_media(desc['id'], pipe)
+
+        media_triggers = []
+        for trigger in desc['triggers']:
+            match = next(
+                (candidate for candidate in all_triggers if trigger == candidate._name),
+                None)
+            if not match:
+                raise GstMediaError(
+                    "Unknown trigger '%s', corrupted description" %
+                    trigger)
+            media_triggers.append(match)
+
+        media.set_triggers(media_triggers)
+
+        return media
 
 
 class GstImage():

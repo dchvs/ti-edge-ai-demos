@@ -117,12 +117,11 @@ class Trigger:
 
 
 class ActionManager:
-    def __init__(self, triggers):
-        self._triggers = triggers
-
     def execute(self, prediction, image, media):
-        if self._triggers is None:
+        triggers = media.get_triggers()
+
+        if triggers is None:
             return
 
-        for trigger in self._triggers:
+        for trigger in triggers:
             trigger.execute(prediction, image, media)

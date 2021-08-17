@@ -42,21 +42,17 @@ class SmartCCTV:
 
         return triggers
 
-    def _create_action_manager(self, config):
+    def _create_action_manager(self):
+        return ActionManager()
+
+    def _create_streams(self, config):
         filters = self._parse_filters(config)
         actions = self._parse_actions(config)
         triggers = self._parse_triggers(config, actions, filters)
 
-        return ActionManager(triggers)
-
-    def _create_streams(self, config):
         streams = []
         for stream in config['streams']:
-            desc = 'rtspsrc location=%s ! queue ! rtph264depay ! h264parse ! avdec_h264 ! queue ! videoconvert ! videoscale ! video/x-raw,width=320,height=240,format=RGB ! appsink emit-signals=true name=appsink' % (
-                stream["uri"])
-            media = GstMedia()
-            media.create_media(stream['id'], desc)
-            streams.append(media)
+            streams.append(GstMedia.make(stream, triggers))
 
         return streams
 
@@ -83,7 +79,7 @@ class SmartCCTV:
         streams = self._create_streams(config)
         media_manager = self._create_media_manager(streams)
         display_manager = self._create_display_manager(streams)
-        action_manager = self._create_action_manager(config)
+        action_manager = self._create_action_manager()
         ai_manager = self._create_ai_manager(model, disp_width, disp_height)
 
         self._stream_manager = StreamManager(
