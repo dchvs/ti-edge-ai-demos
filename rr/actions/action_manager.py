@@ -3,6 +3,8 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
+import copy
+
 from rr.actions.log_event import LogEvent
 from rr.actions.record_event import RecordEvent
 
@@ -109,7 +111,9 @@ class Trigger:
                     break
 
             if match is not None:
-                filters.append(match)
+                # We need to copy the filter to avoid other triggers
+                # activating it
+                filters.append(copy.copy(match))
             else:
                 raise TriggerError('Unknown filter "%s"' % req)
 
