@@ -32,6 +32,7 @@
 
 from dlr import DLRModel
 import numpy as np
+import threading
 import tflite_runtime.interpreter as tflitert_interpreter
 
 
@@ -62,6 +63,8 @@ class tflitert:
             "import": 'no',
         }
 
+        self._mutex = threading.Lock()
+
         try:
             tidl_delegate = [
                 tflitert_interpreter.load_delegate(
@@ -81,7 +84,9 @@ class tflitert:
         if (self.input_details[0]['dtype'] != np.float32):
             input_img = np.uint8(input_img)
         self.interpreter.set_tensor(self.input_details[0]['index'], input_img)
+        self._mutex.acquire()
         self.interpreter.invoke()
+        self._mutex.release()
         results = [self.interpreter.get_tensor(output_detail['index'])
                    for output_detail in self.output_details]
         if (self.params.task_type == 'detection'):
