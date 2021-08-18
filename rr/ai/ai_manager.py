@@ -6,7 +6,6 @@
 
 import cv2
 import numpy as np
-from threading import Lock
 
 from bin.utils.imagehandler import ImageHandler
 from rr.gstreamer.gst_media import GstImage
@@ -155,55 +154,6 @@ class AIManager():
         return self.postprocess_obj.get_classname()
 
 
-def run_inference(image):
-    """Apply inference to the image
-
-    Parameters
-    ----------
-    image : image input
-        The image to preprocess
-
-    inference_model : str
-        The inference model to apply
-
-    preprocess : AI Preprocess object
-        The AI Preprocess object
-
-    Raises
-    ------
-    AIManagerError
-        If couldn't run the inference to the image
-    """
-
-    classID = [[15., 15., 15., 15., 15., 15., 15., 15., 15., 15., 15.]]
-
-    scores = [[0.9819941,
-               0.97701955,
-               0.43781853,
-               0.43781853,
-               0.43781853,
-               0.377575,
-               0.377575,
-               0.3208106,
-               0.3208106,
-               0.3208106,
-               0.3208106]]
-
-    bbox = [[[41.319145, 210.90213, 242.32146, 299.09787],
-            [38.450996, 7.6868715, 300.02994, 180.86444],
-            [47.47543, 59.681156, 234.6865, 182.08157],
-            [87.04913, 201.42395, 293.9264, 299.16367],
-            [122.66138, 24.483088, 296.35184, 166.69206],
-            [74.31985, 89.84922, 301.43396, 178.29462],
-            [177.2659, 97.23523, 285.284, 279.82693],
-            [100.98614, 243.40727, 277.87695, 293.18192],
-            [47.48902, 183.54085, 212.71059, 291.55896],
-            [91.473526, 95.46426, 260.8768, 237.67322],
-            [116.78903, 210.84447, 270.07352, 286.9936]]]
-
-    return classID, scores, bbox
-
-
 class AIManagerOnNewImage(AIManager):
     """
     Class that performs the AI processing
@@ -250,7 +200,7 @@ class AIManagerOnNewImage(AIManager):
 
         image_preprocessed = self.preprocess_detection(img)
 
-        inference_results = run_inference(image_preprocessed)
+        inference_results = self.run_inference(image_preprocessed)
         image_postprocessed = self.postprocess_detection(
             img, inference_results)
 
