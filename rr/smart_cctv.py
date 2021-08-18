@@ -8,7 +8,7 @@ from rr.actions.action_manager import ActionManager
 from rr.actions.action_manager import Action, ActionError
 from rr.actions.action_manager import Filter, FilterError
 from rr.actions.action_manager import Trigger, TriggerError
-from rr.ai.ai_manager_mock import AIManagerOnNewImage
+from rr.ai.ai_manager import AIManagerOnNewImage
 from rr.gstreamer.gst_media import GstMedia
 from rr.gstreamer.media_manager import MediaManager
 from rr.stream.stream_manager import StreamManager
