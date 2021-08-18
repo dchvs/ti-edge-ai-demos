@@ -1,11 +1,11 @@
 streams:
   - id: "stream0"
-    uri: "rtsp://10.251.200.34:5000/stream"
+    uri: "rtsp://10.251.200.14:5000/stream"
     triggers:
       - person_logging
 
   - id: "stream1"
-    uri: "rtsp://10.251.200.34:5000/stream"
+    uri: "rtsp://10.251.200.14:5000/stream"
     triggers:
       - person_logging
 
