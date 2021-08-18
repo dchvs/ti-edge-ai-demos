@@ -158,8 +158,8 @@ class GstMedia():
 
     @classmethod
     def make(cls, desc, all_triggers):
-        pipe = 'rtspsrc location=%s ! queue ! rtph264depay ! h264parse ! avdec_h264 ! queue ! videoconvert ! videoscale ! video/x-raw,width=320,height=240,format=RGB ! appsink emit-signals=true name=appsink' % (
-                desc["uri"])
+        pipe = 'uridecodebin uri=%s caps=video/x-h264 ! queue ! h264parse ! avdec_h264 ! queue ! videoconvert ! videoscale ! video/x-raw,width=320,height=240,format=RGB ! appsink emit-signals=true name=appsink' % (
+            desc["uri"])
         media = GstMedia()
         media.create_media(desc['id'], pipe)
 
