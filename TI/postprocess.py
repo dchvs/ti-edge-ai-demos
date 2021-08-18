@@ -153,8 +153,8 @@ class PostProcessDetection(PostProcess):
             self.params.label_offset,
             self.params.formatter)
 
-        img = self.overlay_title(img, self.disp_width - img_width,
-                                 self.disp_height - img_height)
+        img = self.overlay_title(img, int(self.disp_width) - img_width,
+                                 int(self.disp_height) - img_height)
 
         return img
 
