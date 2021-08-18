@@ -6,6 +6,7 @@
 
 import cv2
 import numpy as np
+import threading
 
 from bin.utils.imagehandler import ImageHandler
 from rr.gstreamer.gst_media import GstImage
@@ -174,6 +175,7 @@ class AIManagerOnNewImage(AIManager):
 
         super().__init__(model, disp_width, disp_height)
 
+        self._mutex = threading.Lock()
         self.on_new_prediction_cb_ = None
 
     def install_callback(self, on_new_prediction_cb_):
@@ -193,6 +195,7 @@ class AIManagerOnNewImage(AIManager):
             If couldn't get the image
         """
 
+        self._mutex.acquire()
         gst_media = image.get_media()
 
         img = ImageHandler.buffer_to_np_array(
@@ -219,6 +222,7 @@ class AIManagerOnNewImage(AIManager):
         classname = self.get_classname()
         inference_results2 = format_inf_results(classname, inference_results)
 
+        self._mutex.release()
         self.on_new_prediction_cb_(
             inference_results2,
             image2,
