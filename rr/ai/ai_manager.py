@@ -215,7 +215,7 @@ class AIManagerOnNewImage(AIManager):
         sample = image.get_sample()
         caps = sample.get_caps()
         sample2 = GstUtils.sample_new(buffer, caps)
-        image2 = GstImage(w, h, c, sample2, image.get_media())
+        image2 = GstImage(w, h, "RGB", sample2, image.get_media())
 
         classname = self.get_classname()
         inference_results2 = format_inf_results(classname, inference_results)
