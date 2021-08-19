@@ -240,6 +240,9 @@ class GstUtils():
     def __init__(self):
         pass
 
+    def buffer_new_wrapped(data):
+        return gst.Buffer.new_wrapped(data)
+
     def buffer_new_wrapped_full(data, size):
         return gst.Buffer.new_wrapped_full(0, data, size, 0, None, None)
 
