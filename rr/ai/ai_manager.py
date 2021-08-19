@@ -209,9 +209,7 @@ class AIManagerOnNewImage(AIManager):
 
         # Create GstBuffer from postprocess image
         h, w, c = image_postprocessed.shape
-        size = h * w * c
-        buffer = GstUtils.buffer_new_wrapped_full(
-            image_postprocessed.tobytes(), size)
+        buffer = GstUtils.buffer_new_wrapped(image_postprocessed.tobytes())
 
         # Create GstImage
         sample = image.get_sample()
