@@ -166,7 +166,7 @@ class GstMedia():
         media_triggers = []
         for trigger in desc['triggers']:
             match = next(
-                (candidate for candidate in all_triggers if trigger == candidate._name),
+                (candidate for candidate in all_triggers if trigger == candidate.get_name()),
                 None)
             if not match:
                 raise GstMediaError(
