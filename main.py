@@ -50,6 +50,7 @@ def main():
         server = SmartCCTV(config_dict)
     except Exception as e:
         error(e)
+        exit(-1)
 
     try:
         server.start()

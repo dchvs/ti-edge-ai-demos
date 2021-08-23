@@ -6,7 +6,7 @@
 
 import cv2
 import numpy as np
-from threading import Lock
+import threading
 
 from bin.utils.imagehandler import ImageHandler
 from rr.gstreamer.gst_media import GstImage
@@ -175,10 +175,13 @@ class AIManagerOnNewImage(AIManager):
 
         super().__init__(model, disp_width, disp_height)
 
+        self._mutex = threading.Lock()
         self.on_new_prediction_cb_ = None
 
     def install_callback(self, on_new_prediction_cb_):
+        self._mutex.acquire()
         self.on_new_prediction_cb_ = on_new_prediction_cb_
+        self._mutex.release()
 
     def process_image(self, image, model, disp_width, disp_height):
         """Get a image input
@@ -194,6 +197,7 @@ class AIManagerOnNewImage(AIManager):
             If couldn't get the image
         """
 
+        self._mutex.acquire()
         gst_media = image.get_media()
 
         img = ImageHandler.buffer_to_np_array(
@@ -202,25 +206,23 @@ class AIManagerOnNewImage(AIManager):
         image_preprocessed = self.preprocess_detection(img)
 
         inference_results = self.run_inference(image_preprocessed)
-
         image_postprocessed = self.postprocess_detection(
             img, inference_results)
 
         # Create GstBuffer from postprocess image
         h, w, c = image_postprocessed.shape
-        size = h * w * c
-        buffer = GstUtils.buffer_new_wrapped_full(
-            image_postprocessed.tobytes(), size)
+        buffer = GstUtils.buffer_new_wrapped(image_postprocessed.tobytes())
 
         # Create GstImage
         sample = image.get_sample()
         caps = sample.get_caps()
         sample2 = GstUtils.sample_new(buffer, caps)
-        image2 = GstImage(w, h, c, sample2, image.get_media())
+        image2 = GstImage(w, h, "RGB", sample2, image.get_media())
 
         classname = self.get_classname()
         inference_results2 = format_inf_results(classname, inference_results)
 
+        self._mutex.release()
         self.on_new_prediction_cb_(
             inference_results2,
             image2,

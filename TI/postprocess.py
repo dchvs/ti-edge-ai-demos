@@ -124,7 +124,7 @@ class PostProcessDetection(PostProcess):
                         (int((box[2] + box[0]) / 2),
                          int((box[3] + box[1]) / 2)),
                         cv2.FONT_HERSHEY_SIMPLEX,
-                        0.5,
+                        0.3,
                         text_color)
 
             self.classname = classnames[class_id]
@@ -152,9 +152,6 @@ class PostProcessDetection(PostProcess):
             scaley,
             self.params.label_offset,
             self.params.formatter)
-
-        img = self.overlay_title(img, self.disp_width - img_width,
-                                 self.disp_height - img_height)
 
         return img
 

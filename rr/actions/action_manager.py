@@ -3,6 +3,8 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
+import copy
+
 from rr.actions.log_event import LogEvent
 from rr.actions.record_event import RecordEvent
 
@@ -109,20 +111,23 @@ class Trigger:
                     break
 
             if match is not None:
-                filters.append(match)
+                # We need to copy the filter to avoid other triggers
+                # activating it
+                filters.append(copy.copy(match))
             else:
                 raise TriggerError('Unknown filter "%s"' % req)
 
         return Trigger(name, action, filters)
 
+    def get_name(self):
+        return self._name
 
 class ActionManager:
-    def __init__(self, triggers):
-        self._triggers = triggers
-
     def execute(self, prediction, image, media):
-        if self._triggers is None:
+        triggers = media.get_triggers()
+
+        if triggers is None:
             return
 
-        for trigger in self._triggers:
+        for trigger in triggers:
             trigger.execute(prediction, image, media)
