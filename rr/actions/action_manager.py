@@ -119,6 +119,8 @@ class Trigger:
 
         return Trigger(name, action, filters)
 
+    def get_name(self):
+        return self._name
 
 class ActionManager:
     def execute(self, prediction, image, media):
