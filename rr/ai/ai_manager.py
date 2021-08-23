@@ -179,7 +179,9 @@ class AIManagerOnNewImage(AIManager):
         self.on_new_prediction_cb_ = None
 
     def install_callback(self, on_new_prediction_cb_):
+        self._mutex.acquire()
         self.on_new_prediction_cb_ = on_new_prediction_cb_
+        self._mutex.release()
 
     def process_image(self, image, model, disp_width, disp_height):
         """Get a image input
