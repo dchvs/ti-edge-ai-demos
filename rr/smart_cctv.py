@@ -3,7 +3,7 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
-
+from bin.utils.getconfig import ParseModelParams
 from rr.actions.action_manager import ActionManager
 from rr.actions.action_manager import Action, ActionError
 from rr.actions.action_manager import Filter, FilterError
@@ -13,10 +13,6 @@ from rr.gstreamer.gst_media import GstMedia
 from rr.gstreamer.media_manager import MediaManager
 from rr.stream.stream_manager import StreamManager
 from rr.display.display_manager import DisplayManager
-
-disp_width = '320'
-disp_height = '240'
-model = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
 
 
 class SmartCCTV:
@@ -76,6 +72,12 @@ class SmartCCTV:
         return AIManagerOnNewImage(model, disp_width, disp_height)
 
     def __init__(self, config):
+        model_params = ParseModelParams(config)
+
+        model = model_params.get_detection_model()
+        disp_width = model_params.get_disp_width()
+        disp_height = model_params.get_disp_height()
+
         streams = self._create_streams(config)
         media_manager = self._create_media_manager(streams)
         display_manager = self._create_display_manager(streams)
