@@ -173,17 +173,24 @@ class MockTrigger:
 
 
 class TestActionManager(unittest.TestCase):
-
     def test_action_manager_success(self):
-        t1 = MockTrigger()
-        t2 = MockTrigger()
 
-        am = ActionManager([t1, t2])
-        am.execute(None, None, None)
+        trigger = Trigger.make(self.desc, [self.action], self.filters)
+        self.assertEqual('trigger_name', trigger._name)
+
+        pred = {"mock": "prediction"}
+        image_obj = MockTriggerImage()
+        media_obj = MockTriggerMedia()
+
+        am = ActionManager()
+        am.execute(pred, image_obj, media_obj)
 
         t1.execute.assert_called()
         t2.execute.assert_called()
 
     def test_action_manager_no_triggers(self):
-        am = ActionManager(None)
-        am.execute(None, None, None)
+        media_obj = MagicMock()
+        media_obj.get_triggers(retun_value=None)
+
+        am = ActionManager()
+        am.execute(None, None, self.media_obj)

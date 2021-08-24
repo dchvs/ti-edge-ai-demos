@@ -144,6 +144,7 @@ class DisplayManager():
                 h) + ",format=RGB,framerate=30/1,pixel-aspect-ratio=1/1" + " ! videoconvert ! videoscale ! video/x-raw,width=" + str(w) + ",height=" + str(h) + " ! mixer. "
 
         self._display_desc = desc
+        print("desc = ", desc);
         self._media.create_media("display", self._display_desc)
 
         for key in self._list:
