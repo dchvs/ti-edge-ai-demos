@@ -80,3 +80,16 @@ class GetConfigYaml:
                 params.label_offset = yaml_params['metric']['label_offset_pred']
 
         return params
+
+class ParseModelParams():
+    def __init__(self, config):
+        self.model_params = config['model_params']
+
+    def get_detection_model(self):
+        return self.model_params['model']['detection']
+
+    def get_disp_width(self):
+        return self.model_params['disp_width']
+
+    def get_disp_height(self):
+        return self.model_params['disp_height']
