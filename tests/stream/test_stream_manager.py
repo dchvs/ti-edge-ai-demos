@@ -9,10 +9,10 @@ import time
 import unittest
 from unittest.mock import MagicMock
 
-from bin.utils.getconfig import ParseModelParams
 from rr.actions.action_manager import ActionManager
 from rr.actions.action_manager import Trigger, TriggerError
 from rr.ai.ai_manager import AIManagerOnNewImage
+from rr.config.app_config_loader import AppConfigLoader
 from rr.display.display_manager import DisplayManager
 from rr.gstreamer.gst_media import GstMedia
 from rr.gstreamer.media_manager import MediaManager
@@ -67,8 +67,13 @@ class MockTriggerAction:
 class TestStreamManager(unittest.TestCase):
     def testsuccess(self):
 
-        model_params = ParseModelParams(config)
-        model = model_params.get_detection_model()
+        config_obj = AppConfigLoader()
+        config_dict = config_obj.load(default_config_file)
+        model_params = config_dict['model_params']
+
+        model = model_params['model']['detection']
+        disp_width = model_params['disp_width']
+        disp_height = model_params['disp_height']
 
         ai_manager = AIManagerOnNewImage(model, disp_width, disp_height)
 
