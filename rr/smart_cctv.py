@@ -3,7 +3,6 @@
 #  Authors: Daniel Chaves <daniel.chaves@ridgerun.com>
 #           Marisol Zeledon <marisol.zeledon@ridgerun.com>
 
-from bin.utils.getconfig import ParseModelParams
 from rr.actions.action_manager import ActionManager
 from rr.actions.action_manager import Action, ActionError
 from rr.actions.action_manager import Filter, FilterError
@@ -16,6 +15,9 @@ from rr.display.display_manager import DisplayManager
 
 
 class SmartCCTV:
+    def _parse_model_params(self, config):
+        model_params = config['model_params']
+        return model_params
 
     def _parse_filters(self, config):
         filters = []
@@ -42,6 +44,11 @@ class SmartCCTV:
         return ActionManager()
 
     def _create_streams(self, config):
+        model_params = self._parse_model_params(config)
+        self.model = model_params['model']['detection']
+        self.disp_width = model_params['disp_width']
+        self.disp_height = model_params['disp_height']
+
         filters = self._parse_filters(config)
         actions = self._parse_actions(config)
         triggers = self._parse_triggers(config, actions, filters)
@@ -72,26 +79,21 @@ class SmartCCTV:
         return AIManagerOnNewImage(model, disp_width, disp_height)
 
     def __init__(self, config):
-        model_params = ParseModelParams(config)
-
-        model = model_params.get_detection_model()
-        disp_width = model_params.get_disp_width()
-        disp_height = model_params.get_disp_height()
 
         streams = self._create_streams(config)
         media_manager = self._create_media_manager(streams)
         display_manager = self._create_display_manager(streams)
         action_manager = self._create_action_manager()
-        ai_manager = self._create_ai_manager(model, disp_width, disp_height)
+        ai_manager = self._create_ai_manager(self.model, self.disp_width, self.disp_height)
 
         self._stream_manager = StreamManager(
             action_manager,
             ai_manager,
             display_manager,
             media_manager,
-            model,
-            disp_width,
-            disp_height)
+            self.model,
+            self.disp_width,
+            self.disp_height)
 
     def start(self):
         self._stream_manager.play()
