@@ -1,3 +1,9 @@
+model_params:
+  disp_width: '320'
+  disp_height: '240'
+  model:
+    detection: '/opt/model_zoo/TFL-OD-2000-ssd-mobV1-coco-mlperf-300x300/'
+
 streams:
   - id: "stream0"
     uri: 'https://r1---sn-j5caxupj5-nwvl.googlevideo.com/videoplayback\?expire\=1629340931\&ei\=o3AdYeClA5SwlAPEsZnoBA\&ip\=186.64.170.207\&id\=o-ABPZs6OWUG5As-PKiP8zOYlHpaw_tgWzibECAz3fbn-F\&itag\=18\&source\=youtube\&requiressl\=yes\&mh\=yT\&mm\=31%2C29\&mn\=sn-j5caxupj5-nwvl%2Csn-hp57kn6e\&ms\=au%2Crdu\&mv\=m\&mvi\=1\&pcm2cms\=yes\&pl\=24\&initcwndbps\=1061250\&vprv\=1\&mime\=video%2Fmp4\&ns\=NYbtpqSjHZ0Zq4VyrJaAMksG\&gir\=yes\&clen\=52532427\&ratebypass\=yes\&dur\=840.608\&lmt\=1527732394812891\&mt\=1629319006\&fvip\=5\&fexp\=24001373%2C24007246\&c\=WEB\&n\=kcWjplwNR4gWJ6jpC\&sparams\=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cns%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt\&sig\=AOq0QJ8wRQIhAJyu2AqS5XWU-pRr6wcqSKO2_AqtDnkY-0z5wbKVZD5tAiByZW_kGjyMcHdaawIp5BP6YEhNDrr-HbO4i47MWqp-SA%3D%3D\&lsparams\=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpcm2cms%2Cpl%2Cinitcwndbps\&lsig\=AG3C_xAwRgIhAJkmZruHRKtnV82uZOFTlZZVYYc8DbfXNCDaNAXOqnbXAiEA-v2UEWz7HYdPv-Gugux8O63o_uXh8ZWWgFyBsKR2pIA%3D'
