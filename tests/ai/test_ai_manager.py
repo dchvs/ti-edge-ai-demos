@@ -21,6 +21,7 @@ from rr.gstreamer.gst_media import GstMedia
 from rr.gstreamer.gst_media import GstUtils
 from bin.utils.imagehandler import ImageHandler
 
+default_config_file = "config.yaml"
 width = 1920
 height = 1080
 color = (100, 100, 100)
