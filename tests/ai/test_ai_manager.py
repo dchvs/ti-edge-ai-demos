@@ -10,12 +10,12 @@ import random
 import unittest
 from unittest.mock import MagicMock
 
-from bin.utils.getconfig import ParseModelParams
 from TI.postprocess import PostProcessDetection
 from TI.preprocess import PreProcessDetection
 from rr.ai.ai_manager import AIManager
 from rr.ai.ai_manager import AIManagerError
 from rr.ai.ai_manager import AIManagerOnNewImage
+from rr.config.app_config_loader import AppConfigLoader
 from rr.gstreamer.gst_media import GstImage
 from rr.gstreamer.gst_media import GstMedia
 from rr.gstreamer.gst_media import GstUtils
@@ -95,23 +95,21 @@ class TestAIManagerOnNewImage(unittest.TestCase):
     def setUp(self):
         global width, height, color
 
-        model_params = ParseModelParams(config)
+        config_obj = AppConfigLoader()
+        config_dict = config_obj.load(default_config_file)
+        model_params = config_dict['model_params']
 
-        model = model_params.get_detection_model()
-        disp_width = model_params.get_disp_width()
-        disp_height = model_params.get_disp_height()
-
-        self.model = model
-        self.disp_width = disp_width
-        self.disp_height = disp_height
+        self.model = model_params['model']['detection']
+        self.disp_width = model_params['disp_width']
+        self.disp_height = model_params['disp_height']
 
         self.mock_image = MockImage(width, height, color)
         self.img = self.mock_image.get_image()
 
         self.ai_manager = AIManagerOnNewImage(
-            model,
-            disp_width,
-            disp_height)
+            self.model,
+            self.disp_width,
+            self.disp_height)
 
     def testprocess_image(self):
         h, w, c = self.img.shape
