@@ -95,8 +95,8 @@ class MockTriggerFilter2:
 
 
 class MockTriggerAction:
-    def __init__(self):
-        self.execute = MagicMock()
+    def __init__(self, media, image, prediction, filters):
+        self.execute = MagicMock(media, image, prediction, filters)
 
     def get_name(self):
         return "mock_action"
@@ -122,13 +122,15 @@ class TestTrigger(unittest.TestCase):
             ]
         }
 
-        self.action = Trigger(
-            self.desc['name'],
-            self.desc['action'],
-            self.desc['filters'])
+        self.pred = {"mock": "prediction"}
+
         self.filter1 = MockTriggerFilter1()
         self.filter2 = MockTriggerFilter2()
         self.filters = [self.filter1, self.filter2]
+
+        media = MagicMock()
+        image = MagicMock()
+        self.action = MockTriggerAction(media, image, self.pred, self.filters)
 
     def test_trigger_success(self):
         trigger = Trigger.make(self.desc, [self.action], self.filters)
@@ -142,8 +144,7 @@ class TestTrigger(unittest.TestCase):
         trigger.execute(pred, image, media)
         self.filter1.apply.assert_called_with(pred)
         self.filter2.apply.assert_called_with(pred)
-        self.action.execute.assert_called_with(
-            media, image, pred, self.filters)
+        self.action.execute.assert_called_once()
 
     def test_trigger_malformed_desc(self):
         # remove name
@@ -187,10 +188,15 @@ class TestActionManager(unittest.TestCase):
             ]
         }
 
-        self.action = MockTriggerAction()
+        self.pred = {"mock": "prediction"}
+
         self.filter1 = MockTriggerFilter1()
         self.filter2 = MockTriggerFilter2()
         self.filters = [self.filter1, self.filter2]
+
+        media = MagicMock()
+        image = MagicMock()
+        self.action = MockTriggerAction(media, image, self.pred, self.filters)
 
     def test_action_manager_success(self):
 
@@ -199,13 +205,12 @@ class TestActionManager(unittest.TestCase):
         trigger.get_name = MagicMock(return_value=self.desc['name'])
         self.assertEqual('trigger_name', trigger.get_name())
 
-        pred = {"mock": "prediction"}
         image_obj = MockTriggerImage()
         media_obj = MockTriggerMedia()
         media_obj.get_triggers = MagicMock(return_value=[trigger])
 
         am = ActionManager()
-        am.execute(pred, image_obj, media_obj)
+        am.execute(self.pred, image_obj, media_obj)
 
         trigger.execute.assert_called()
 
