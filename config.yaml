@@ -1,6 +1,6 @@
 model_params:
-  disp_width: '320'
-  disp_height: '240'
+  disp_width: 320
+  disp_height: 240
   model:
     detection: '/opt/model_zoo/TFL-OD-2000-ssd-mobV1-coco-mlperf-300x300/'
 
