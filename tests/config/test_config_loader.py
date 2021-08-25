@@ -14,8 +14,8 @@ class TestYamlFormat(unittest.TestCase):
 
     def setUp(self):
         self.path = "tests/config/test_config.yaml"
-        self.output_cfg = {'model_params': {'disp_width': '320',
-                                            'disp_height': '240',
+        self.output_cfg = {'model_params': {'disp_width': 320,
+                                            'disp_height': 240,
                                             'model': {'detection': '/path/to/detection/model'}},
                            'streams': [{'id': 'stream0',
                                         'uri': 'http0',

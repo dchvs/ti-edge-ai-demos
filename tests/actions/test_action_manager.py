@@ -95,8 +95,8 @@ class MockTriggerFilter2:
 
 
 class MockTriggerAction:
-    def __init__(self):
-        self.execute = MagicMock()
+    def __init__(self, media, image, prediction, filters):
+        self.execute = MagicMock(media, image, prediction, filters)
 
     def get_name(self):
         return "mock_action"
@@ -122,14 +122,20 @@ class TestTrigger(unittest.TestCase):
             ]
         }
 
-        self.action = MockTriggerAction()
+        self.pred = {"mock": "prediction"}
+
         self.filter1 = MockTriggerFilter1()
         self.filter2 = MockTriggerFilter2()
         self.filters = [self.filter1, self.filter2]
 
+        media = MagicMock()
+        image = MagicMock()
+        self.action = MockTriggerAction(media, image, self.pred, self.filters)
+
     def test_trigger_success(self):
         trigger = Trigger.make(self.desc, [self.action], self.filters)
-        self.assertEqual('trigger_name', trigger._name)
+        trigger.get_name = MagicMock(return_value=self.desc['name'])
+        self.assertEqual('trigger_name', trigger.get_name())
 
         image = MockTriggerImage()
         media = MockTriggerMedia()
@@ -138,8 +144,7 @@ class TestTrigger(unittest.TestCase):
         trigger.execute(pred, image, media)
         self.filter1.apply.assert_called_with(pred)
         self.filter2.apply.assert_called_with(pred)
-        self.action.execute.assert_called_with(
-            media, image, pred, self.filters)
+        self.action.execute.assert_called_once()
 
     def test_trigger_malformed_desc(self):
         # remove name
@@ -173,17 +178,45 @@ class MockTrigger:
 
 
 class TestActionManager(unittest.TestCase):
+    def setUp(self):
+        self.desc = {
+            "name": "trigger_name",
+            "action": "mock_action",
+            "filters": [
+                "mock_filter1",
+                "mock_filter2",
+            ]
+        }
+
+        self.pred = {"mock": "prediction"}
+
+        self.filter1 = MockTriggerFilter1()
+        self.filter2 = MockTriggerFilter2()
+        self.filters = [self.filter1, self.filter2]
+
+        media = MagicMock()
+        image = MagicMock()
+        self.action = MockTriggerAction(media, image, self.pred, self.filters)
 
     def test_action_manager_success(self):
-        t1 = MockTrigger()
-        t2 = MockTrigger()
 
-        am = ActionManager([t1, t2])
-        am.execute(None, None, None)
+        trigger = Trigger.make(self.desc, [self.action], self.filters)
+        trigger.execute = MagicMock()
+        trigger.get_name = MagicMock(return_value=self.desc['name'])
+        self.assertEqual('trigger_name', trigger.get_name())
 
-        t1.execute.assert_called()
-        t2.execute.assert_called()
+        image_obj = MockTriggerImage()
+        media_obj = MockTriggerMedia()
+        media_obj.get_triggers = MagicMock(return_value=[trigger])
+
+        am = ActionManager()
+        am.execute(self.pred, image_obj, media_obj)
+
+        trigger.execute.assert_called()
 
     def test_action_manager_no_triggers(self):
-        am = ActionManager(None)
-        am.execute(None, None, None)
+        media_obj = MagicMock()
+        media_obj.get_triggers(retun_value=None)
+
+        am = ActionManager()
+        am.execute(None, None, media_obj)

@@ -53,23 +53,21 @@ class TestAIManager(unittest.TestCase):
     def setUp(self):
         global width, height, color
 
-        model_params = ParseModelParams(config)
+        config_obj = AppConfigLoader()
+        config_dict = config_obj.load(default_config_file)
+        model_params = config_dict['model_params']
 
-        model = model_params.get_detection_model()
-        disp_width = model_params.get_disp_width()
-        disp_height = model_params.get_disp_height()
+        self.model = model_params['model']['detection']
+        self.disp_width = model_params['disp_width']
+        self.disp_height = model_params['disp_height']
 
         self.mock_image = MockImage(width, height, color)
         self.img = self.mock_image.get_image()
-        self.model = model
 
         self.ai_manager = AIManager(
             self.model,
-            disp_width,
-            disp_height)
-
-        self.disp_width = disp_width
-        self.disp_height = disp_height
+            self.disp_width,
+            self.disp_height)
 
     def testpreprocess_detection(self):
         img = self.ai_manager.preprocess_detection(self.img)

@@ -26,6 +26,11 @@ class mockImage():
         return self._timestamp
 
 
+class mockFilter:
+    def is_triggered(self):
+        return True
+
+
 class TestLogEvent(unittest.TestCase):
     csv_file_good = 'tests/actions/test_log.csv'
 
@@ -51,7 +56,7 @@ class TestLogEvent(unittest.TestCase):
                         "x": 'X', "y": 'Y', "width": 'width', "height": 'height'}}]}
 
         log_action = LogEvent("name", self.csv_file_good)
-        log_action.execute(media, image, inf_results)
+        log_action.execute(media, image, inf_results, [mockFilter()])
 
         first_row_ret = [
             'test_media_name',
