@@ -25,7 +25,7 @@ import unittest
 # This command will run after dependencies are installed
 
 name = 'ti-edge-ai-demos'
-version = '0.1.0'
+version = '0.1.1'
 author = 'RidgeRun'
 
 tested = False
