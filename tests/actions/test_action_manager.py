@@ -193,4 +193,4 @@ class TestActionManager(unittest.TestCase):
         media_obj.get_triggers(retun_value=None)
 
         am = ActionManager()
-        am.execute(None, None, self.media_obj)
+        am.execute(None, None, media_obj)
