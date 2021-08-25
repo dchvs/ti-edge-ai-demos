@@ -122,14 +122,18 @@ class TestTrigger(unittest.TestCase):
             ]
         }
 
-        self.action = MockTriggerAction()
+        self.action = Trigger(
+            self.desc['name'],
+            self.desc['action'],
+            self.desc['filters'])
         self.filter1 = MockTriggerFilter1()
         self.filter2 = MockTriggerFilter2()
         self.filters = [self.filter1, self.filter2]
 
     def test_trigger_success(self):
         trigger = Trigger.make(self.desc, [self.action], self.filters)
-        self.assertEqual('trigger_name', trigger._name)
+        trigger.get_name = MagicMock(return_value=self.desc['name'])
+        self.assertEqual('trigger_name', trigger.get_name())
 
         image = MockTriggerImage()
         media = MockTriggerMedia()
@@ -173,20 +177,37 @@ class MockTrigger:
 
 
 class TestActionManager(unittest.TestCase):
+    def setUp(self):
+        self.desc = {
+            "name": "trigger_name",
+            "action": "mock_action",
+            "filters": [
+                "mock_filter1",
+                "mock_filter2",
+            ]
+        }
+
+        self.action = MockTriggerAction()
+        self.filter1 = MockTriggerFilter1()
+        self.filter2 = MockTriggerFilter2()
+        self.filters = [self.filter1, self.filter2]
+
     def test_action_manager_success(self):
 
         trigger = Trigger.make(self.desc, [self.action], self.filters)
-        self.assertEqual('trigger_name', trigger._name)
+        trigger.execute = MagicMock()
+        trigger.get_name = MagicMock(return_value=self.desc['name'])
+        self.assertEqual('trigger_name', trigger.get_name())
 
         pred = {"mock": "prediction"}
         image_obj = MockTriggerImage()
         media_obj = MockTriggerMedia()
+        media_obj.get_triggers = MagicMock(return_value=[trigger])
 
         am = ActionManager()
         am.execute(pred, image_obj, media_obj)
 
-        t1.execute.assert_called()
-        t2.execute.assert_called()
+        trigger.execute.assert_called()
 
     def test_action_manager_no_triggers(self):
         media_obj = MagicMock()
