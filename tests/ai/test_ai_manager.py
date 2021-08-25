@@ -15,12 +15,13 @@ from TI.preprocess import PreProcessDetection
 from rr.ai.ai_manager import AIManager
 from rr.ai.ai_manager import AIManagerError
 from rr.ai.ai_manager import AIManagerOnNewImage
+from rr.config.app_config_loader import AppConfigLoader
 from rr.gstreamer.gst_media import GstImage
 from rr.gstreamer.gst_media import GstMedia
 from rr.gstreamer.gst_media import GstUtils
 from bin.utils.imagehandler import ImageHandler
 
-model = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
+default_config_file = "config.yaml"
 width = 1920
 height = 1080
 color = (100, 100, 100)
@@ -50,8 +51,13 @@ class MockImage():
 
 class TestAIManager(unittest.TestCase):
     def setUp(self):
-        global model, width, height, disp_width, disp_height
         global width, height, color
+
+        model_params = ParseModelParams(config)
+
+        model = model_params.get_detection_model()
+        disp_width = model_params.get_disp_width()
+        disp_height = model_params.get_disp_height()
 
         self.mock_image = MockImage(width, height, color)
         self.img = self.mock_image.get_image()
@@ -88,20 +94,23 @@ class TestAIManager(unittest.TestCase):
 
 class TestAIManagerOnNewImage(unittest.TestCase):
     def setUp(self):
-        global model, width, height, disp_width, disp_height
         global width, height, color
 
-        self.model = model
-        self.disp_width = disp_width
-        self.disp_height = disp_height
+        config_obj = AppConfigLoader()
+        config_dict = config_obj.load(default_config_file)
+        model_params = config_dict['model_params']
+
+        self.model = model_params['model']['detection']
+        self.disp_width = model_params['disp_width']
+        self.disp_height = model_params['disp_height']
 
         self.mock_image = MockImage(width, height, color)
         self.img = self.mock_image.get_image()
 
         self.ai_manager = AIManagerOnNewImage(
-            model,
-            disp_width,
-            disp_height)
+            self.model,
+            self.disp_width,
+            self.disp_height)
 
     def testprocess_image(self):
         h, w, c = self.img.shape

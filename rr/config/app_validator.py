@@ -243,6 +243,48 @@ def validate_triggers(cfg, actions, filters):
     return triggers_list
 
 
+def validate_model_parameters(cfg):
+    """Validates the model parameters field of the configuration object
+    """
+
+    validate_objects(
+        cfg,
+        'model_params',
+        dict,
+        "Name model_params not found in model parameters",
+        "Found model_params field in model parameters, but it is not a dictionary")
+
+    model_params = cfg['model_params']
+
+    validate_objects(
+        model_params,
+        'disp_width',
+        int,
+        "Name display_width not found in model parameters",
+        "Found display_width field in model parameters, but it is not an integer")
+
+    validate_objects(
+        model_params,
+        'disp_height',
+        int,
+        "Name display_height not found in model parameters",
+        "Found display_height field in model parameters, but it is not an integer")
+
+    validate_objects(
+        model_params,
+        'model',
+        dict,
+        "Name display_height not found in model parameters",
+        "Found display_height field in model parameters, but it is not a dictionary")
+
+    validate_objects(
+        model_params['model'],
+        'detection',
+        str,
+        "Name detection not found in model parameters",
+        "Found detectionfield in model parameters, but it is not a string")
+
+
 class AppValidatortError(RuntimeError):
     pass
 
@@ -261,6 +303,7 @@ class AppValidator():
         """Calls the validation field functions
         """
 
+        validate_model_parameters(cfg)
         filters = validate_filters(cfg)
         actions = validate_actions(cfg)
         triggers = validate_triggers(cfg, actions, filters)

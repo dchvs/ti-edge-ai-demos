@@ -12,6 +12,7 @@ from unittest.mock import MagicMock
 from rr.actions.action_manager import ActionManager
 from rr.actions.action_manager import Trigger, TriggerError
 from rr.ai.ai_manager import AIManagerOnNewImage
+from rr.config.app_config_loader import AppConfigLoader
 from rr.display.display_manager import DisplayManager
 from rr.gstreamer.gst_media import GstMedia
 from rr.gstreamer.media_manager import MediaManager
@@ -23,12 +24,9 @@ from bin.utils.imagehandler import ImageHandler
 class MockTriggerMedia:
     pass
 
-
-model = "/opt/edge_ai_apps/models/detection/TFL-OD-200-ssd-mobV1-coco-mlperf-300x300/"
+default_config_file = "config.yaml"
 disp_width = 2040
 disp_height = 1920
-default_width = 320
-default_height = 240
 default_dimentions = 3
 img_path = "./data/0004.jpg"
 
@@ -68,6 +66,15 @@ class MockTriggerAction:
 
 class TestStreamManager(unittest.TestCase):
     def testsuccess(self):
+
+        config_obj = AppConfigLoader()
+        config_dict = config_obj.load(default_config_file)
+        model_params = config_dict['model_params']
+
+        model = model_params['model']['detection']
+        disp_width = model_params['disp_width']
+        disp_height = model_params['disp_height']
+
         ai_manager = AIManagerOnNewImage(model, disp_width, disp_height)
 
         desc = "videotestsrc num-buffers=1 is-live=true ! video/x-raw,width=320,height=240,format=BGRx ! appsink name=appsink async=false emit-signals=true"

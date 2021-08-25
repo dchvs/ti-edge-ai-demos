@@ -1,4 +1,10 @@
 ---
+model_params:
+  disp_width: '320'
+  disp_height: '240'
+  model:
+    detection: '/path/to/detection/model'
+
 streams:
   - id: "stream0"
     uri: http0
