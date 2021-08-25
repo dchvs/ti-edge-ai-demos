@@ -68,10 +68,10 @@ class TestDisplayManager(unittest.TestCase):
         stream = {
             "id": "stream0",
             "uri": "rtsp://localhost:5000/stream",
-            "triggers": ["mock_filter1", "mock_filter2"]
+            "triggers": ["trigger_name"]
         }
 
-        self.stream = GstMedia.make(stream, trigger)
+        self.stream = GstMedia.make(stream, [trigger])
 
         self.display_manager.add_stream(self.stream)
         self.display_media = self.display_manager._get_media()
@@ -140,7 +140,7 @@ class TestDisplayManagerFail(unittest.TestCase):
         stream = {
             "id": "stream0",
             "uri": "rtsp://localhost:5000/stream",
-            "triggers": ["mock_filter1", "mock_filter1"]
+            "triggers": ["trigger_name"]
         }
 
         self.stream = GstMedia.make(stream, [trigger])
