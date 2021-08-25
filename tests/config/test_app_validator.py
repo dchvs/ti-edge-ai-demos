@@ -467,9 +467,9 @@ class TestYamlFormat(unittest.TestCase):
 
     def test_validate(self):
         self.validator = AppValidator()
-        cfg = {'model_params': [{'disp_width': '320',
-                                 'disp_height': '240',
-                                 'model': {'detection': '/path/to/detection/model'}}],
+        cfg = {'model_params': {'disp_width': 320,
+                                'disp_height': 240,
+                                'model': {'detection': '/path/to/detection/model'}},
                'streams': [{'id': 'stream0',
                             'uri': 'http0',
                             'triggers': ['person_recording',
