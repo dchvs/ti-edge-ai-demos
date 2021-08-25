@@ -23,6 +23,17 @@ def _get_media_State(media):
     return media.get_state(gst.CLOCK_TIME_NONE)[1]
 
 
+def _create_stream(id, trigger_list):
+    # Create a stream instance
+    stream_desc = {
+        "id": id,
+        "uri": "rtsp://localhost:5000/stream",
+        "triggers": ["trigger_name"]
+    }
+
+    return GstMedia.make(stream_desc, trigger_list)
+
+
 class MockTriggerAction:
     def __init__(self):
         self.execute = MagicMock()
@@ -133,8 +144,8 @@ class TestDisplayManagerFail(unittest.TestCase):
         action = MockTriggerAction()
         filters = [MockTriggerFilter1(), MockTriggerFilter2()]
 
-        trigger = Trigger.make(desc, [action], filters)
-        trigger.get_name = MagicMock(return_value=desc['name'])
+        self.trigger = Trigger.make(desc, [action], filters)
+        self.trigger.get_name = MagicMock(return_value=desc['name'])
 
         # Create a stream instance
         self.stream_desc = {
@@ -143,7 +154,7 @@ class TestDisplayManagerFail(unittest.TestCase):
             "triggers": ["trigger_name"]
         }
 
-        self.stream = GstMedia.make(self.stream_desc, [trigger])
+        self.stream = GstMedia.make(self.stream_desc, [self.trigger])
 
         self.display_manager.add_stream(self.stream)
 
@@ -161,15 +172,29 @@ class TestDisplayManagerFail(unittest.TestCase):
             self.display_manager.add_stream("stream1")
 
     def test_add_stream_exceed_limit(self):
-        self.display_manager.add_stream(self.stream)
-        self.display_manager.add_stream(self.stream)
-        self.display_manager.add_stream(self.stream)
-        self.display_manager.add_stream(self.stream)
-        self.display_manager.add_stream(self.stream)
-        self.display_manager.add_stream(self.stream)
-        self.display_manager.add_stream(self.stream)
+        stream1 = _create_stream("stream1", [self.trigger])
+        self.display_manager.add_stream(stream1)
+
+        stream2 = _create_stream("stream2", [self.trigger])
+        self.display_manager.add_stream(stream2)
+
+        stream3 = _create_stream("stream3", [self.trigger])
+        self.display_manager.add_stream(stream3)
+
+        stream4 = _create_stream("stream4", [self.trigger])
+        self.display_manager.add_stream(stream4)
+
+        stream5 = _create_stream("stream5", [self.trigger])
+        self.display_manager.add_stream(stream5)
+
+        stream6 = _create_stream("stream6", [self.trigger])
+        self.display_manager.add_stream(stream6)
+
+        stream7 = _create_stream("stream7", [self.trigger])
+        self.display_manager.add_stream(stream7)
         with self.assertRaisesRegex(DisplayManagerError, "Max number of streams reached"):
-            self.display_manager.add_stream(self.stream)
+            stream8 = _create_stream("stream8", [self.trigger])
+            self.display_manager.add_stream(stream8)
 
     def test_remove_stream_none(self):
         with self.assertRaisesRegex(DisplayManagerError, "Invalid key"):
