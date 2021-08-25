@@ -18,8 +18,10 @@ from rr.display.display_manager import DisplayManager
 from rr.display.display_manager import DisplayManagerError
 from rr.gstreamer.gst_media import GstMedia
 
+
 def _get_media_State(media):
     return media.get_state(gst.CLOCK_TIME_NONE)[1]
+
 
 class MockTriggerAction:
     def __init__(self):
@@ -44,6 +46,7 @@ class MockTriggerFilter2:
     def get_name(self):
         return "mock_filter2"
 
+
 class TestDisplayManager(unittest.TestCase):
     def setUp(self):
         self.display_manager = DisplayManager()
@@ -59,13 +62,14 @@ class TestDisplayManager(unittest.TestCase):
         filters = [MockTriggerFilter1(), MockTriggerFilter2()]
 
         trigger = Trigger.make(desc, [action], filters)
+        trigger.get_name = MagicMock(return_value=desc['name'])
 
         # Create a stream instance
         stream = {
             "id": "stream0",
             "uri": "rtsp://localhost:5000/stream",
             "triggers": ["mock_filter1", "mock_filter2"]
-            }
+        }
 
         self.stream = GstMedia.make(stream, trigger)
 
@@ -130,13 +134,14 @@ class TestDisplayManagerFail(unittest.TestCase):
         filters = [MockTriggerFilter1(), MockTriggerFilter2()]
 
         trigger = Trigger.make(desc, [action], filters)
+        trigger.get_name = MagicMock(return_value=desc['name'])
 
         # Create a stream instance
         stream = {
             "id": "stream0",
             "uri": "rtsp://localhost:5000/stream",
             "triggers": ["car_recording", "car_recording"]
-            }
+        }
 
         self.stream = GstMedia.make(stream, trigger)
 
