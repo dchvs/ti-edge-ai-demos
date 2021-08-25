@@ -103,10 +103,12 @@ class DisplayManager():
 
         if key in self._list:
             self._list.remove(key)
-            self._appsrc_dict.pop(key)
         else:
             raise DisplayManagerError(
                 "Stream doesn't exist in display manager")
+
+        if key in self._appsrc_dict:
+            self._appsrc_dict.pop(key)
 
     def push_image(self, image, media):
         media_name = media.get_name()
@@ -144,7 +146,6 @@ class DisplayManager():
                 h) + ",format=RGB,framerate=30/1,pixel-aspect-ratio=1/1" + " ! videoconvert ! videoscale ! video/x-raw,width=" + str(w) + ",height=" + str(h) + " ! mixer. "
 
         self._display_desc = desc
-        print("desc = ", desc);
         self._media.create_media("display", self._display_desc)
 
         for key in self._list:
