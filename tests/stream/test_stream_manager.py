@@ -102,7 +102,7 @@ class TestStreamManager(unittest.TestCase):
         self.filters = [self.filter1, self.filter2]
 
         trigger = Trigger(self.desc, self.action, self.filters)
-        action_manager = ActionManager([trigger])
+        action_manager = ActionManager()
         display_manager = DisplayManager()
 
         streams = []

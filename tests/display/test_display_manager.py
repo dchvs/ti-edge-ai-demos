@@ -11,33 +11,93 @@ from gi.repository import Gst as gst
 from gi.repository import GLib
 
 import unittest
+from unittest.mock import MagicMock
 
-from rr.display.display_manager_interpipe import DisplayManager
-from rr.display.display_manager_interpipe import DisplayManagerError
+from rr.actions.action_manager import Trigger
+from rr.display.display_manager import DisplayManager
+from rr.display.display_manager import DisplayManagerError
+from rr.gstreamer.gst_media import GstMedia
 
 
 def _get_media_State(media):
     return media.get_state(gst.CLOCK_TIME_NONE)[1]
 
 
+def _create_stream(id, trigger_list):
+    # Create a stream instance
+    stream_desc = {
+        "id": id,
+        "uri": "rtsp://localhost:5000/stream",
+        "triggers": ["trigger_name"]
+    }
+
+    return GstMedia.make(stream_desc, trigger_list)
+
+
+class MockTriggerAction:
+    def __init__(self):
+        self.execute = MagicMock()
+
+    def get_name(self):
+        return "mock_action"
+
+
+class MockTriggerFilter1:
+    def __init__(self):
+        self.apply = MagicMock()
+
+    def get_name(self):
+        return "mock_filter1"
+
+
+class MockTriggerFilter2:
+    def __init__(self):
+        self.apply = MagicMock()
+
+    def get_name(self):
+        return "mock_filter2"
+
+
 class TestDisplayManager(unittest.TestCase):
     def setUp(self):
         self.display_manager = DisplayManager()
-        self.stream_name = "stream0"
-        self.display_manager.add_stream(self.stream_name)
+
+        # Create a trigger
+        desc = {
+            "name": "trigger_name",
+            "action": "mock_action",
+            "filters": ["mock_filter1", "mock_filter2"]
+        }
+
+        action = MockTriggerAction()
+        filters = [MockTriggerFilter1(), MockTriggerFilter2()]
+
+        trigger = Trigger.make(desc, [action], filters)
+        trigger.get_name = MagicMock(return_value=desc['name'])
+
+        # Create a stream instance
+        self.stream_desc = {
+            "id": "stream0",
+            "uri": "rtsp://localhost:5000/stream",
+            "triggers": ["trigger_name"]
+        }
+
+        self.stream = GstMedia.make(self.stream_desc, [trigger])
+
+        self.display_manager.add_stream(self.stream)
         self.display_media = self.display_manager._get_media()
 
     def test_add_stream(self):
         list = self.display_manager._get_stream_list()
-        self.assertTrue(self.stream_name in list)
+        self.assertTrue(self.stream.get_name() in list)
 
     def test_remove_stream(self):
-        self.display_manager.remove_stream(self.stream_name)
+        self.display_manager.remove_stream(self.stream_desc['id'])
         list = self.display_manager._get_stream_list()
-        self.assertTrue(self.stream_name not in list)
+        self.assertTrue(self.stream.get_name() not in list)
 
     def test_create_display(self):
-        display_desc = "videomixer name=mixer  sink_0::xpos=0 sink_0::ypos=0 ! queue ! video/x-raw,width=1280,height=720 ! kmssink force-modesetting=true sync=false async=false  interpipesrc listen-to=stream0 format=time ! queue ! videoscale ! video/x-raw,width=320,height=240 ! mixer. "
+        display_desc = 'videomixer name=mixer  sink_0::xpos=0 sink_0::ypos=0 ! queue ! videoconvert ! videoscale ! video/x-raw,width=1280,height=720 ! kmssink force-modesetting=true sync=false async=false qos=false  appsrc do-timestamp=true name=stream0 format=time ! queue ! video/x-raw,width=320,height=240,format=RGB,framerate=30/1,pixel-aspect-ratio=1/1 ! videoconvert ! videoscale ! video/x-raw,width=320,height=240 ! mixer. '
         self.display_manager.create_display()
         self.assertEqual(
             display_desc,
@@ -73,20 +133,38 @@ class TestDisplayManager(unittest.TestCase):
 class TestDisplayManagerFail(unittest.TestCase):
     def setUp(self):
         self.display_manager = DisplayManager()
-        self.stream_name = "stream0"
-        self.display_manager.add_stream(self.stream_name)
+
+        # Create a trigger
+        desc = {
+            "name": "trigger_name",
+            "action": "mock_action",
+            "filters": ["mock_filter1", "mock_filter2"]
+        }
+
+        action = MockTriggerAction()
+        filters = [MockTriggerFilter1(), MockTriggerFilter2()]
+
+        self.trigger = Trigger.make(desc, [action], filters)
+        self.trigger.get_name = MagicMock(return_value=desc['name'])
+
+        # Create a stream instance
+        self.stream_desc = {
+            "id": "stream0",
+            "uri": "rtsp://localhost:5000/stream",
+            "triggers": ["trigger_name"]
+        }
+
+        self.stream = GstMedia.make(self.stream_desc, [self.trigger])
+
+        self.display_manager.add_stream(self.stream)
 
     def test_add_stream_none(self):
-        with self.assertRaisesRegex(DisplayManagerError, "Invalid key"):
+        with self.assertRaisesRegex(DisplayManagerError, "Invalid media object"):
             self.display_manager.add_stream(None)
-
-    def test_add_stream_not_string(self):
-        with self.assertRaisesRegex(DisplayManagerError, "Invalid key"):
-            self.display_manager.add_stream(1)
 
     def test_add_stream_duplicated(self):
         with self.assertRaisesRegex(DisplayManagerError, "Stream already exists in display manager"):
-            self.display_manager.add_stream(self.stream_name)
+            self.display_manager.add_stream(self.stream)
 
     def test_add_stream_after_created(self):
         self.display_manager.create_display()
@@ -94,15 +172,29 @@ class TestDisplayManagerFail(unittest.TestCase):
             self.display_manager.add_stream("stream1")
 
     def test_add_stream_exceed_limit(self):
-        self.display_manager.add_stream("stream1")
-        self.display_manager.add_stream("stream2")
-        self.display_manager.add_stream("stream3")
-        self.display_manager.add_stream("stream4")
-        self.display_manager.add_stream("stream5")
-        self.display_manager.add_stream("stream6")
-        self.display_manager.add_stream("stream7")
+        stream1 = _create_stream("stream1", [self.trigger])
+        self.display_manager.add_stream(stream1)
+
+        stream2 = _create_stream("stream2", [self.trigger])
+        self.display_manager.add_stream(stream2)
+
+        stream3 = _create_stream("stream3", [self.trigger])
+        self.display_manager.add_stream(stream3)
+
+        stream4 = _create_stream("stream4", [self.trigger])
+        self.display_manager.add_stream(stream4)
+
+        stream5 = _create_stream("stream5", [self.trigger])
+        self.display_manager.add_stream(stream5)
+
+        stream6 = _create_stream("stream6", [self.trigger])
+        self.display_manager.add_stream(stream6)
+
+        stream7 = _create_stream("stream7", [self.trigger])
+        self.display_manager.add_stream(stream7)
         with self.assertRaisesRegex(DisplayManagerError, "Max number of streams reached"):
-            self.display_manager.add_stream("stream8")
+            stream8 = _create_stream("stream8", [self.trigger])
+            self.display_manager.add_stream(stream8)
 
     def test_remove_stream_none(self):
         with self.assertRaisesRegex(DisplayManagerError, "Invalid key"):
@@ -114,15 +206,15 @@ class TestDisplayManagerFail(unittest.TestCase):
 
     def test_remove_stream_invalid(self):
         with self.assertRaisesRegex(DisplayManagerError, "Stream doesn't exist in display manager"):
-            self.display_manager.remove_stream("stream1")
+            self.display_manager.remove_stream("a_invalid_key")
 
     def test_remove_stream_after_created(self):
         self.display_manager.create_display()
         with self.assertRaisesRegex(DisplayManagerError, "Display already created, delete before removing a stream"):
-            self.display_manager.remove_stream(self.stream_name)
+            self.display_manager.remove_stream(self.stream_desc['id'])
 
     def test_create_display_empty(self):
-        self.display_manager.remove_stream(self.stream_name)
+        self.display_manager.remove_stream(self.stream_desc['id'])
         with self.assertRaisesRegex(DisplayManagerError, "No streams added"):
             self.display_manager.create_display()
 
@@ -132,14 +224,17 @@ class TestDisplayManagerFail(unittest.TestCase):
             self.display_manager.create_display()
 
     def test_play_display_not_created(self):
-        with self.assertRaisesRegex(DisplayManagerError, "Display description not created yet"):
+        self.display_manager.remove_stream(self.stream_desc['id'])
+        with self.assertRaisesRegex(DisplayManagerError, "No streams added"):
             self.display_manager.play_display()
 
     def test_stop_display_not_created(self):
+        self.display_manager.remove_stream(self.stream_desc['id'])
         with self.assertRaisesRegex(DisplayManagerError, "Display description not created yet"):
             self.display_manager.stop_display()
 
     def test_delete_display_not_created(self):
+        self.display_manager.remove_stream(self.stream_desc['id'])
         with self.assertRaisesRegex(DisplayManagerError, "Display description not created yet"):
             self.display_manager.stop_display()
 
