@@ -259,16 +259,16 @@ def validate_model_parameters(cfg):
     validate_objects(
         model_params,
         'disp_width',
-        str,
+        int,
         "Name display_width not found in model parameters",
-        "Found display_width field in model parameters, but it is not a string")
+        "Found display_width field in model parameters, but it is not an integer")
 
     validate_objects(
         model_params,
         'disp_height',
-        str,
+        int,
         "Name display_height not found in model parameters",
-        "Found display_height field in model parameters, but it is not a string")
+        "Found display_height field in model parameters, but it is not an integer")
 
     validate_objects(
         model_params,
