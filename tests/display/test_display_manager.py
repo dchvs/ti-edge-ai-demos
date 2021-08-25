@@ -225,12 +225,12 @@ class TestDisplayManagerFail(unittest.TestCase):
 
     def test_play_display_not_created(self):
         self.display_manager.remove_stream(self.stream_desc['id'])
-        with self.assertRaisesRegex(DisplayManagerError, "Unable to start display"):
+        with self.assertRaisesRegex(DisplayManagerError, "No streams added"):
             self.display_manager.play_display()
 
     def test_stop_display_not_created(self):
         self.display_manager.remove_stream(self.stream_desc['id'])
-        with self.assertRaisesRegex(DisplayManagerError, "Unable to stop display"):
+        with self.assertRaisesRegex(DisplayManagerError, "Display description not created yet"):
             self.display_manager.stop_display()
 
     def test_delete_display_not_created(self):
