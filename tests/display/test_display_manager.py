@@ -65,13 +65,13 @@ class TestDisplayManager(unittest.TestCase):
         trigger.get_name = MagicMock(return_value=desc['name'])
 
         # Create a stream instance
-        stream = {
+        self.stream_desc = {
             "id": "stream0",
             "uri": "rtsp://localhost:5000/stream",
             "triggers": ["trigger_name"]
         }
 
-        self.stream = GstMedia.make(stream, [trigger])
+        self.stream = GstMedia.make(self.stream_desc, [trigger])
 
         self.display_manager.add_stream(self.stream)
         self.display_media = self.display_manager._get_media()
@@ -81,7 +81,7 @@ class TestDisplayManager(unittest.TestCase):
         self.assertTrue(self.stream in list)
 
     def test_remove_stream(self):
-        self.display_manager.remove_stream(self.stream)
+        self.display_manager.remove_stream(self.stream_desc['id'])
         list = self.display_manager._get_stream_list()
         self.assertTrue(self.stream not in list)
 
@@ -137,22 +137,22 @@ class TestDisplayManagerFail(unittest.TestCase):
         trigger.get_name = MagicMock(return_value=desc['name'])
 
         # Create a stream instance
-        stream = {
+        self.stream_desc = {
             "id": "stream0",
             "uri": "rtsp://localhost:5000/stream",
             "triggers": ["trigger_name"]
         }
 
-        self.stream = GstMedia.make(stream, [trigger])
+        self.stream = GstMedia.make(self.stream_desc, [trigger])
 
         self.display_manager.add_stream(self.stream)
 
     def test_add_stream_none(self):
-        with self.assertRaisesRegex(DisplayManagerError, "Invalid key"):
+        with self.assertRaisesRegex(DisplayManagerError, "Invalid media object"):
             self.display_manager.add_stream(None)
 
     def test_add_stream_not_string(self):
-        with self.assertRaisesRegex(DisplayManagerError, "Invalid key"):
+        with self.assertRaisesRegex(DisplayManagerError, "Invalid media object"):
             self.display_manager.add_stream(1)
 
     def test_add_stream_duplicated(self):
@@ -185,12 +185,12 @@ class TestDisplayManagerFail(unittest.TestCase):
 
     def test_remove_stream_invalid(self):
         with self.assertRaisesRegex(DisplayManagerError, "Stream doesn't exist in display manager"):
-            self.display_manager.remove_stream(self.stream)
+            self.display_manager.remove_stream("a_invalid_key")
 
     def test_remove_stream_after_created(self):
         self.display_manager.create_display()
         with self.assertRaisesRegex(DisplayManagerError, "Display already created, delete before removing a stream"):
-            self.display_manager.remove_stream(self.stream)
+            self.display_manager.remove_stream(self.stream_desc['id'])
 
     def test_create_display_empty(self):
         self.display_manager.remove_stream(self.stream)
