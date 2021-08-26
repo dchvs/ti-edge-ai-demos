@@ -86,7 +86,8 @@ class SmartCCTV:
         media_manager = self._create_media_manager(streams)
         display_manager = self._create_display_manager(streams)
         action_manager = self._create_action_manager()
-        ai_manager = self._create_ai_manager(self.model, self.disp_width, self.disp_height)
+        ai_manager = self._create_ai_manager(
+            self.model, self.disp_width, self.disp_height)
 
         self._stream_manager = StreamManager(
             action_manager,
