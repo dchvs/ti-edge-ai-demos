@@ -6,22 +6,22 @@ model_params:
 
 streams:
   - id: "stream0"
-    uri: 'https://r2---sn-5hoxuj5cax-nwvd.googlevideo.com/videoplayback?expire=1629858551&ei=l1YlYYX6CLuRj-8PhYyPQA&ip=186.176.134.58&id=o-ABNLl_jtIFCRR6W3AHqdxPNiHHWoDn0_UmfydA05LFM7&itag=18&source=youtube&requiressl=yes&mh=Gr&mm=31%2C29&mn=sn-5hoxuj5cax-nwvd%2Csn-hp57ynes&ms=au%2Crdu&mv=m&mvi=2&pl=23&initcwndbps=1262500&vprv=1&mime=video%2Fmp4&ns=nY2d_paaqYGEwKula-f7YzYG&gir=yes&clen=295363209&ratebypass=yes&dur=3660.788&lmt=1617592404738523&mt=1629836700&fvip=2&fexp=24001373%2C24007246&c=WEB&txp=5430432&n=Jukl5JHTp8eQq8Zf_&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cns%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AOq0QJ8wRQIhAIlA6Mv4t2lXP3jelqfuQxu7m-YGyD1ZAhR7uEq9ebe9AiAlWujlSvYlWF7BYPdH-9b9_02RCy9i6Wse4zogNeXsdA%3D%3D&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AG3C_xAwRAIgXhXdjqsqgO0qse7sTwNCJpsNORGtt-6lo5GrPqeoWQYCICmYFttpe2DWuiyBBzmpLI8xPjgHGmpvBAg9LvYuOpAZ'
+    uri: 'rtspt://170.93.143.139/rtplive/1701519c02510075004d823633235daa'
     triggers:
       - car_recording
 
   - id: "stream1"
-    uri: 'https://r2---sn-5hoxuj5cax-nwvd.googlevideo.com/videoplayback?expire=1629858551&ei=l1YlYYX6CLuRj-8PhYyPQA&ip=186.176.134.58&id=o-ABNLl_jtIFCRR6W3AHqdxPNiHHWoDn0_UmfydA05LFM7&itag=18&source=youtube&requiressl=yes&mh=Gr&mm=31%2C29&mn=sn-5hoxuj5cax-nwvd%2Csn-hp57ynes&ms=au%2Crdu&mv=m&mvi=2&pl=23&initcwndbps=1262500&vprv=1&mime=video%2Fmp4&ns=nY2d_paaqYGEwKula-f7YzYG&gir=yes&clen=295363209&ratebypass=yes&dur=3660.788&lmt=1617592404738523&mt=1629836700&fvip=2&fexp=24001373%2C24007246&c=WEB&txp=5430432&n=Jukl5JHTp8eQq8Zf_&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cns%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AOq0QJ8wRQIhAIlA6Mv4t2lXP3jelqfuQxu7m-YGyD1ZAhR7uEq9ebe9AiAlWujlSvYlWF7BYPdH-9b9_02RCy9i6Wse4zogNeXsdA%3D%3D&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AG3C_xAwRAIgXhXdjqsqgO0qse7sTwNCJpsNORGtt-6lo5GrPqeoWQYCICmYFttpe2DWuiyBBzmpLI8xPjgHGmpvBAg9LvYuOpAZ'
+    uri: 'rtspt://170.93.143.139/rtplive/1701519c02510075004d823633235daa'
     triggers:
       - car_recording
 
   - id: "stream2"
-    uri: 'https://r2---sn-5hoxuj5cax-nwvd.googlevideo.com/videoplayback?expire=1629858551&ei=l1YlYYX6CLuRj-8PhYyPQA&ip=186.176.134.58&id=o-ABNLl_jtIFCRR6W3AHqdxPNiHHWoDn0_UmfydA05LFM7&itag=18&source=youtube&requiressl=yes&mh=Gr&mm=31%2C29&mn=sn-5hoxuj5cax-nwvd%2Csn-hp57ynes&ms=au%2Crdu&mv=m&mvi=2&pl=23&initcwndbps=1262500&vprv=1&mime=video%2Fmp4&ns=nY2d_paaqYGEwKula-f7YzYG&gir=yes&clen=295363209&ratebypass=yes&dur=3660.788&lmt=1617592404738523&mt=1629836700&fvip=2&fexp=24001373%2C24007246&c=WEB&txp=5430432&n=Jukl5JHTp8eQq8Zf_&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cns%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AOq0QJ8wRQIhAIlA6Mv4t2lXP3jelqfuQxu7m-YGyD1ZAhR7uEq9ebe9AiAlWujlSvYlWF7BYPdH-9b9_02RCy9i6Wse4zogNeXsdA%3D%3D&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AG3C_xAwRAIgXhXdjqsqgO0qse7sTwNCJpsNORGtt-6lo5GrPqeoWQYCICmYFttpe2DWuiyBBzmpLI8xPjgHGmpvBAg9LvYuOpAZ'
+    uri: 'rtspt://170.93.143.139/rtplive/1701519c02510075004d823633235daa'
     triggers:
       - car_recording
 
   - id: "stream3"
-    uri: 'https://r2---sn-5hoxuj5cax-nwvd.googlevideo.com/videoplayback?expire=1629858551&ei=l1YlYYX6CLuRj-8PhYyPQA&ip=186.176.134.58&id=o-ABNLl_jtIFCRR6W3AHqdxPNiHHWoDn0_UmfydA05LFM7&itag=18&source=youtube&requiressl=yes&mh=Gr&mm=31%2C29&mn=sn-5hoxuj5cax-nwvd%2Csn-hp57ynes&ms=au%2Crdu&mv=m&mvi=2&pl=23&initcwndbps=1262500&vprv=1&mime=video%2Fmp4&ns=nY2d_paaqYGEwKula-f7YzYG&gir=yes&clen=295363209&ratebypass=yes&dur=3660.788&lmt=1617592404738523&mt=1629836700&fvip=2&fexp=24001373%2C24007246&c=WEB&txp=5430432&n=Jukl5JHTp8eQq8Zf_&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cns%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AOq0QJ8wRQIhAIlA6Mv4t2lXP3jelqfuQxu7m-YGyD1ZAhR7uEq9ebe9AiAlWujlSvYlWF7BYPdH-9b9_02RCy9i6Wse4zogNeXsdA%3D%3D&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AG3C_xAwRAIgXhXdjqsqgO0qse7sTwNCJpsNORGtt-6lo5GrPqeoWQYCICmYFttpe2DWuiyBBzmpLI8xPjgHGmpvBAg9LvYuOpAZ'
+    uri: 'rtspt://170.93.143.139/rtplive/1701519c02510075004d823633235daa'
     triggers:
       - car_recording
 
