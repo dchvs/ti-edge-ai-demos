@@ -8,37 +8,54 @@ streams:
   - id: "stream0"
     uri: 'rtspt://170.93.143.139/rtplive/1701519c02510075004d823633235daa'
     triggers:
-      - car_recording
+      - vehicle_logging
+      - person_recording
 
   - id: "stream1"
     uri: 'rtspt://170.93.143.139/rtplive/1701519c02510075004d823633235daa'
     triggers:
-      - car_recording
+      - traffic_sign_logging
 
   - id: "stream2"
     uri: 'rtspt://170.93.143.139/rtplive/1701519c02510075004d823633235daa'
     triggers:
-      - car_recording
+      - vehicle_logging
+      - person_recording
 
   - id: "stream3"
     uri: 'rtspt://170.93.143.139/rtplive/1701519c02510075004d823633235daa'
     triggers:
-      - car_recording
+      - traffic_sign_logging
 
 filters:
+  - name: truck_filter
+    labels:
+      - vehicle/truck
+    threshold: 0.3
+
   - name: car_filter
     labels:
       - vehicle/car
     threshold: 0.5
 
-  - name: animal_filter
+  - name: motorcycle_filter
     labels:
-      - cat
-      - dog
+      - vehicle/motorcycle
+    threshold: 0.7
+
+  - name: traffic_sign_filter
+    labels:
+      - 'outdoor/traffic light'
+      - 'outdoor/stop sign'
+    threshold: 0.5
+
+  - name: person_filter
+    labels:
+      - person/person
     threshold: 0.8
 
 actions:
-  - name: car_recording
+  - name: record_event
     type: record_event
     length: 10
     location: /tmp/
@@ -48,7 +65,19 @@ actions:
     location: /tmp/log.csv
 
 triggers:
-  - name: car_recording
-    action: car_recording
+  - name: vehicle_logging
+    action: log_event
     filters:
       - car_filter
+      - motorcycle_filter
+      - truck_filter
+
+  - name: person_recording
+    action: record_event
+    filters:
+      - person_filter
+
+  - name: traffic_sign_logging
+    action: log_event
+    filters:
+      - traffic_sign_filter
