@@ -45,7 +45,7 @@ actions:
 
   - name: log_event
     type: log_event
-    location: /tmp/log.xls
+    location: /tmp/log.csv
 
 triggers:
   - name: car_recording
