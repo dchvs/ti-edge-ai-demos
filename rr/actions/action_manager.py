@@ -122,6 +122,7 @@ class Trigger:
     def get_name(self):
         return self._name
 
+
 class ActionManager:
     def execute(self, prediction, image, media):
         triggers = media.get_triggers()

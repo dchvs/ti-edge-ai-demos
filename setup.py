@@ -62,7 +62,7 @@ setup(
             "tests.*",
             "tests"]),
     scripts=[
-        'main.py',
+        'smartcity.py',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
