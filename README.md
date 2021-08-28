@@ -25,7 +25,7 @@ sudo python3 setup.py develop
 
 ## Running the Demo
 ```bash
-python3 main.py
+smartcity.py
 ```
 
 ## Customizing the Demo
@@ -34,7 +34,7 @@ Different aspects of the project may be customized in the main configuration fil
 demo will look for **config.yaml** in the same directory, but different configurations may be specified as the
 following:
 ```bash
-python3 ./main.py -f alternative_configuration.yaml
+python3 ./smartcity.py -f alternative_configuration.yaml
 ```
 
 ### Anatomy of the Configuration File
