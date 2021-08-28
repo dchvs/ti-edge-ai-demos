@@ -24,6 +24,7 @@ from bin.utils.imagehandler import ImageHandler
 class MockTriggerMedia:
     pass
 
+
 default_config_file = "config.yaml"
 disp_width = 2040
 disp_height = 1920

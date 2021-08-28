@@ -79,14 +79,12 @@ class SmartCCTV:
         return AIManagerOnNewImage(model, disp_width, disp_height)
 
     def __init__(self, config):
-        models = self._parse_models(config)
-        model = models['detection']
-
         streams = self._create_streams(config)
         media_manager = self._create_media_manager(streams)
         display_manager = self._create_display_manager(streams)
         action_manager = self._create_action_manager()
-        ai_manager = self._create_ai_manager(self.model, self.disp_width, self.disp_height)
+        ai_manager = self._create_ai_manager(
+            self.model, self.disp_width, self.disp_height)
 
         self._stream_manager = StreamManager(
             action_manager,
